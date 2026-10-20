@@ -1,0 +1,105 @@
+Jami guruhlar soni: 16
+Jami skill fayllar soni: 85
+Jami subskilllar soni: 1555
+
+[*] PHP va Laravel (php-laravel) -- 5 ta skill:
+    - [01] PHP (26 ta subskill)
+    - [02] Laravel (31 ta subskill)
+    - [13] Eloquent ORM (24 ta subskill)
+    - [07] Composer (16 ta subskill)
+    - [08] PSR Standards (11 ta subskill)
+[*] Dizayn va kod sifati (code-quality) -- 6 ta skill:
+    - [03] Object-Oriented Programming (OOP) (14 ta subskill)
+    - [04] SOLID Principles (8 ta subskill)
+    - [05] Design Patterns (20 ta subskill)
+    - [06] Clean Code (16 ta subskill)
+    - [72] Code Review (20 ta subskill)
+    - [73] Refactoring (18 ta subskill)
+[*] Ma'lumotlar bazasi (database) -- 8 ta skill:
+    - [09] SQL (24 ta subskill)
+    - [10] MySQL (21 ta subskill)
+    - [11] PostgreSQL (24 ta subskill)
+    - [14] Database Design (19 ta subskill)
+    - [15] Database Optimization (19 ta subskill)
+    - [16] Query Optimization (18 ta subskill)
+    - [17] Database Transactions (19 ta subskill)
+    - [55] Database Indexing (18 ta subskill)
+[*] API va integratsiya (api) -- 6 ta skill:
+    - [18] REST API (20 ta subskill)
+    - [19] API Design (20 ta subskill)
+    - [24] Webhooks (19 ta subskill)
+    - [75] API Documentation (16 ta subskill)
+    - [76] OpenAPI (17 ta subskill)
+    - [77] Swagger (13 ta subskill)
+[*] Autentifikatsiya (auth) -- 4 ta skill:
+    - [20] API Authentication & Authorization (21 ta subskill)
+    - [21] OAuth 2.0 (16 ta subskill)
+    - [22] JWT (16 ta subskill)
+    - [23] Laravel Sanctum (16 ta subskill)
+[*] Testlash va statik tahlil (testing) -- 9 ta skill:
+    - [25] PHPUnit (18 ta subskill)
+    - [26] Pest (16 ta subskill)
+    - [27] Unit Testing (15 ta subskill)
+    - [28] Integration Testing (15 ta subskill)
+    - [29] Feature Testing (16 ta subskill)
+    - [30] Test-Driven Development (TDD) (12 ta subskill)
+    - [74] Automated Testing (20 ta subskill)
+    - [31] PHPStan (15 ta subskill)
+    - [32] Larastan (14 ta subskill)
+[*] Git va kod platformalari (vcs) -- 3 ta skill:
+    - [33] Git (21 ta subskill)
+    - [34] GitHub (18 ta subskill)
+    - [35] GitLab (16 ta subskill)
+[*] Server va infratuzilma (infra) -- 7 ta skill:
+    - [36] Docker (19 ta subskill)
+    - [37] Docker Compose (17 ta subskill)
+    - [38] Linux (19 ta subskill)
+    - [39] Ubuntu Server (15 ta subskill)
+    - [40] Bash (19 ta subskill)
+    - [41] Nginx (21 ta subskill)
+    - [42] PHP-FPM (18 ta subskill)
+[*] CI/CD (cicd) -- 3 ta skill:
+    - [43] CI/CD (17 ta subskill)
+    - [44] GitLab CI/CD (17 ta subskill)
+    - [45] GitHub Actions (17 ta subskill)
+[*] Navbatlar va hodisalar (async) -- 4 ta skill:
+    - [46] Queues & Background Jobs (22 ta subskill)
+    - [47] Laravel Horizon (17 ta subskill)
+    - [48] Event-Driven Architecture (16 ta subskill)
+    - [49] RabbitMQ (20 ta subskill)
+[*] Xavfsizlik (security) -- 3 ta skill:
+    - [50] HTTP/HTTPS (22 ta subskill)
+    - [51] Web Application Security (23 ta subskill)
+    - [52] OWASP Top 10 (15 ta subskill)
+[*] Performance va kesh (performance) -- 3 ta skill:
+    - [53] Application Performance Optimization (20 ta subskill)
+    - [54] Caching Strategies (20 ta subskill)
+    - [12] Redis (20 ta subskill)
+[*] Debugging va monitoring (observability) -- 5 ta skill:
+    - [56] Debugging (17 ta subskill)
+    - [57] Xdebug (17 ta subskill)
+    - [58] Logging & Monitoring (21 ta subskill)
+    - [59] Sentry (18 ta subskill)
+    - [60] Laravel Telescope (19 ta subskill)
+[*] Arxitektura va tizim dizayni (architecture) -- 9 ta skill:
+    - [61] Software Architecture (20 ta subskill)
+    - [62] MVC Architecture (17 ta subskill)
+    - [63] Domain-Driven Design (DDD) (19 ta subskill)
+    - [64] Clean Architecture (17 ta subskill)
+    - [65] Microservices (20 ta subskill)
+    - [66] System Design (23 ta subskill)
+    - [67] Scalability (19 ta subskill)
+    - [68] High Availability (18 ta subskill)
+    - [85] Architecture Review (20 ta subskill)
+[*] Bulut texnologiyalari (cloud) -- 3 ta skill:
+    - [69] Cloud Computing (20 ta subskill)
+    - [70] AWS (25 ta subskill)
+    - [71] Amazon S3 (20 ta subskill)
+[*] Jarayon va liderlik (process) -- 7 ta skill:
+    - [78] Agile (16 ta subskill)
+    - [79] Scrum (18 ta subskill)
+    - [80] Technical Documentation (17 ta subskill)
+    - [81] Problem Solving (16 ta subskill)
+    - [82] Technical Decision-Making (16 ta subskill)
+    - [83] Mentoring (14 ta subskill)
+    - [84] Technical Leadership (18 ta subskill)

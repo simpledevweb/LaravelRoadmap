@@ -1,0 +1,1821 @@
+Quyidagi tuzilma 85 ta asosiy skillni Category → Skill → Subskill ko‘rinishida ajratadi. Har bir skill ostida Senior PHP/Laravel Developer bilishi kerak bo‘lgan ichki mavzular keltiriladi. Takrorlanuvchi tushunchalar imkon qadar birlashtirilgan.
+
+## 1. PHP — by claude
+
+- Syntax va language fundamentals
+- Variables, Constants va Data Types
+- Type Declarations
+- Type Juggling va Type Coercion
+- Strict Typing (`strict_types`)
+- Nullable, Union va Intersection Types
+- Enums
+- Functions va Closures
+- Anonymous Functions va Arrow Functions
+- Namespaces va Autoloading
+- OOP
+- Traits, Interfaces va Abstract Classes
+- Inheritance va Polymorphism
+- Static Properties va Methods
+- Exceptions va Error Handling
+- Attributes
+- Generators va Iterators
+- Reflection API
+- Anonymous Classes
+- Magic Methods
+- References
+- Memory Management
+- Garbage Collection
+- PHP Configuration (`php.ini`)
+- PHP-FPM va OPcache asoslari
+- PHP 8.x imkoniyatlari va versiyalar orasidagi moslik
+
+## 2. Laravel — by claude
+
+- Laravel Request Lifecycle
+- Application Structure
+- Routing va Route Model Binding
+- Middleware
+- Controllers va Resource Controllers
+- Service Container
+- Service Providers
+- Dependency Injection
+- Facades
+- Configuration va Environment Variables
+- Request va Response Lifecycle
+- Validation
+- Form Requests
+- Authorization
+- Policies va Gates
+- Error Handling va Exception Reporting
+- Laravel Logging
+- Artisan Commands
+- Task Scheduling
+- Events va Listeners
+- Notifications va Mail
+- Filesystem va Storage
+- Localization
+- Pagination
+- API Resources
+- Laravel Package Development
+- Framework Internals va Service Resolution
+- Laravel Version Upgrades
+
+## 3. Object-Oriented Programming (OOP) — by claude
+
+- Encapsulation
+- Abstraction
+- Inheritance
+- Polymorphism
+- Composition over Inheritance
+- Interfaces va Abstract Classes
+- Object Composition
+- Association, Aggregation va Composition
+- Immutability
+- Object Lifecycle
+- Coupling va Cohesion
+- Dependency Injection
+- Object Contracts
+- SOLID bilan bog‘liqligi
+
+## 4. SOLID Principles — by claude
+
+- Single Responsibility Principle (SRP)
+- Open/Closed Principle (OCP)
+- Liskov Substitution Principle (LSP)
+- Interface Segregation Principle (ISP)
+- Dependency Inversion Principle (DIP)
+- Violationlarni aniqlash
+- Refactoring orqali SOLID qo‘llash
+- SOLID va Laravel Service Container
+
+## 5. Design Patterns — by claude
+
+- Factory
+- Abstract Factory
+- Builder
+- Singleton
+- Adapter
+- Decorator
+- Strategy
+- Observer
+- Command
+- Template Method
+- Repository
+- Unit of Work
+- Specification
+- Chain of Responsibility
+- State
+- Proxy
+- Facade
+- Dependency Injection
+- Pattern tanlash mezonlari
+- Overengineering va ortiqcha abstraksiyadan qochish
+
+## 6. Clean Code — by claude
+
+- Meaningful Naming
+- Small and Focused Functions
+- Single Responsibility
+- DRY
+- KISS
+- YAGNI
+- Separation of Concerns
+- Avoiding Code Duplication
+- Readability
+- Explicit Dependencies
+- Guard Clauses
+- Code Smells
+- Technical Debt
+- Maintainability
+- Refactoring Safety
+- Clean Code va performance o‘rtasidagi muvozanat
+
+## 7. Composer — by claude
+
+- `composer.json`
+- `composer.lock`
+- Dependency Management
+- Semantic Versioning
+- Version Constraints
+- PSR-4 Autoloading
+- Package Installation va Removal
+- `require` va `require-dev`
+- Composer Scripts
+- Private Packages
+- Packagist
+- Dependency Conflict Resolution
+- Security Audit
+- Reproducible Builds
+- Production Dependencies (`--no-dev`)
+- Dependency Update Strategy
+
+## 8. PSR Standards — by claude
+
+- PSR-1: Basic Coding Standard
+- PSR-3: Logger Interface
+- PSR-4: Autoloading
+- PSR-7: HTTP Message Interfaces
+- PSR-11: Container Interface
+- PSR-12: Extended Coding Style
+- PSR-15: HTTP Handlers and Middleware
+- PSR-16: Simple Cache
+- PSR-18: HTTP Client
+- PSR-20: Clock
+- PSR standartlari va Laravel implementatsiyalari orasidagi farq
+
+## 9. SQL — by claude
+
+- SELECT, INSERT, UPDATE, DELETE
+- WHERE, ORDER BY, GROUP BY, HAVING
+- JOIN turlari
+- Subqueries
+- CTE (`WITH`)
+- Window Functions
+- Aggregate Functions
+- CASE Expressions
+- UNION va UNION ALL
+- NULL bilan ishlash
+- Constraints
+- Primary va Foreign Keys
+- Unique va Check Constraints
+- Views
+- Stored Procedures va Triggers
+- Transactions
+- Isolation Levels
+- Locks va Deadlocks
+- Query Execution Plans
+- Indexlardan foydalanish
+- Query Optimization
+- SQL Injection Prevention
+- Pagination strategiyalari
+- Bulk Operations
+
+## 10. MySQL — by claude
+
+- MySQL Architecture asoslari
+- InnoDB
+- Tables, Columns va Data Types
+- Primary, Unique va Foreign Keys
+- B-tree Indexes
+- Composite Indexes
+- Covering Indexes
+- `EXPLAIN` va `EXPLAIN ANALYZE` mavjud versiyalarda
+- Query Optimization
+- Transactions va Isolation Levels
+- Row-level Locking
+- Deadlocks
+- MVCC
+- JSON Columns
+- Full-Text Indexes
+- Replication asoslari
+- Slow Query Log
+- Connection Management
+- Backup va Restore
+- Charset va Collation
+- MySQL Performance Tuning
+
+## 11. PostgreSQL — by claude
+
+- PostgreSQL Architecture asoslari
+- Schemas
+- Data Types
+- JSON va JSONB
+- B-tree, GIN, GiST va BRIN Indexes
+- Composite va Partial Indexes
+- Expression Indexes
+- `EXPLAIN ANALYZE`
+- Query Planner
+- MVCC
+- Transactions va Isolation Levels
+- Locks va Deadlocks
+- Common Table Expressions
+- Window Functions
+- Full-Text Search
+- Partitioning
+- Materialized Views
+- Extensions
+- Autovacuum va `VACUUM`
+- `ANALYZE`
+- Replication asoslari
+- Backup va Point-in-Time Recovery
+- Connection Pooling
+- PostgreSQL Performance Tuning
+
+## 12. Redis — by claude
+
+- Redis Data Types: Strings, Hashes, Lists, Sets, Sorted Sets
+- Streams
+- Key Expiration va TTL
+- Cache-Aside Pattern
+- Cache Invalidation
+- Cache Stampede Prevention
+- Distributed Locks
+- Atomic Operations
+- Transactions va Lua Scripts
+- Pub/Sub
+- Redis Queues
+- Session Storage
+- Rate Limiting
+- Redis Persistence: RDB va AOF
+- Eviction Policies
+- Memory Management
+- Redis Replication
+- Sentinel va Cluster
+- Redis Monitoring va Troubleshooting
+- Cache Consistency
+
+## 13. Eloquent ORM — by claude
+
+- Models va Model Configuration
+- CRUD Operations
+- Mass Assignment
+- `$fillable` va `$guarded`
+- Attribute Casting
+- Accessors va Mutators
+- Model Events
+- Observers
+- Relationships: One-to-One, One-to-Many, Many-to-Many
+- Polymorphic Relationships
+- Eager Loading va Lazy Loading
+- N+1 Query Problem
+- Query Scopes
+- Local va Global Scopes
+- Collections
+- API Resources bilan ishlash
+- Soft Deletes
+- Factories va Seeders
+- Transactions
+- Optimistic va Pessimistic Locking
+- Raw Queries
+- Bulk Insert va Update
+- Eloquent Performance Optimization
+- Eloquent va Query Builder farqi
+
+## 14. Database Design — by claude
+
+- Entity-Relationship Modeling
+- Entities va Attributes
+- Primary va Foreign Keys
+- One-to-One, One-to-Many, Many-to-Many
+- Normalization: 1NF, 2NF, 3NF
+- Denormalization
+- Junction Tables
+- Unique Constraints
+- Referential Integrity
+- Nullable va Default Values
+- Data Types tanlash
+- Timestamps va Time Zones
+- Soft Delete Design
+- Audit Fields
+- Multi-Tenant Database Design
+- Schema Evolution
+- Backward-Compatible Migrations
+- Data Integrity
+- Database Naming Conventions
+
+## 15. Database Optimization — by claude
+
+- Query Profiling
+- Slow Query Analysis
+- Execution Plans
+- Index Strategy
+- Composite Index Order
+- Index Selectivity
+- Avoiding Full Table Scans
+- N+1 Query Detection
+- Connection Pooling
+- Query Count Reduction
+- Pagination Optimization
+- Bulk Operations
+- Database Load Analysis
+- Lock Contention
+- Read/Write Separation
+- Replicas
+- Partitioning
+- Benchmarking
+- Monitoring Database Metrics
+
+## 16. Query Optimization — by claude
+
+- `EXPLAIN`
+- `EXPLAIN ANALYZE`
+- Execution Plan Interpretation
+- Index Selection
+- Composite Index Design
+- Sargable Queries
+- JOIN Optimization
+- Subquery vs JOIN
+- Avoiding Unnecessary Columns
+- Avoiding Functions on Indexed Columns
+- Pagination: Offset vs Cursor
+- Query Batching
+- Aggregation Optimization
+- Sorting Optimization
+- ORM-generated SQL Analysis
+- Prepared Statements
+- Query Caching Considerations
+- Measuring Before and After Optimization
+
+## 17. Database Transactions — by claude
+
+- ACID Properties
+- `BEGIN`, `COMMIT`, `ROLLBACK`
+- Laravel `DB::transaction()`
+- Nested Transactions va Savepoints
+- Isolation Levels
+- Dirty Reads
+- Non-Repeatable Reads
+- Phantom Reads
+- Lost Updates
+- Pessimistic Locking
+- Optimistic Locking
+- Deadlock Detection
+- Retry Strategies
+- Transaction Boundaries
+- Long-Running Transactions
+- External API Calls inside Transactions
+- Idempotency
+- Transactional Outbox Pattern
+- Consistency in Distributed Systems
+
+## 18. REST API — by claude
+
+- REST Principles
+- Resources va Resource-Oriented Design
+- HTTP Methods
+- HTTP Status Codes
+- Request va Response Structure
+- JSON
+- Headers
+- Content Negotiation
+- Route Parameters va Query Parameters
+- Filtering, Sorting va Pagination
+- Cursor Pagination
+- API Versioning
+- Error Response Standards
+- Idempotent Requests
+- Rate Limiting
+- Authentication va Authorization
+- API Resource Transformation
+- Backward Compatibility
+- API Performance
+- REST API Testing
+
+## 19. API Design — by claude
+
+- Resource Naming
+- URI Design
+- HTTP Method Semantics
+- Status Code Selection
+- Request Validation
+- Consistent Response Format
+- Error Format
+- Pagination Contracts
+- Filtering va Sorting Contracts
+- API Versioning Strategy
+- Backward Compatibility
+- Idempotency Keys
+- Rate Limits
+- Authentication Strategy
+- Authorization Model
+- Bulk Operations
+- Long-Running Operations
+- Deprecation Policy
+- API Contract Testing
+- Developer Experience
+
+## 20. API Authentication & Authorization — by claude
+
+- Authentication vs Authorization
+- Session-Based Authentication
+- Token-Based Authentication
+- API Keys
+- Bearer Tokens
+- OAuth 2.0 Fundamentals
+- JWT Fundamentals
+- Laravel Sanctum
+- Laravel Passport
+- Roles va Permissions
+- Policies va Gates
+- Resource-Level Authorization
+- Object-Level Authorization
+- Token Expiration va Revocation
+- Refresh Tokens
+- Scopes
+- Least Privilege
+- Brute-Force Protection
+- Rate Limiting
+- Secure Token Storage
+- Authentication Testing
+
+## 21. OAuth 2.0 — by claude
+
+- Roles: Resource Owner, Client, Authorization Server, Resource Server
+- Authorization Code Flow
+- PKCE
+- Client Credentials Flow
+- Refresh Tokens
+- Access Token Lifetimes
+- Scopes
+- Consent
+- Token Revocation
+- Token Introspection
+- Redirect URI Validation
+- State Parameter
+- OAuth Security Best Practices
+- OAuth 2.0 va OpenID Connect farqi
+- Laravel Passport bilan OAuth ishlatish
+- Qachon OAuth kerak, qachon Sanctum yetarli
+
+## 22. JWT — by claude
+
+- JWT Structure
+- Header, Payload va Signature
+- Claims
+- Registered va Custom Claims
+- Signing Algorithms
+- Token Expiration
+- Issuer va Audience Validation
+- Signature Verification
+- Key Rotation
+- Refresh Token Strategy
+- Revocation Challenges
+- Token Storage
+- Sensitive Data in Payload
+- Algorithm Confusion Risks
+- JWT va Session Authentication taqqoslash
+- Secure JWT Implementation
+
+## 23. Laravel Sanctum — by claude
+
+- SPA Authentication
+- API Token Authentication
+- Token Creation
+- Token Abilities
+- Token Expiration
+- Token Revocation
+- Stateful Domains
+- CSRF Protection
+- Cookie-Based Authentication
+- CORS Configuration
+- Middleware
+- Authentication Guards
+- User Token Management
+- Token Abilities va Authorization farqi
+- Sanctum Security Configuration
+- Feature Testing
+
+## 24. Webhooks — by claude
+
+- Webhook Architecture
+- Webhook Endpoint Design
+- Signature Verification
+- HMAC
+- Timestamp Validation
+- Replay Attack Prevention
+- Idempotency
+- Duplicate Event Handling
+- Retry Policies
+- Exponential Backoff
+- Event Delivery Guarantees
+- Webhook Logging
+- Delivery Status Tracking
+- Queue-Based Processing
+- Timeout Management
+- Dead Letter Handling
+- Webhook Testing
+- Outbound Webhook Security
+- SSRF Risk Prevention
+
+## 25. PHPUnit — by claude
+
+- Test Structure
+- Assertions
+- Test Fixtures
+- Data Providers
+- Setup va Teardown
+- Test Doubles
+- Mocks va Stubs
+- Exceptions Testing
+- Data-Driven Tests
+- Code Coverage
+- Unit Testing
+- Integration Testing
+- Database Testing
+- Test Isolation
+- Test Suites
+- PHPUnit Configuration
+- CI Integration
+- Flaky Test Diagnosis
+
+## 26. Pest — by claude
+
+- Pest Syntax
+- `it()` va `test()`
+- Expectations
+- Datasets
+- Hooks
+- Custom Expectations
+- Plugins
+- Architecture Testing
+- Laravel Plugin
+- HTTP Tests
+- Database Tests
+- Mocking
+- Parallel Testing
+- Pest va PHPUnit interoperability
+- Test Organization
+- CI Integration
+
+## 27. Unit Testing — by claude
+
+- Unit Under Test
+- Arrange–Act–Assert
+- Testing Business Logic
+- Isolated Tests
+- Dependency Injection for Testability
+- Mocking External Dependencies
+- Boundary Conditions
+- Edge Cases
+- Exception Testing
+- Deterministic Tests
+- Avoiding Over-Mocking
+- Test Naming
+- Fast Test Suites
+- Code Coverage Interpretation
+- Unit vs Integration Test Selection
+
+## 28. Integration Testing — by claude
+
+- Integration Boundaries
+- Database Integration
+- Redis Integration
+- Queue Integration
+- External API Integration
+- Filesystem Integration
+- Test Containers and Isolated Services
+- Test Database Management
+- Transaction-Based Tests
+- Real Dependency vs Mock
+- Integration Test Data
+- Environment Configuration
+- Cleanup and Isolation
+- Failure Diagnosis
+- CI Integration
+
+## 29. Feature Testing — by claude
+
+- Laravel HTTP Tests
+- Request/Response Assertions
+- Route Testing
+- Authentication Testing
+- Authorization Testing
+- Validation Testing
+- Database Assertions
+- JSON Response Assertions
+- Middleware Testing
+- File Upload Testing
+- Queue and Event Fakes
+- Notification and Mail Fakes
+- Error Handling
+- Pagination and Filtering Tests
+- Permission Boundary Tests
+- End-to-End Business Scenarios
+
+## 30. Test-Driven Development (TDD) — by claude
+
+- Red–Green–Refactor Cycle
+- Writing Failing Tests First
+- Minimal Implementation
+- Refactoring Safely
+- Testable Architecture
+- Unit vs Feature TDD
+- Outside-In TDD
+- Inside-Out TDD
+- Acceptance Criteria
+- Regression Prevention
+- Test Design
+- Avoiding Test-Driven Overengineering
+
+## 31. PHPStan — by claude
+
+- Static Analysis Fundamentals
+- Analysis Levels
+- Type Inference
+- Generics
+- PHPDoc Types
+- Array Shapes
+- Union Types
+- Nullability Analysis
+- Baseline Management
+- Custom Rules
+- False Positive Management
+- CI Integration
+- Incremental Adoption
+- PHPStan with Laravel
+- Third-Party Extension Compatibility
+
+## 32. Larastan — by claude
+
+- Larastan Configuration
+- Laravel-Specific Type Analysis
+- Eloquent Model Types
+- Relationship Return Types
+- Builder Types
+- Collection Types
+- Facade Analysis
+- Container Resolution Analysis
+- Dynamic Properties
+- PHPDoc Annotations
+- Baseline Management
+- CI Integration
+- Incremental Strictness
+- Diagnosing Laravel-Specific Errors
+
+## 33. Git — by claude
+
+- Repository Fundamentals
+- Working Tree va Staging
+- Commits
+- Branching
+- Merging
+- Rebasing
+- Cherry-Pick
+- Reset va Revert
+- Stash
+- Conflict Resolution
+- Interactive Rebase
+- Commit Hygiene
+- `.gitignore`
+- Tags
+- Release Branches
+- Bisect
+- Reflog
+- Hooks
+- Pull Request Workflow
+- Branch Protection
+- Git Troubleshooting
+
+## 34. GitHub — by claude
+
+- Repositories
+- Branch Protection
+- Pull Requests
+- Code Review
+- Issues
+- Projects
+- GitHub Actions
+- Secrets
+- Environments
+- Releases
+- Tags
+- Dependabot
+- Security Advisories
+- CODEOWNERS
+- Templates
+- Permissions
+- Repository Security
+- Release Automation
+
+## 35. GitLab — by claude
+
+- Projects va Groups
+- Branches va Merge Requests
+- Code Review
+- Protected Branches
+- Issues va Boards
+- GitLab CI/CD
+- Runners
+- CI Variables
+- Container Registry
+- Environments
+- Deployments
+- Releases
+- Package Registry
+- Security Scanning
+- Permissions
+- Merge Request Approval Rules
+
+## 36. Docker — by claude
+
+- Images va Containers
+- Dockerfile
+- Build Context
+- Layers va Caching
+- Volumes
+- Bind Mounts
+- Networks
+- Ports
+- Environment Variables
+- Health Checks
+- Container Logs
+- Resource Limits
+- Multi-Stage Builds
+- Image Optimization
+- Non-Root Containers
+- Container Security
+- Registry
+- Debugging Containers
+- Docker Compose bilan ishlash
+
+## 37. Docker Compose — by claude
+
+- Compose YAML
+- Services
+- Networks
+- Volumes
+- Environment Files
+- Service Dependencies
+- Health Checks
+- `depends_on` Readiness
+- Profiles
+- Overrides
+- Build Configuration
+- Secrets
+- Persistent Database Storage
+- Service Discovery
+- Local Development Environment
+- Logs va Troubleshooting
+- Production Limitations
+
+## 38. Linux — by claude
+
+- Filesystem Hierarchy
+- Files and Directories
+- File Permissions
+- Users va Groups
+- Processes
+- Signals
+- Services
+- Package Management
+- Environment Variables
+- Pipes va Redirection
+- Logs
+- Disk Usage
+- Memory va CPU Monitoring
+- Networking Commands
+- SSH
+- File Descriptors
+- Process Monitoring
+- System Troubleshooting
+- Security Basics
+
+## 39. Ubuntu Server — by claude
+
+- Installation va Initial Setup
+- APT Package Management
+- User va Group Management
+- SSH Configuration
+- Firewall Configuration
+- System Updates
+- Service Management
+- System Logs
+- Disk va Memory Monitoring
+- Server Hardening
+- Automatic Security Updates
+- Time Zone va NTP
+- Backup
+- Network Configuration
+- Production Server Maintenance
+
+## 40. Bash — by claude
+
+- Variables
+- Arguments
+- Exit Codes
+- Conditions
+- Loops
+- Functions
+- Arrays
+- Pipes
+- Redirection
+- Quoting
+- `grep`, `sed`, `awk`
+- `find`, `xargs`
+- `curl`, `jq`
+- Environment Variables
+- Error Handling
+- `set -euo pipefail`
+- Cron Scripts
+- Deployment Scripts
+- Shell Script Security
+
+## 41. Nginx — by claude
+
+- HTTP Server Fundamentals
+- Reverse Proxy
+- Virtual Hosts
+- `server` va `location` Blocks
+- `proxy_pass`
+- FastCGI
+- PHP-FPM Integration
+- Static File Serving
+- TLS/HTTPS
+- HTTP Headers
+- Request Size Limits
+- Timeouts
+- Rate Limiting
+- Load Balancing
+- Gzip/Brotli
+- Access va Error Logs
+- Cache Configuration
+- Security Headers
+- Configuration Testing
+- Zero-Downtime Reload
+- Troubleshooting 502/504 Errors
+
+## 42. PHP-FPM — by claude
+
+- PHP-FPM Architecture
+- Worker Processes
+- Process Manager Modes
+- `pm.max_children`
+- `pm.start_servers`
+- `pm.min_spare_servers`
+- `pm.max_spare_servers`
+- Request Timeouts
+- Slow Logs
+- Status Page
+- Unix Sockets vs TCP
+- Socket Permissions
+- PHP Configuration Pools
+- Resource Consumption
+- OPcache
+- Nginx Integration
+- Worker Saturation Diagnosis
+- Performance Tuning
+
+## 43. CI/CD — by claude
+
+- Continuous Integration
+- Continuous Delivery vs Deployment
+- Pipeline Stages
+- Build, Test va Deploy
+- Automated Testing
+- Code Quality Gates
+- Artifact Management
+- Environment Separation
+- Secrets Management
+- Database Migration Strategy
+- Deployment Approvals
+- Rollback Strategy
+- Blue-Green Deployment
+- Canary Releases
+- Zero-Downtime Deployment
+- Pipeline Security
+- Deployment Monitoring
+
+## 44. GitLab CI/CD — by claude
+
+- `.gitlab-ci.yml`
+- Stages va Jobs
+- Runners
+- `rules` va `workflow`
+- Variables
+- Cache va Artifacts
+- Dependencies
+- Services
+- Docker-in-Docker Considerations
+- Test Pipelines
+- Build Pipelines
+- Deployment Environments
+- Protected Variables
+- Manual Jobs
+- Environments va Rollbacks
+- Merge Request Pipelines
+- Pipeline Optimization
+
+## 45. GitHub Actions — by claude
+
+- Workflows
+- Events va Triggers
+- Jobs va Steps
+- Actions
+- Runners
+- Matrix Builds
+- Secrets va Variables
+- Artifacts
+- Caching
+- Reusable Workflows
+- Environments
+- Deployment Approvals
+- Permissions
+- OIDC for Cloud Authentication
+- Dependency Pinning
+- CI/CD Security
+- Release Automation
+
+## 46. Queues & Background Jobs — by claude
+
+- Synchronous vs Asynchronous Processing
+- Queue Drivers
+- Job Dispatching
+- Job Payloads
+- Job Lifecycle
+- Retries va Backoff
+- Timeout Configuration
+- Failed Jobs
+- Job Batching
+- Job Chaining
+- Delayed Jobs
+- Unique Jobs
+- Overlapping Job Prevention
+- Idempotent Job Design
+- Job Priorities
+- Queue Workers
+- Worker Memory Management
+- Graceful Worker Restart
+- Dead Letter Handling
+- Monitoring Queue Backlogs
+- At-Least-Once Delivery
+- Duplicate Processing Prevention
+
+## 47. Laravel Horizon — by claude
+
+- Horizon Architecture
+- Redis Queue Configuration
+- Supervisors
+- Worker Balancing Strategies
+- Queue Priorities
+- Process Limits
+- Memory Limits
+- Timeouts
+- Retry Configuration
+- Failed Jobs
+- Job Metrics
+- Queue Wait Times
+- Throughput Monitoring
+- Dashboard Access Control
+- Production Deployment
+- Graceful Restarts
+- Troubleshooting Queue Backlogs
+
+## 48. Event-Driven Architecture — by claude
+
+- Events va Consumers
+- Producers va Subscribers
+- Event Payload Design
+- Synchronous vs Asynchronous Events
+- Event Ordering
+- Duplicate Event Handling
+- Idempotent Consumers
+- Event Versioning
+- Retry va Backoff
+- Eventual Consistency
+- Message Delivery Guarantees
+- Transactional Outbox Pattern
+- Dead Letter Queues
+- Event Monitoring
+- Failure Recovery
+- Event-Driven Design Trade-offs
+
+## 49. RabbitMQ — by claude
+
+- Exchanges
+- Queues
+- Bindings
+- Routing Keys
+- Direct, Topic, Fanout va Headers Exchanges
+- Producers va Consumers
+- Acknowledgements
+- Publisher Confirms
+- Durable Queues
+- Persistent Messages
+- Prefetch
+- Consumer Concurrency
+- Dead Letter Exchanges
+- Retry Queues
+- Message TTL
+- Idempotent Consumers
+- Queue Monitoring
+- High Availability
+- Laravel Integration
+- RabbitMQ vs Redis Queue
+
+## 50. HTTP/HTTPS — by claude
+
+- HTTP Request/Response Model
+- HTTP Methods
+- Status Codes
+- Headers
+- Cookies
+- Sessions
+- HTTP/1.1, HTTP/2 va HTTP/3
+- TLS Handshake
+- Certificates
+- DNS Resolution
+- TCP Connections
+- Keep-Alive
+- Connection Timeouts
+- CORS
+- Content Types
+- Compression
+- Caching Headers
+- ETags
+- Conditional Requests
+- Idempotency
+- Proxies
+- HTTPS Security
+
+## 51. Web Application Security — by claude
+
+- Authentication va Authorization
+- Principle of Least Privilege
+- Input Validation
+- Output Encoding
+- SQL Injection
+- Cross-Site Scripting (XSS)
+- Cross-Site Request Forgery (CSRF)
+- Server-Side Request Forgery (SSRF)
+- Broken Access Control
+- Insecure Direct Object References (IDOR)
+- Mass Assignment
+- File Upload Security
+- Path Traversal
+- Session Security
+- Password Hashing
+- Secret Management
+- Encryption at Rest va in Transit
+- Security Headers
+- Rate Limiting
+- Dependency Vulnerabilities
+- Threat Modeling
+- Security Logging
+- Secure Error Handling
+
+## 52. OWASP Top 10 — by claude
+
+- Broken Access Control
+- Security Misconfiguration
+- Software Supply Chain Failures
+- Cryptographic Failures
+- Injection
+- Insecure Design
+- Authentication Failures
+- Software and Data Integrity Failures
+- Security Logging and Alerting Failures
+- Mishandling of Exceptional Conditions
+- OWASP ASVS asoslari
+- Risk Assessment
+- Threat Modeling
+- Security Testing
+- Secure Development Lifecycle
+
+## 53. Application Performance Optimization — by claude
+
+- Performance Profiling
+- Response Time Analysis
+- Throughput
+- CPU va Memory Profiling
+- PHP-FPM Worker Tuning
+- OPcache
+- Laravel Bootstrapping Optimization
+- Eloquent Query Optimization
+- N+1 Query Prevention
+- Redis Caching
+- Queue Offloading
+- Lazy vs Eager Loading
+- Pagination Optimization
+- HTTP Compression
+- CDN
+- Database Connection Management
+- Load Testing
+- Bottleneck Identification
+- Performance Regression Testing
+- Latency Percentiles: p50, p95, p99
+
+## 54. Caching Strategies — by claude
+
+- Cache-Aside
+- Read-Through
+- Write-Through
+- Write-Behind
+- Cache Keys
+- TTL
+- Cache Invalidation
+- Cache Tags
+- Cache Stampede
+- Cache Penetration
+- Cache Avalanche
+- Distributed Caching
+- Local vs Shared Cache
+- Negative Caching
+- HTTP Caching
+- CDN Caching
+- Database Query Caching Considerations
+- Cache Consistency
+- Cache Hit Ratio
+- Cache Monitoring
+
+## 55. Database Indexing — by claude
+
+- Primary Indexes
+- Unique Indexes
+- Composite Indexes
+- Covering Indexes
+- Partial Indexes
+- Functional/Expression Indexes
+- Full-Text Indexes
+- B-tree Indexes
+- Hash Indexes
+- GIN va GiST Indexes
+- Index Selectivity
+- Column Order in Composite Indexes
+- Index-Only Scans
+- Index Maintenance
+- Write Performance Trade-offs
+- Index Usage Analysis
+- Duplicate va Unused Indexes
+- `EXPLAIN ANALYZE`
+
+## 56. Debugging — by claude
+
+- Reproducing Bugs
+- Minimal Reproduction
+- Stack Trace Analysis
+- Log Analysis
+- Breakpoints
+- Variable Inspection
+- Request Lifecycle Tracing
+- Database Query Debugging
+- Race Conditions
+- Memory Leak Investigation
+- Production Debugging
+- Root Cause Analysis
+- Regression Identification
+- Error Classification
+- Debugging Without Exposing Secrets
+- Fix Verification
+- Regression Tests
+
+## 57. Xdebug — by claude
+
+- Installation va Configuration
+- Step Debugging
+- Breakpoints
+- Conditional Breakpoints
+- Variable Inspection
+- Call Stack
+- Watches
+- Remote Debugging
+- IDE Integration
+- Code Coverage
+- Profiling
+- Trace Files
+- CLI Debugging
+- PHP-FPM Debugging
+- Docker Networking
+- Performance Overhead
+- Production-Safe Configuration
+
+## 58. Logging & Monitoring — by claude
+
+- Log Levels
+- Structured Logging
+- Contextual Logging
+- Correlation IDs
+- Request IDs
+- Exception Logging
+- Sensitive Data Redaction
+- Centralized Logging
+- Log Rotation
+- Log Retention
+- Metrics
+- Application Health Checks
+- Infrastructure Monitoring
+- Alerting
+- Queue Monitoring
+- Database Monitoring
+- Error Rate Monitoring
+- Latency Monitoring
+- Dashboards
+- Incident Correlation
+- SLI, SLO va SLA
+
+## 59. Sentry — by claude
+
+- Error Tracking
+- Exception Capture
+- Stack Traces
+- Release Tracking
+- Environment Configuration
+- Performance Monitoring
+- Transaction Tracing
+- User Context
+- Breadcrumbs
+- Source Maps where applicable
+- Issue Grouping
+- Alert Rules
+- Sampling
+- PII Scrubbing
+- Sensitive Data Filtering
+- Laravel Integration
+- Performance Overhead
+- Production Configuration
+
+## 60. Laravel Telescope — by claude
+
+- Request Monitoring
+- Exceptions
+- Logs
+- Database Queries
+- Slow Queries
+- Jobs
+- Queue Monitoring
+- Events
+- Notifications
+- Mail
+- Cache Operations
+- Scheduled Tasks
+- Gate Checks
+- Dump Watcher
+- Entry Filtering
+- Data Pruning
+- Access Control
+- Production Exposure Risks
+- Sensitive Data Protection
+
+## 61. Software Architecture — by claude
+
+- Architectural Styles
+- Layered Architecture
+- Modular Monolith
+- Microservices
+- Separation of Concerns
+- Dependency Direction
+- Bounded Contexts
+- Domain Modeling
+- Application Services
+- Domain Services
+- Infrastructure Layer
+- Ports and Adapters
+- Dependency Inversion
+- Module Boundaries
+- Interface Contracts
+- Coupling va Cohesion
+- Architecture Trade-offs
+- Quality Attributes
+- Architecture Decision Records (ADR)
+- Evolutionary Architecture
+
+## 62. MVC Architecture — by claude
+
+- Model
+- View
+- Controller
+- Request Lifecycle
+- Routing
+- Controller Responsibilities
+- Business Logic Placement
+- Validation Layer
+- Service Layer
+- Data Access Layer
+- View Rendering
+- API Controllers
+- Resource Transformation
+- Fat Controller Problems
+- Thin Controller Design
+- MVC Limitations
+- MVC vs Layered Architecture
+
+## 63. Domain-Driven Design (DDD) — by claude
+
+- Ubiquitous Language
+- Domain Model
+- Entities
+- Value Objects
+- Aggregates
+- Aggregate Roots
+- Repositories
+- Domain Services
+- Application Services
+- Domain Events
+- Bounded Contexts
+- Context Mapping
+- Anti-Corruption Layer
+- Factories
+- Invariants
+- Business Rules
+- Strategic vs Tactical DDD
+- DDD in Laravel
+- When DDD Is Worth the Complexity
+
+## 64. Clean Architecture — by claude
+
+- Dependency Rule
+- Entities
+- Use Cases
+- Interface Adapters
+- Infrastructure
+- Dependency Inversion
+- Ports and Adapters
+- Framework Independence
+- Database Independence
+- Testable Business Logic
+- Application Boundaries
+- DTOs
+- Input and Output Ports
+- Repository Interfaces
+- Infrastructure Implementations
+- Laravel Integration
+- Avoiding Unnecessary Abstraction
+
+## 65. Microservices — by claude
+
+- Service Boundaries
+- Bounded Contexts
+- Independent Deployment
+- Service-to-Service Communication
+- REST and Messaging
+- API Gateway
+- Service Discovery
+- Data Ownership
+- Database per Service
+- Eventual Consistency
+- Distributed Transactions
+- Saga Pattern
+- Circuit Breakers
+- Retries and Timeouts
+- Idempotency
+- Distributed Tracing
+- Service Authentication
+- Resilience
+- Deployment Complexity
+- Monolith vs Microservices Trade-offs
+
+## 66. System Design — by claude
+
+- Functional Requirements
+- Non-Functional Requirements
+- Capacity Estimation
+- Traffic Estimation
+- Data Volume Estimation
+- API Design
+- Database Schema Design
+- Caching
+- Load Balancing
+- Horizontal vs Vertical Scaling
+- Queues
+- Asynchronous Processing
+- Data Partitioning
+- Replication
+- Consistency Models
+- Availability
+- Fault Tolerance
+- Rate Limiting
+- Bottleneck Analysis
+- Trade-off Evaluation
+- Architecture Diagrams
+- Failure Scenarios
+- Cost Estimation
+
+## 67. Scalability — by claude
+
+- Vertical Scaling
+- Horizontal Scaling
+- Stateless Applications
+- Load Balancing
+- Database Read Replicas
+- Database Partitioning
+- Sharding
+- Caching
+- Queue-Based Workloads
+- Async Processing
+- Connection Pooling
+- Bottleneck Analysis
+- Throughput Planning
+- Load Testing
+- Autoscaling
+- Backpressure
+- Resource Limits
+- Capacity Planning
+- Scalability Trade-offs
+
+## 68. High Availability — by claude
+
+- Redundancy
+- Single Points of Failure
+- Load Balancers
+- Health Checks
+- Failover
+- Database Replication
+- Multi-Availability-Zone Deployment
+- Service Recovery
+- Graceful Degradation
+- Retry Policies
+- Circuit Breakers
+- Disaster Recovery
+- Backup Validation
+- Recovery Time Objective (RTO)
+- Recovery Point Objective (RPO)
+- Uptime Measurement
+- Incident Response
+- Availability vs Consistency Trade-offs
+
+## 69. Cloud Computing — by claude
+
+- Cloud Service Models: IaaS, PaaS, SaaS
+- Public, Private va Hybrid Cloud
+- Compute Services
+- Networking
+- Storage
+- Managed Databases
+- Object Storage
+- Identity and Access Management
+- Secrets Management
+- Load Balancing
+- Autoscaling
+- Monitoring
+- Logging
+- Backup and Recovery
+- Availability Zones
+- Cost Management
+- Cloud Security
+- Infrastructure as Code
+- Deployment Models
+- Shared Responsibility Model
+
+## 70. AWS
+
+- IAM
+- EC2
+- VPC
+- Security Groups
+- Application Load Balancer
+- Auto Scaling
+- S3
+- RDS
+- ElastiCache
+- SQS
+- SNS
+- CloudFront
+- Route 53
+- CloudWatch
+- CloudTrail
+- Secrets Manager
+- Systems Manager
+- ECS
+- ECR
+- EKS fundamentals
+- Lambda fundamentals
+- IAM Least Privilege
+- Backup and Recovery
+- Cost Optimization
+- Laravel Deployment on AWS
+
+## 71. Amazon S3
+
+- Buckets va Objects
+- Object Keys
+- Regions
+- IAM Policies
+- Bucket Policies
+- Block Public Access
+- Presigned URLs
+- Multipart Upload
+- Versioning
+- Lifecycle Rules
+- Encryption
+- Storage Classes
+- CORS
+- Access Control
+- Laravel Filesystem Integration
+- Temporary URLs
+- CDN Integration
+- Object Metadata
+- Backup and Retention
+- Secure File Uploads
+
+## 72. Code Review
+
+- Correctness
+- Readability
+- Maintainability
+- Architecture Consistency
+- Security Review
+- Performance Review
+- Database Query Review
+- Test Coverage
+- Edge Cases
+- Error Handling
+- Naming and Abstraction
+- SOLID and Design Patterns
+- Backward Compatibility
+- Migration Safety
+- Constructive Feedback
+- Review Scope
+- Approval Criteria
+- Avoiding Style-Only Nitpicks
+- Automated Checks
+- Knowledge Sharing
+
+## 73. Refactoring
+
+- Code Smell Identification
+- Extract Method
+- Extract Class
+- Rename
+- Replace Conditional with Polymorphism
+- Introduce Parameter Object
+- Dependency Injection
+- Reduce Coupling
+- Improve Cohesion
+- Remove Duplication
+- Simplify Conditionals
+- Safe Database Refactoring
+- Behavior-Preserving Changes
+- Regression Tests
+- Incremental Refactoring
+- Legacy Code Refactoring
+- Refactoring vs Rewriting
+- Technical Debt Prioritization
+
+## 74. Automated Testing
+
+- Test Pyramid
+- Unit Tests
+- Integration Tests
+- Feature Tests
+- API Tests
+- End-to-End Tests
+- Regression Tests
+- Smoke Tests
+- Contract Tests
+- Database Test Isolation
+- Test Data Management
+- Mocking Strategy
+- Flaky Test Prevention
+- Parallel Testing
+- Code Coverage
+- Mutation Testing
+- CI Integration
+- Test Execution Time
+- Test Maintenance
+- Quality Gates
+
+## 75. API Documentation
+
+- OpenAPI Specification
+- Endpoint Descriptions
+- Request Schemas
+- Response Schemas
+- Authentication Requirements
+- Error Responses
+- Examples
+- Pagination Documentation
+- Rate Limit Documentation
+- Versioning
+- Deprecation Notices
+- Schema Validation
+- Contract Consistency
+- Generated Documentation
+- Interactive API Explorer
+- Keeping Docs Updated
+
+## 76. OpenAPI
+
+- OpenAPI Specification Structure
+- Paths and Operations
+- Parameters
+- Request Bodies
+- Responses
+- Schemas
+- Components and Reuse
+- Authentication Schemes
+- Security Requirements
+- Error Schemas
+- Examples
+- Tags
+- API Versioning
+- Schema Validation
+- Code Generation
+- Contract Testing
+- OpenAPI 3.x
+
+## 77. Swagger
+
+- Swagger UI
+- Swagger Editor
+- OpenAPI Integration
+- Interactive API Documentation
+- Authentication Configuration
+- Request/Response Examples
+- Schema Visualization
+- Try-It-Out Configuration
+- Protected Documentation
+- Generated Docs
+- Version Compatibility
+- Documentation Validation
+- Swagger va OpenAPI farqi
+
+## 78. Agile
+
+- Agile Principles
+- Iterative Delivery
+- Incremental Development
+- Backlog Management
+- User Stories
+- Acceptance Criteria
+- Prioritization
+- Estimation
+- Sprint Planning
+- Continuous Feedback
+- Retrospectives
+- Risk Management
+- Stakeholder Collaboration
+- Delivery Metrics
+- Managing Scope Changes
+- Continuous Improvement
+
+## 79. Scrum
+
+- Scrum Roles
+- Product Owner
+- Scrum Master
+- Developers
+- Product Backlog
+- Sprint Backlog
+- Sprint Goal
+- Sprint Planning
+- Daily Scrum
+- Sprint Review
+- Sprint Retrospective
+- Definition of Ready
+- Definition of Done
+- Story Points
+- Velocity
+- Impediment Management
+- Backlog Refinement
+- Scrum Metrics and Their Limitations
+
+## 80. Technical Documentation
+
+- README
+- Setup Instructions
+- Architecture Documentation
+- Architecture Decision Records
+- API Documentation
+- Database Schema Documentation
+- Deployment Instructions
+- Environment Variables
+- Operational Runbooks
+- Troubleshooting Guides
+- Sequence Diagrams
+- Data Flow Diagrams
+- Onboarding Documentation
+- Change Logs
+- Versioning
+- Documentation Maintenance
+- Clear Technical Writing
+
+## 81. Problem Solving
+
+- Problem Definition
+- Requirement Clarification
+- Reproduction
+- Root Cause Analysis
+- Hypothesis Formation
+- Evidence-Based Debugging
+- Divide and Conquer
+- Complexity Analysis
+- Trade-off Evaluation
+- Risk Identification
+- Edge Case Analysis
+- Prioritization
+- Solution Validation
+- Regression Prevention
+- Incident Learning
+- Communicating Findings
+
+## 82. Technical Decision-Making
+
+- Requirements Analysis
+- Option Comparison
+- Build vs Buy
+- Trade-off Analysis
+- Cost vs Performance
+- Maintainability vs Complexity
+- Risk Assessment
+- Security Implications
+- Scalability Requirements
+- Backward Compatibility
+- Evidence-Based Decisions
+- Architecture Decision Records
+- Reversibility of Decisions
+- Stakeholder Alignment
+- Technical Debt Assessment
+- Measuring Decision Outcomes
+
+## 83. Mentoring
+
+- Knowledge Sharing
+- Onboarding Developers
+- Explaining Technical Concepts
+- Pair Programming
+- Code Review Mentoring
+- Giving Constructive Feedback
+- Delegating Learning Tasks
+- Identifying Skill Gaps
+- Individual Development Plans
+- Supporting Independent Problem Solving
+- Technical Documentation
+- Progress Feedback
+- Coaching Without Micromanagement
+- Building Team Capability
+
+## 84. Technical Leadership
+
+- Technical Direction
+- Architecture Ownership
+- Technical Standards
+- Engineering Best Practices
+- Technical Roadmaps
+- Prioritization
+- Cross-Team Coordination
+- Mentoring
+- Delegation
+- Risk Management
+- Incident Leadership
+- Technical Debt Management
+- Stakeholder Communication
+- Delivery Quality
+- Team Decision-Making
+- Conflict Resolution
+- Engineering Effectiveness
+- Business and Technical Alignment
+
+## 85. Architecture Review
+
+- Requirements and Constraints
+- Component Boundaries
+- Dependency Direction
+- Data Ownership
+- API Contracts
+- Security Assessment
+- Performance Assessment
+- Scalability Assessment
+- Availability and Resilience
+- Failure Modes
+- Observability
+- Deployment Complexity
+- Migration Strategy
+- Backward Compatibility
+- Cost Analysis
+- Operational Complexity
+- ADR Review
+- Trade-off Documentation
+- Risks and Mitigations
+- Architecture Evolution
+
+## Skill Tracker uchun tavsiya
+
+Har bir subskillga quyidagi maydonlarni biriktirish mumkin:
+
+- Priority: Core, Important, Optional
+- Target Level: Foundation, Junior, Middle, Strong Middle, Senior, Lead
+- Status: Not Started, Learning, Practicing, Proficient, Expert
+- Practical Task: bilimni amalda tekshirish topshirig‘i
+- Acceptance Criteria: skillni egallagan deb hisoblash mezonlari
+- Prerequisites: oldindan bilish kerak bo‘lgan skilllar
+
+Muhim jihat: barcha subskilllarni Senior darajasida chuqur bilish shart emas. Masalan, AWS, RabbitMQ va Microservices ko‘p loyihalarda foydali, lekin ularning zarurligi vakansiya va kompaniya arxitekturasiga bog‘liq. PHP, Laravel, SQL, ma’lumotlar bazasi optimizatsiyasi, API, testing, debugging, security va system design esa Senior Laravel yo‘nalishining markaziy ko‘nikmalaridir.

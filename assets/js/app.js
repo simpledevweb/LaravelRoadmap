@@ -1,0 +1,1274 @@
+/* Laravel Skill Map — vanilla JS, works from file:// (no build, no server). */
+(() => {
+  "use strict";
+
+  /* ------------------------------------------------------------------ *
+   * Constants
+   * ------------------------------------------------------------------ */
+  const STATUSES = [
+    { label: "Not Started", hint: "Hali boshlanmagan" },
+    { label: "Learning",    hint: "O'rganilmoqda" },
+    { label: "Practicing",  hint: "Amaliyotda qo'llanmoqda" },
+    { label: "Proficient",  hint: "Yaxshi biladi" },
+    { label: "Expert",      hint: "Ekspert darajasi" },
+  ];
+  const WEIGHT = [0, 0.25, 0.5, 0.75, 1];
+  const PRIORITY = { core: "Core", important: "Important", optional: "Optional" };
+  const KEYS = { progress: "lsm:progress", theme: "lsm:theme", collapsed: "lsm:collapsed", last: "lsm:last", questions: "lsm:questions" };
+
+  const CAREER_LEVELS = [
+    { id: "junior", label: "Junior", name: "Junior Developer", subLevels: ["foundation", "junior"], badge: "Junior", color: "var(--accent-text)", bg: "var(--accent-soft)", icon: "code", desc: "PHP sintaksisi, OOP asoslari, MVC, sodda CRUD va bazaviy vositalar" },
+    { id: "middle", label: "Middle", name: "Middle Developer", subLevels: ["middle", "strong middle"], badge: "Middle", color: "var(--st-1)", bg: "var(--st-1-soft)", icon: "layers", desc: "Ishlab chiqarish amaliyoti, Eloquent, REST API, testlash, Docker va DB optimizatsiyasi" },
+    { id: "senior", label: "Senior", name: "Senior Developer", subLevels: ["senior"], badge: "Senior", color: "var(--st-4)", bg: "var(--st-4-soft)", icon: "shield", desc: "Tizim arxitekturasi, yuqori yuklama, xavfsizlik, AWS bulut va murakkab refactoring" },
+    { id: "lead",   label: "Lead",   name: "Tech / Team Lead",  subLevels: ["lead"], badge: "Lead", color: "var(--st-2)", bg: "var(--st-2-soft)", icon: "users", desc: "Texnik yo'nalish, jamoa murabbiyligi, arxitektura review va qarorlar qabul qilish" }
+  ];
+
+  function levelOf(sub) {
+    const l = String(sub.level || "").toLowerCase().trim();
+    if (l === "foundation" || l === "junior") return "junior";
+    if (l === "middle" || l === "strong middle") return "middle";
+    if (l === "senior") return "senior";
+    if (l === "lead") return "lead";
+    return "middle";
+  }
+
+
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+  const icon = (name, cls = "ic") => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+  const pad = (n) => String(n).padStart(2, "0");
+  const pct = (x) => Math.round(x * 100);
+
+  const store = {
+    get(key, fallback) {
+      try { const v = localStorage.getItem(key); return v == null ? fallback : JSON.parse(v); } catch { return fallback; }
+    },
+    set(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* private mode: keep in memory only */ }
+    },
+  };
+
+  /* ------------------------------------------------------------------ *
+   * Data loading — each data/skills/*.js calls registerSkill({...})
+   * ------------------------------------------------------------------ */
+  const registered = [];
+  const fileErrors = {};
+
+  window.registerSkill = (skill) => {
+    const src = document.currentScript && document.currentScript.src;
+    registered.push({ ...skill, _file: src ? decodeURIComponent(src.split("/").pop()) : "" });
+  };
+
+  window.addEventListener("error", (e) => {
+    if (e.filename && e.filename.includes("/data/skills/")) {
+      fileErrors[decodeURIComponent(e.filename.split("/").pop())] = `${e.message} (qator ${e.lineno})`;
+    }
+  });
+
+  function loadData() {
+    const files = window.SKILL_FILES || [];
+    return new Promise((resolve) => {
+      if (!files.length) return resolve();
+      let left = files.length;
+      const done = () => { if (--left === 0) resolve(); };
+      files.forEach((f) => {
+        const s = document.createElement("script");
+        s.src = `data/skills/${f}`;
+        s.async = false;
+        s.onload = done;
+        s.onerror = () => { fileErrors[f] = fileErrors[f] || "Fayl topilmadi"; done(); };
+        document.body.appendChild(s);
+      });
+    });
+  }
+
+  const text = (v) => (Array.isArray(v) ? v.join("\n") : typeof v === "string" ? v : "").trim();
+  const list = (v) => (Array.isArray(v) ? v.map((x) => String(x).trim()).filter(Boolean) : text(v) ? [text(v)] : []);
+
+  let SKILLS = [], BY_SLUG = {}, BY_ID = {}, SUB_BY_ID = {}, GROUPS = [], GROUP_BY_ID = {}, LOAD_ISSUES = [];
+
+  function buildModel() {
+    SKILLS = registered
+      .map((s) => ({
+        id: Number(s.id),
+        slug: String(s.slug),
+        title: String(s.title),
+        group: String(s.group || ""),
+        description: text(s.description),
+        file: s._file,
+        subskills: (s.subskills || []).map((x, i) => ({
+          id: String(x.id || `${s.id}.${i + 1}`),
+          title: String(x.title || ""),
+          description: text(x.description),
+          priority: String(x.priority || "").toLowerCase().trim(),
+          level: String(x.level || "").trim(),
+          practicalTask: text(x.practicalTask),
+          acceptanceCriteria: list(x.acceptanceCriteria),
+          prerequisites: list(x.prerequisites),
+        })),
+      }))
+      .sort((a, b) => a.id - b.id);
+
+    SKILLS.forEach((s, i) => {
+      s.index = i;
+      BY_SLUG[s.slug] = s;
+      BY_ID[s.id] = s;
+      s.subskills.forEach((x) => { x.skill = s; SUB_BY_ID[x.id] = x; });
+    });
+
+    GROUPS = (window.SKILL_GROUPS || []).map((g) => ({
+      ...g, items: g.skills.map((id) => BY_ID[id]).filter(Boolean),
+    }));
+    const grouped = new Set(GROUPS.flatMap((g) => g.items.map((s) => s.id)));
+    const orphans = SKILLS.filter((s) => !grouped.has(s.id));
+    if (orphans.length) GROUPS.push({ id: "other", title: "Boshqa", icon: "layers", items: orphans });
+    GROUPS.forEach((g) => { GROUP_BY_ID[g.id] = g; g.items.forEach((s) => { s.groupRef = g; }); });
+
+    // Ko'rsatiladigan raqamlash sidebar (bo'limlar) tartibiga mos: 1..N ketma-ket.
+    // Ma'lumotdagi id'lar (progress kalitlari, prerequisites) o'zgarmaydi.
+    SKILLS = GROUPS.flatMap((g) => g.items);
+    SKILLS.forEach((s, i) => {
+      s.index = i;
+      s.num = i + 1;
+      s.subskills.forEach((x, j) => { x.num = `${s.num}.${j + 1}`; });
+    });
+
+    const loaded = new Set(registered.map((r) => r._file));
+    LOAD_ISSUES = (window.SKILL_FILES || [])
+      .filter((f) => !loaded.has(f) || fileErrors[f])
+      .map((f) => ({ file: f, msg: fileErrors[f] || "registerSkill() chaqirilmadi — sintaksis xatosi bo'lishi mumkin" }));
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Progress state
+   * ------------------------------------------------------------------ */
+  let progress = store.get(KEYS.progress, {});
+  if (typeof progress !== "object" || progress === null) progress = {};
+
+  const statusOf = (subId) => {
+    const v = progress[subId];
+    return Number.isInteger(v) && v >= 0 && v <= 4 ? v : 0;
+  };
+  function setStatus(subId, st) {
+    if (st === 0) delete progress[subId]; else progress[subId] = st;
+    store.set(KEYS.progress, progress);
+  }
+  function statsFor(subs) {
+    const counts = [0, 0, 0, 0, 0];
+    let w = 0, described = 0;
+    subs.forEach((x) => {
+      const st = statusOf(x.id);
+      counts[st]++; w += WEIGHT[st];
+      if (x.description) described++;
+    });
+    const n = subs.length || 1;
+    return { counts, total: subs.length, progress: w / n, done: counts[3] + counts[4], described };
+  }
+  const allSubs = () => SKILLS.flatMap((s) => s.subskills);
+
+  /* ------------------------------------------------------------------ *
+   * Markdown (small, safe subset) + tiny PHP/SQL highlighter
+   * ------------------------------------------------------------------ */
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  function inline(src) {
+    const parts = String(src).split(/(`[^`]+`)/g);
+    return parts.map((p) => {
+      if (/^`[^`]+`$/.test(p)) return `<code>${esc(p.slice(1, -1))}</code>`;
+      let h = esc(p);
+      h = h.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      h = h.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
+      h = h.replace(/\[([^\]]+)\]\(((?:https?:\/\/|#)[^)\s]+)\)/g, (m, t, u) =>
+        `<a href="${u}"${u.startsWith("#") ? "" : ' target="_blank" rel="noopener noreferrer"'}>${t}</a>`);
+      return h;
+    }).join("");
+  }
+
+  const KW = new Set(("abstract and array as break callable case catch class clone const continue declare default do echo else elseif " +
+    "empty enddeclare endfor endforeach endif endswitch endwhile enum extends final finally fn for foreach function global goto if " +
+    "implements include instanceof insteadof interface isset list match namespace new or print private protected public readonly " +
+    "require return static switch throw trait try unset use var while yield null true false self parent mixed void never int string " +
+    "float bool iterable object " +
+    "select from where join left right inner outer on group by order having limit offset insert into values update set delete create " +
+    "table index primary key foreign references unique not null default begin commit rollback transaction with as union all distinct " +
+    "case when then end explain analyze count sum avg min max over partition alter add drop exists in is like between asc desc lock for share").split(" "));
+
+  function highlight(code) {
+    const re = /(\/\*[\s\S]*?\*\/|\/\/[^\n]*|#[^\n]*|--[^\n]*)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(\$[A-Za-z_]\w*)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)/g;
+    let out = "", last = 0, m;
+    while ((m = re.exec(code))) {
+      out += esc(code.slice(last, m.index));
+      const [tok, c, s, v, n, w] = m;
+      if (c) out += `<span class="tok-c">${esc(tok)}</span>`;
+      else if (s) out += `<span class="tok-s">${esc(tok)}</span>`;
+      else if (v) out += `<span class="tok-v">${esc(tok)}</span>`;
+      else if (n) out += `<span class="tok-n">${esc(tok)}</span>`;
+      else if (w && KW.has(w.toLowerCase())) out += `<span class="tok-k">${esc(tok)}</span>`;
+      else out += esc(tok);
+      last = m.index + tok.length;
+    }
+    return out + esc(code.slice(last));
+  }
+
+  function markdown(src) {
+    const lines = String(src).replace(/\r\n?/g, "\n").split("\n");
+    const out = [];
+    let i = 0;
+    const isBlockStart = (l) => /^(```|#{1,6}\s|>\s?|\s*[-*]\s+|\s*\d+[.)]\s+|\|)/.test(l);
+
+    while (i < lines.length) {
+      const line = lines[i];
+      if (!line.trim()) { i++; continue; }
+
+      const fence = line.match(/^```\s*([\w+-]*)/);
+      if (fence) {
+        const buf = []; i++;
+        while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+        i++;
+        const lang = fence[1] || "";
+        out.push(`<pre${lang ? ` data-lang="${esc(lang)}"` : ""}><code>${highlight(buf.join("\n"))}</code></pre>`);
+        continue;
+      }
+      const h = line.match(/^(#{1,6})\s+(.*)$/);
+      if (h) { const lvl = Math.min(4, Math.max(3, h[1].length + 1)); out.push(`<h${lvl}>${inline(h[2])}</h${lvl}>`); i++; continue; }
+
+      if (/^>\s?/.test(line)) {
+        const buf = [];
+        while (i < lines.length && /^>\s?/.test(lines[i])) buf.push(lines[i++].replace(/^>\s?/, ""));
+        out.push(`<blockquote>${inline(buf.join(" "))}</blockquote>`);
+        continue;
+      }
+      if (/^\s*([-*]|\d+[.)])\s+/.test(line)) {
+        const ordered = /^\s*\d+[.)]\s+/.test(line);
+        const items = [];
+        while (i < lines.length && /^\s*([-*]|\d+[.)])\s+/.test(lines[i])) {
+          let item = lines[i++].replace(/^\s*([-*]|\d+[.)])\s+/, "");
+          while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*([-*]|\d+[.)])\s+/.test(lines[i])) item += " " + lines[i++].trim();
+          items.push(`<li>${inline(item)}</li>`);
+        }
+        out.push(ordered ? `<ol>${items.join("")}</ol>` : `<ul>${items.join("")}</ul>`);
+        continue;
+      }
+      if (/^\|/.test(line) && i + 1 < lines.length && /^\|?\s*:?-{3,}/.test(lines[i + 1])) {
+        const cells = (l) => l.replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+        const head = cells(line); i += 2;
+        const rows = [];
+        while (i < lines.length && /^\|/.test(lines[i])) rows.push(cells(lines[i++]));
+        out.push(`<table><thead><tr>${head.map((c) => `<th>${inline(c)}</th>`).join("")}</tr></thead><tbody>${
+          rows.map((r) => `<tr>${r.map((c) => `<td>${inline(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`);
+        continue;
+      }
+      const buf = [line]; i++;
+      while (i < lines.length && lines[i].trim() && !isBlockStart(lines[i])) buf.push(lines[i++]);
+      out.push(`<p>${inline(buf.join(" "))}</p>`);
+    }
+    return `<div class="md">${out.join("")}</div>`;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Sidebar
+   * ------------------------------------------------------------------ */
+  let collapsed = store.get(KEYS.collapsed, {});
+
+  function renderSidebar() {
+    const nav = $("#sidebar");
+    nav.innerHTML = `
+      <a class="side-home" href="#/">${icon("home")}Umumiy ko'rinish</a>
+      <a class="side-levels" href="#/levels">${icon("target")}Darajalar xaritasi</a>
+      <a class="side-interview" href="#/interview">${icon("help")}Intervyu savollari</a>
+      ${GROUPS.map((g) => `
+        <div class="side-group" data-group="${g.id}" data-collapsed="${!!collapsed[g.id]}">
+          <button class="side-group-btn" aria-expanded="${!collapsed[g.id]}" aria-controls="sg-${g.id}">
+            ${icon(g.icon)}<span>${esc(g.title)}</span><span class="count">${g.items.length}</span>${icon("chev-down", "ic ic-sm chev")}
+          </button>
+          <ul class="side-list" id="sg-${g.id}">
+            ${g.items.map((s) => `
+              <li><a class="side-link" href="#/s/${s.slug}" data-slug="${s.slug}">
+                <span class="num">${pad(s.num)}</span><span class="t">${esc(s.title)}</span><span class="pct" data-pct="${s.slug}"></span>
+              </a></li>`).join("")}
+          </ul>
+        </div>`).join("")}`;
+    nav.addEventListener("click", (e) => {
+      const btn = e.target.closest(".side-group-btn");
+      if (!btn) return;
+      const grp = btn.parentElement;
+      const now = grp.dataset.collapsed !== "true";
+      grp.dataset.collapsed = String(now);
+      btn.setAttribute("aria-expanded", String(!now));
+      collapsed[grp.dataset.group] = now;
+      store.set(KEYS.collapsed, collapsed);
+    });
+    updateSidebarProgress();
+  }
+
+  function updateSidebarProgress(onlySlug) {
+    (onlySlug ? [BY_SLUG[onlySlug]] : SKILLS).forEach((s) => {
+      const el = $(`[data-pct="${s.slug}"]`);
+      if (!el) return;
+      const p = pct(statsFor(s.subskills).progress);
+      el.textContent = p ? `${p}%` : "";
+      el.classList.toggle("done", p === 100);
+    });
+  }
+
+  function markActive(slug, isLevels = false, isInterview = false) {
+    $$(".side-link").forEach((a) => {
+      if (a.dataset.slug === slug) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    const home = $(".side-home");
+    const levels = $(".side-levels");
+    const interview = $(".side-interview");
+    if (home) {
+      if (!slug && !isLevels && !isInterview) home.setAttribute("aria-current", "page"); else home.removeAttribute("aria-current");
+    }
+    if (levels) {
+      if (isLevels) levels.setAttribute("aria-current", "page"); else levels.removeAttribute("aria-current");
+    }
+    if (interview) {
+      if (isInterview) interview.setAttribute("aria-current", "page"); else interview.removeAttribute("aria-current");
+    }
+    if (slug) {
+      const link = $(`.side-link[data-slug="${slug}"]`);
+      const grp = link && link.closest(".side-group");
+      if (grp && grp.dataset.collapsed === "true") grp.querySelector(".side-group-btn").click();
+      if (link) {
+        const nav = $("#sidebar"), r = link.getBoundingClientRect(), nr = nav.getBoundingClientRect();
+        if (r.top < nr.top + 40 || r.bottom > nr.bottom - 40) link.scrollIntoView({ block: "center" });
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Views
+   * ------------------------------------------------------------------ */
+  const view = () => $("#view");
+
+  function loadErrorBlock() {
+    if (!LOAD_ISSUES.length) return "";
+    return `<div class="load-error" role="alert">
+      <h3>${icon("alert")}${LOAD_ISSUES.length} ta ma'lumot fayli yuklanmadi</h3>
+      Odatda bu fayldagi sintaksis xatosi (yopilmagan qo'shtirnoq, ortiqcha vergul va h.k.) sababli bo'ladi.
+      <ul>${LOAD_ISSUES.map((x) => `<li>data/skills/${esc(x.file)} — ${esc(x.msg)}</li>`).join("")}</ul>
+    </div>`;
+  }
+
+  function statusLegend(counts) {
+    return `<div class="status-legend">${STATUSES.map((s, i) =>
+      `<span data-st="${i}"><i class="st-dot"></i>${s.label} <b>${counts[i]}</b></span>`).join("")}</div>`;
+  }
+
+  function renderHome() {
+    const subs = allSubs();
+    const st = statsFor(subs);
+    const last = BY_SLUG[store.get(KEYS.last, "")];
+    const first = SKILLS[0];
+    const focus = subs.filter((x) => { const v = statusOf(x.id); return v === 1 || v === 2; }).slice(0, 6);
+
+    view().innerHTML = `
+      ${loadErrorBlock()}
+      <section class="hero-grid reveal">
+        <div class="hero">
+          <span class="eyebrow"><span class="dot"></span>Senior PHP / Laravel Developer</span>
+          <h1>${SKILLS.length} ta skill.<br><span class="grad">${subs.length.toLocaleString("en-US")} ta mavzu.</span><br>Bitta yo'l xaritasi.</h1>
+          <p class="lead">PHP asoslaridan tortib arxitektura review'gacha — Category → Skill → Subskill tuzilmasida. Har bir mavzuni belgilab boring, progressingiz brauzerda saqlanadi.</p>
+          <button class="hero-search" data-open-palette>${icon("search")}<span>Qidirish: N+1, Sanctum, EXPLAIN…</span><kbd>/</kbd></button>
+          <div class="hero-actions">
+            ${last ? `<a class="btn btn-primary" href="#/s/${last.slug}">Davom ettirish: ${esc(last.title)} ${icon("arrow-right")}</a>`
+                   : first ? `<a class="btn btn-primary" href="#/s/${first.slug}">Boshlash: ${esc(first.title)} ${icon("arrow-right")}</a>` : ""}
+            <button class="btn" data-scroll-groups>Bo'limlarni ko'rish</button>
+          </div>
+        </div>
+        <aside class="panel hero-panel" aria-label="Umumiy progress">
+          <div class="panel-head"><span class="kicker">PROGRESS</span><span class="mono-dim">${st.done}/${st.total}</span></div>
+          <div class="hero-ring${pct(st.progress) === 0 ? " is-zero" : ""}">
+            <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="52"/>
+              <circle class="val" cx="60" cy="60" r="52" stroke-dasharray="${2 * Math.PI * 52}" stroke-dashoffset="${2 * Math.PI * 52 * (1 - st.progress)}"/></svg>
+            <div class="hero-ring-label"><b>${pct(st.progress)}<small>%</small></b><span>o'zlashtirildi</span></div>
+          </div>
+          <ul class="status-bars">${STATUSES.map((x, i) => `
+            <li data-st="${i}"><span class="name"><i class="st-dot"></i>${x.label}</span><b>${st.counts[i]}</b>
+              <span class="mini-bar"><i style="width:${(st.counts[i] / (st.total || 1)) * 100}%"></i></span></li>`).join("")}
+          </ul>
+        </aside>
+      </section>
+
+      <section class="stats reveal" aria-label="Statistika">
+        <div class="stat"><div class="label">${icon("boxes", "ic ic-sm")}Skill'lar</div><div class="value">${SKILLS.length}</div></div>
+        <div class="stat"><div class="label">${icon("list-checks", "ic ic-sm")}Subskill'lar</div><div class="value">${subs.length}</div></div>
+        <div class="stat"><div class="label">${icon("layers", "ic ic-sm")}Bo'limlar</div><div class="value">${GROUPS.length}</div></div>
+        <div class="stat"><div class="label">${icon("file", "ic ic-sm")}Tavsiflar yozilgan</div>
+          <div class="value">${st.described}<small> / ${st.total}</small></div>
+          <div class="bar"><i style="width:${(st.described / (st.total || 1)) * 100}%"></i></div></div>
+      </section>
+
+      ${focus.length ? `
+        <div class="section-head"><div><span class="kicker">// 01</span><h2>Hozir ustida ishlayapsiz</h2><p>Learning va Practicing holatidagi mavzular</p></div></div>
+        <div class="focus-list">${focus.map((x) => `
+          <a class="focus-item" href="#/s/${x.skill.slug}/${x.id}" data-st="${statusOf(x.id)}">
+            <i class="st-dot"></i><div><div class="t">${inline(x.title)}</div><div class="s">${pad(x.skill.num)} · ${esc(x.skill.title)} · ${STATUSES[statusOf(x.id)].label}</div></div>
+          </a>`).join("")}</div>` : ""}
+
+      <div class="section-head" id="levels"><div><span class="kicker">// ${focus.length ? "02" : "01"}</span><h2>Karyera darajalari</h2><p>Junior, Middle, Senior va Lead bosqichlari bo'yicha ko'nikmalar taqsimoti</p></div></div>
+      <div class="levels-grid">${CAREER_LEVELS.map((lvl) => {
+        const lvlSubs = subs.filter((x) => levelOf(x) === lvl.id);
+        const ls = statsFor(lvlSubs);
+        return `<a class="level-card panel" href="#/levels?lvl=${lvl.id}" style="--lvl-color:${lvl.color};--lvl-bg:${lvl.bg}">
+          <div class="level-card-top">
+            <span class="level-card-icon">${icon(lvl.icon)}</span>
+            <span class="level-card-badge">${lvl.badge}</span>
+          </div>
+          <h3>${esc(lvl.name)}</h3>
+          <p>${esc(lvl.desc)}</p>
+          <div class="level-card-foot">
+            <div class="level-card-meta">
+              <span class="count">${lvlSubs.length} ta mavzu · ${ls.done} o'zlashtirildi</span>
+              <span class="pct">${pct(ls.progress)}%</span>
+            </div>
+            <div class="bar"><i style="width:${pct(ls.progress)}%"></i></div>
+          </div>
+        </a>`;
+      }).join("")}</div>
+
+      <div class="section-head" id="groups"><div><span class="kicker">// ${focus.length ? "03" : "02"}</span><h2>Bo'limlar</h2><p>${GROUPS.length} ta yo'nalish bo'yicha guruhlangan</p></div></div>
+      <div class="groups">${GROUPS.map((g, gi) => {
+        const gs = statsFor(g.items.flatMap((s) => s.subskills));
+        return `<article class="group-card panel" style="--p:${pct(gs.progress)}%">
+          <span class="card-index">${pad(gi + 1)}</span>
+          <div class="group-top">
+            <span class="group-icon">${icon(g.icon)}</span>
+            <div><h3>${esc(g.title)}</h3><div class="meta">${g.items.length} skill · ${gs.total} mavzu</div></div>
+            <span class="pct">${pct(gs.progress)}%</span>
+          </div>
+          <div class="bar"><i style="width:${pct(gs.progress)}%"></i></div>
+          <ul class="group-skills">${g.items.map((s) => `
+            <li><a href="#/s/${s.slug}"><span class="num">${pad(s.num)}</span><span class="t">${esc(s.title)}</span><span class="n">${s.subskills.length}</span></a></li>`).join("")}
+          </ul>
+        </article>`;
+      }).join("")}</div>
+
+      <aside class="note">
+        <span class="group-icon">${icon("info")}</span>
+        <div><h3>Muhim jihat</h3>
+        <p>Barcha subskill'larni Senior darajasida chuqur bilish shart emas. AWS, RabbitMQ va Microservices ko'p loyihalarda foydali, lekin ularning zarurligi vakansiya va kompaniya arxitekturasiga bog'liq. PHP, Laravel, SQL, ma'lumotlar bazasi optimizatsiyasi, API, testing, debugging, security va system design esa Senior Laravel yo'nalishining markaziy ko'nikmalaridir.</p></div>
+      </aside>`;
+  }
+
+  function placeholder(title, path) {
+    return `<div class="placeholder">${icon("file")}<div><b>${title}</b>Bu joy tavsif uchun ajratilgan. To'ldirish: <code>${esc(path)}</code></div></div>`;
+  }
+
+  function subItem(x) {
+    const st = statusOf(x.id);
+    const domId = `sub-${x.id.replace(/\./g, "-")}`;
+    const chips = [
+      x.priority && PRIORITY[x.priority] ? `<span class="chip ${x.priority}">${PRIORITY[x.priority]}</span>` : "",
+      x.level ? `<span class="chip level">${esc(x.level)}</span>` : "",
+      !x.description ? `<span class="chip missing" title="Tavsif hali yozilmagan">tavsif yo'q</span>` : "",
+    ].join("");
+    const prereq = x.prerequisites.map((p) => {
+      const target = SUB_BY_ID[p] || BY_SLUG[p];
+      if (!target) return `<span class="chip">${inline(p)}</span>`;
+      const href = target.skill ? `#/s/${target.skill.slug}/${target.id}` : `#/s/${target.slug}`;
+      return `<a class="chip" href="${href}">${target.skill ? `<span class="mono">${target.num}</span> ` : ""}${inline(target.title)}</a>`;
+    }).join("");
+
+    return `<li class="sub" id="${domId}" data-sub="${x.id}" data-st="${st}" data-level="${levelOf(x)}">
+      <div class="sub-row">
+        <button class="st-toggle" data-cycle aria-label="Status: ${STATUSES[st].label}. Keyingisiga o'tkazish">
+          <span class="ring"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+        </button>
+        <button class="sub-main" data-toggle aria-expanded="false" aria-controls="${domId}-panel">
+          <span class="sid">${x.num}</span><span class="t">${inline(x.title)}</span>
+        </button>
+        <div class="sub-side">
+          <span class="chips">${chips}</span>
+          <span class="st-name">${st ? STATUSES[st].label : ""}</span>
+          <button class="icon-btn" data-toggle aria-label="Batafsil" tabindex="-1">${icon("chev-down", "ic chev")}</button>
+        </div>
+      </div>
+      <div class="sub-panel" id="${domId}-panel" role="region" aria-label="${esc(x.title.replace(/`/g, ""))}">
+        <div><div class="sub-body">
+          <div>${x.description ? markdown(x.description)
+            : placeholder("Tavsif hali yozilmagan", `data/skills/${x.skill.file} → id: "${x.id}" → description`)}</div>
+          ${x.practicalTask ? `<div><div class="field-label">${icon("target", "ic ic-sm")}Amaliy topshiriq</div><div class="task">${markdown(x.practicalTask)}</div></div>` : ""}
+          ${x.acceptanceCriteria.length ? `<div><div class="field-label">${icon("list-checks", "ic ic-sm")}Qabul mezonlari</div>
+            <ul class="checklist">${x.acceptanceCriteria.map((c) => `<li>${icon("check")}<span>${inline(c)}</span></li>`).join("")}</ul></div>` : ""}
+          ${prereq ? `<div><div class="field-label">Oldindan bilish kerak</div><div class="prereq">${prereq}</div></div>` : ""}
+          ${(() => {
+            const mqs = (window.INTERVIEW_QUESTIONS || []).filter((q) => q.subskillId === x.id);
+            if (!mqs.length) return "";
+            return `
+              <div class="sub-interview-box">
+                <div class="box-head">
+                  <div class="box-title">${icon("help", "ic ic-sm")} Texnik intervyu savoli (${mqs.length})</div>
+                  <a href="#/interview" style="font-size:11px;color:var(--text-3);text-decoration:none">Barcha savollar →</a>
+                </div>
+                <div class="sub-interview-items">
+                  ${mqs.map((q) => `
+                    <details class="sub-interview-item">
+                      <summary>${esc(q.title)}</summary>
+                      <div class="sub-interview-ans">
+                        <div>${markdown(q.answer)}</div>
+                        ${q.tip ? `<div class="iq-tip-box" style="margin-top:10px"><h4>${icon("sparkles", "ic ic-sm")} Senior maslahati</h4><p>${esc(q.tip)}</p></div>` : ""}
+                      </div>
+                    </details>
+                  `).join("")}
+                </div>
+              </div>
+            `;
+          })()}
+          <div class="status-picker-wrap"><div class="field-label" id="${domId}-st">Status</div>
+            <div class="status-picker" role="radiogroup" aria-labelledby="${domId}-st">
+              ${STATUSES.map((s, i) => `<button role="radio" data-set="${i}" data-st="${i}" aria-checked="${i === st}" title="${s.hint}"><i class="st-dot"></i>${s.label}</button>`).join("")}
+            </div></div>
+          <div class="sub-foot"><button class="btn btn-sm" data-copy>${icon("link", "ic ic-sm")}Havolani nusxalash</button></div>
+        </div></div>
+      </div>
+    </li>`;
+  }
+
+  let filter = "all";
+  let levelFilter = "all";
+  const FILTERS = [
+    ["all", "Hammasi"], ["todo", "Boshlanmagan"], ["wip", "Jarayonda"], ["done", "O'zlashtirilgan"],
+  ];
+  const passes = (st, lvl) => {
+    const stOk = filter === "all" || (filter === "todo" && st === 0) || (filter === "wip" && (st === 1 || st === 2)) || (filter === "done" && st >= 3);
+    const lvlOk = levelFilter === "all" || levelFilter === lvl;
+    return stOk && lvlOk;
+  };
+
+  function railHtml(s) {
+    const st = statsFor(s.subskills);
+    const C = 2 * Math.PI * 36;
+    return `
+      <section class="card" aria-label="Progress">
+        <h3>Progress</h3>
+        <div class="ring-chart">
+          <svg viewBox="0 0 84 84" aria-hidden="true"><circle class="track" cx="42" cy="42" r="36"/>
+            <circle class="val" cx="42" cy="42" r="36" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - st.progress)}"/></svg>
+          <div><div class="big">${pct(st.progress)}%</div><div class="small">${st.done} / ${st.total} o'zlashtirilgan</div></div>
+        </div>
+        <ul class="breakdown">${STATUSES.map((x, i) => `<li data-st="${i}"><i class="st-dot"></i>${x.label}<b>${st.counts[i]}</b></li>`).join("")}</ul>
+      </section>
+      <section class="card" aria-label="Tavsiflar">
+        <h3>Tavsiflar</h3>
+        <div class="ring-chart" style="margin-top:12px"><div><div class="big">${st.described}<span style="font-size:15px;color:var(--text-3)"> / ${st.total}</span></div>
+          <div class="small">subskill tavsifi yozilgan</div></div></div>
+        <div class="bar"><i style="width:${(st.described / (st.total || 1)) * 100}%"></i></div>
+        <p style="margin-top:14px;font-size:13px;color:var(--text-3)">Manba fayl:<br><code class="inline-code" style="word-break:break-all">data/skills/${esc(s.file)}</code></p>
+      </section>`;
+  }
+
+  function renderSkill(s, subId) {
+    store.set(KEYS.last, s.slug);
+    const prev = SKILLS[s.index - 1], next = SKILLS[s.index + 1];
+    const g = s.groupRef;
+    const st = statsFor(s.subskills);
+
+    view().innerHTML = `
+      ${loadErrorBlock()}
+      <div class="skill-layout">
+        <article>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Bosh sahifa</a><span class="sep">/</span><span>${esc(g ? g.title : "")}</span><span class="sep">/</span><span aria-current="page">${esc(s.title)}</span></nav>
+          <header class="skill-head reveal">
+            <div class="idx">SKILL ${pad(s.num)} / ${SKILLS.length}</div>
+            <h1>${esc(s.title)}</h1>
+            <div class="chips">
+              ${g ? `<span class="chip">${icon(g.icon, "ic ic-sm")}${esc(g.title)}</span>` : ""}
+              <span class="chip mono">${s.subskills.length} subskill</span>
+              <span class="chip mono" data-desc-chip>tavsif ${st.described}/${st.total}</span>
+            </div>
+          </header>
+          <div class="desc-block">${s.description ? markdown(s.description)
+            : placeholder("Skill tavsifi hali yozilmagan", `data/skills/${s.file} → description`)}</div>
+
+          <div class="toolbar">
+            <h2>Subskill'lar <span class="chip">${s.subskills.length}</span></h2>
+            <div class="seg" role="group" aria-label="Status bo'yicha filtr">
+              ${FILTERS.map(([k, l]) => `<button data-filter="${k}" aria-pressed="${filter === k}">${l}</button>`).join("")}
+            </div>
+            <div class="level-seg" role="group" aria-label="Daraja bo'yicha filtr">
+              <button data-level-filter="all" aria-pressed="${levelFilter === "all"}">Barchasi</button>
+              ${CAREER_LEVELS.map((lvl) => `<button data-level-filter="${lvl.id}" aria-pressed="${levelFilter === lvl.id}">${lvl.label}</button>`).join("")}
+            </div>
+            <button class="icon-btn" data-expand-all aria-label="Hammasini ochish / yopish" title="Hammasini ochish / yopish">${icon("expand")}</button>
+          </div>
+          <ul class="subs" id="subs">${s.subskills.map(subItem).join("")}</ul>
+          <div class="empty" id="subs-empty" hidden>${icon("search")}<div>Bu filtr bo'yicha mavzu yo'q.</div></div>
+
+          <nav class="pager" aria-label="Skill'lar orasida">
+            ${prev ? `<a href="#/s/${prev.slug}"><span class="dir">${icon("arrow-left", "ic ic-sm")}Oldingi</span><span class="t">${pad(prev.num)} · ${esc(prev.title)}</span></a>` : ""}
+            ${next ? `<a class="next" href="#/s/${next.slug}"><span class="dir">Keyingi${icon("arrow-right", "ic ic-sm")}</span><span class="t">${pad(next.num)} · ${esc(next.title)}</span></a>` : ""}
+          </nav>
+        </article>
+        <aside class="rail" id="rail">${railHtml(s)}</aside>
+      </div>`;
+
+    applyFilter();
+    if (subId && SUB_BY_ID[subId] && SUB_BY_ID[subId].skill === s) {
+      const li = $(`[data-sub="${CSS.escape(subId)}"]`);
+      if (li) {
+        if (li.hidden) {
+          filter = "all";
+          levelFilter = "all";
+          $$("[data-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.filter === "all")));
+          $$("[data-level-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.levelFilter === "all")));
+          applyFilter();
+        }
+        toggleSub(li, true);
+        requestAnimationFrame(() => li.scrollIntoView({ block: "start" }));
+      }
+    }
+  }
+
+  function applyFilter() {
+    let visible = 0;
+    $$("#subs .sub").forEach((li) => {
+      const ok = passes(Number(li.dataset.st), li.dataset.level);
+      li.hidden = !ok; if (ok) visible++;
+    });
+    const empty = $("#subs-empty");
+    if (empty) empty.hidden = visible > 0;
+  }
+
+  function toggleSub(li, force) {
+    const open = force ?? !li.classList.contains("open");
+    li.classList.toggle("open", open);
+    li.querySelector(".sub-main").setAttribute("aria-expanded", String(open));
+  }
+
+  function refreshSkillStats(s) {
+    const rail = $("#rail");
+    if (rail) rail.innerHTML = railHtml(s);
+    updateSidebarProgress(s.slug);
+  }
+
+  function changeStatus(li, st) {
+    const id = li.dataset.sub;
+    setStatus(id, st);
+    li.dataset.st = String(st);
+    li.querySelector(".st-name").textContent = st ? STATUSES[st].label : "";
+    li.querySelector("[data-cycle]").setAttribute("aria-label", `Status: ${STATUSES[st].label}. Keyingisiga o'tkazish`);
+    $$(".status-picker [data-set]", li).forEach((b) => b.setAttribute("aria-checked", String(Number(b.dataset.set) === st)));
+    refreshSkillStats(SUB_BY_ID[id].skill);
+    updateRoadmapTabs();
+  }
+
+  /* view-level event delegation (skill page) */
+  document.addEventListener("click", (e) => {
+    const t = e.target;
+    if (t.closest("[data-open-palette]")) { openPalette(); return; }
+    if (t.closest("[data-scroll-groups]")) { $("#groups").scrollIntoView({ behavior: "smooth" }); return; }
+
+    const li = t.closest(".sub");
+    if (li) {
+      if (t.closest("[data-cycle]")) { changeStatus(li, (Number(li.dataset.st) + 1) % STATUSES.length); return; }
+      const set = t.closest("[data-set]");
+      if (set) { changeStatus(li, Number(set.dataset.set)); return; }
+      if (t.closest("[data-toggle]")) { toggleSub(li); return; }
+      if (t.closest("[data-copy]")) {
+        const s = SUB_BY_ID[li.dataset.sub].skill;
+        copyText(`${location.href.split("#")[0]}#/s/${s.slug}/${li.dataset.sub}`);
+        return;
+      }
+    }
+    const lf = t.closest("[data-level-filter]");
+    if (lf) {
+      levelFilter = lf.dataset.levelFilter;
+      $$("[data-level-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b === lf)));
+      applyFilter();
+      return;
+    }
+    const f = t.closest("[data-filter]");
+    if (f) {
+      filter = f.dataset.filter;
+      $$("[data-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b === f)));
+      applyFilter();
+      return;
+    }
+    if (t.closest("[data-expand-all]")) {
+      const items = $$(".subs .sub:not([hidden])");
+      const anyClosed = items.some((x) => !x.classList.contains("open"));
+      items.forEach((x) => toggleSub(x, anyClosed));
+      return;
+    }
+    const iqToggle = t.closest("[data-iq-toggle]");
+    if (iqToggle) {
+      const card = iqToggle.closest(".iq-card");
+      if (card) {
+        const nowOpen = card.classList.toggle("open");
+        iqToggle.setAttribute("aria-expanded", String(nowOpen));
+      }
+      return;
+    }
+    const iqCheck = t.closest("[data-iq-check]");
+    if (iqCheck) {
+      toggleMasteredIq(iqCheck.dataset.iqCheck);
+      return;
+    }
+    const lvlBtn = t.closest("[data-iq-lvl]");
+    if (lvlBtn) {
+      iqFilterLevel = lvlBtn.dataset.iqLvl;
+      $$("[data-iq-lvl]").forEach((b) => b.setAttribute("aria-pressed", String(b === lvlBtn)));
+      filterInterviewList();
+      return;
+    }
+    const catBtn = t.closest("[data-iq-cat]");
+    if (catBtn) {
+      iqFilterCat = catBtn.dataset.iqCat;
+      $$("[data-iq-cat]").forEach((b) => b.setAttribute("aria-pressed", String(b === catBtn)));
+      filterInterviewList();
+      return;
+    }
+  });
+
+  /* keyboard support for status picker (arrow keys inside radiogroup) */
+  document.addEventListener("keydown", (e) => {
+    const radio = e.target.closest && e.target.closest(".status-picker [role=radio]");
+    if (!radio || !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) return;
+    e.preventDefault();
+    const li = radio.closest(".sub");
+    const dir = e.key === "ArrowLeft" || e.key === "ArrowUp" ? -1 : 1;
+    const st = (Number(li.dataset.st) + dir + STATUSES.length) % STATUSES.length;
+    changeStatus(li, st);
+    $(`.status-picker [data-set="${st}"]`, li).focus();
+  });
+
+  function updateRoadmapTabs() {
+    const all = allSubs();
+    CAREER_LEVELS.forEach((lvl) => {
+      const s = statsFor(all.filter((x) => levelOf(x) === lvl.id));
+      const pctEl = $(`[data-roadmap-pct="${lvl.id}"]`);
+      const barEl = $(`[data-roadmap-bar="${lvl.id}"]`);
+      const countEl = $(`[data-roadmap-count="${lvl.id}"]`);
+      if (pctEl) pctEl.textContent = `${pct(s.progress)}%`;
+      if (barEl) barEl.style.width = `${pct(s.progress)}%`;
+      if (countEl) countEl.textContent = `${s.total} ta mavzu · ${s.done} o'zlashtirildi`;
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Career Levels Roadmap View
+   * ------------------------------------------------------------------ */
+  let currentRoadmapLvl = "junior";
+
+  function renderLevels(targetLvl) {
+    if (targetLvl && CAREER_LEVELS.some((c) => c.id === targetLvl)) {
+      currentRoadmapLvl = targetLvl;
+    }
+    const all = allSubs();
+    const curLevelObj = CAREER_LEVELS.find((c) => c.id === currentRoadmapLvl) || CAREER_LEVELS[0];
+    const lvlSubs = all.filter((x) => levelOf(x) === currentRoadmapLvl);
+    const lvlStats = statsFor(lvlSubs);
+
+    const skillGroups = [];
+    const seenSkills = new Map();
+    lvlSubs.forEach((sub) => {
+      if (!seenSkills.has(sub.skill)) {
+        const item = { skill: sub.skill, subs: [] };
+        seenSkills.set(sub.skill, item);
+        skillGroups.push(item);
+      }
+      seenSkills.get(sub.skill).subs.push(sub);
+    });
+
+    view().innerHTML = `
+      ${loadErrorBlock()}
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Bosh sahifa</a><span class="sep">/</span><span aria-current="page">Darajalar xaritasi</span></nav>
+      <header class="skill-head reveal" style="margin-bottom:var(--sp-5)">
+        <div class="idx">CAREER ROADMAP</div>
+        <h1>Darajalar xaritasi</h1>
+        <p class="lead" style="margin-top:8px">Junior, Middle, Senior va Lead bosqichlarida talab qilinadigan barcha ko'nikmalarning saralangan to'liq xaritasi.</p>
+      </header>
+
+      <div class="roadmap-tabs" role="tablist" aria-label="Darajalar">
+        ${CAREER_LEVELS.map((lvl) => {
+          const s = statsFor(all.filter((x) => levelOf(x) === lvl.id));
+          const isActive = lvl.id === currentRoadmapLvl;
+          return `
+            <a class="roadmap-tab-btn" href="#/levels?lvl=${lvl.id}" role="tab" aria-selected="${isActive}" style="--lvl-color:${lvl.color}">
+              <div class="roadmap-tab-head">
+                <span class="roadmap-tab-title">${icon(lvl.icon, "ic ic-sm")} ${lvl.label}</span>
+                <span class="roadmap-tab-pct" data-roadmap-pct="${lvl.id}">${pct(s.progress)}%</span>
+              </div>
+              <div class="bar"><i data-roadmap-bar="${lvl.id}" style="width:${pct(s.progress)}%;background:${lvl.color}"></i></div>
+              <div style="font-size:12px;color:var(--text-3);margin-top:2px" data-roadmap-count="${lvl.id}">${s.total} ta mavzu · ${s.done} o'zlashtirildi</div>
+            </a>
+          `;
+        }).join("")}
+      </div>
+
+      <div class="section-head" style="margin-top:var(--sp-6)">
+        <div>
+          <span class="kicker">${curLevelObj.badge} DARAJASIDAGI MAVZULAR</span>
+          <h2>${esc(curLevelObj.name)} — ${lvlSubs.length} ta mavzu</h2>
+          <p>${esc(curLevelObj.desc)}</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="icon-btn" data-expand-all aria-label="Hammasini ochish / yopish" title="Hammasini ochish / yopish">${icon("expand")}</button>
+        </div>
+      </div>
+
+      <div class="roadmap-content">
+        ${skillGroups.map(({ skill, subs }) => `
+          <div class="roadmap-skill-group">
+            <div class="roadmap-group-header">
+              <a href="#/s/${skill.slug}">
+                <span class="mono-dim" style="font-family:var(--mono);font-size:13px">${pad(skill.num)}.</span>
+                <span>${esc(skill.title)}</span>
+                <span class="chip" style="font-size:11px">${subs.length} ta subskill</span>
+              </a>
+              <a class="btn btn-sm" href="#/s/${skill.slug}" style="text-decoration:none">${icon("arrow-right", "ic ic-sm")} Skill sahifasi</a>
+            </div>
+            <ul class="subs roadmap-group-subs">${subs.map(subItem).join("")}</ul>
+          </div>
+        `).join("")}
+      </div>`;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Interview Questions & Answers View
+   * ------------------------------------------------------------------ */
+  let iqFilterLevel = "all";
+  let iqFilterCat = "all";
+  let iqSearchQuery = "";
+  let masteredIq = new Set(store.get(KEYS.questions, []));
+
+  const IQ_CATEGORIES = [
+    { id: "all", label: "Barchasi" },
+    { id: "php", label: "PHP tili" },
+    { id: "laravel", label: "Laravel" },
+    { id: "database", label: "Ma'lumotlar bazasi" },
+    { id: "architecture", label: "Arxitektura" },
+    { id: "async", label: "Navbatlar & Async" },
+    { id: "security", label: "Xavfsizlik" },
+    { id: "testing", label: "Testlash" },
+    { id: "devops", label: "DevOps & Server" }
+  ];
+
+  function toggleMasteredIq(id) {
+    if (masteredIq.has(id)) {
+      masteredIq.delete(id);
+    } else {
+      masteredIq.add(id);
+    }
+    store.set(KEYS.questions, Array.from(masteredIq));
+    const btn = $(`[data-iq-check="${id}"]`);
+    if (btn) {
+      const isDone = masteredIq.has(id);
+      btn.classList.toggle("done", isDone);
+      btn.innerHTML = `${icon(isDone ? "check" : "target", "ic ic-sm")} ${isDone ? "O'zlashtirildi" : "O'zlashtirish"}`;
+    }
+    updateIqStats();
+  }
+
+  function updateIqStats() {
+    const questions = window.INTERVIEW_QUESTIONS || [];
+    const doneCount = Array.from(masteredIq).filter((id) => questions.some((q) => q.id === id)).length;
+    const statDoneEl = $("#iq-stat-done");
+    const statPctEl = $("#iq-stat-pct");
+    const statBarEl = $("#iq-stat-bar");
+    if (statDoneEl) statDoneEl.textContent = `${doneCount} / ${questions.length}`;
+    if (statPctEl) statPctEl.textContent = `${pct(doneCount / (questions.length || 1))}%`;
+    if (statBarEl) statBarEl.style.width = `${pct(doneCount / (questions.length || 1))}%`;
+  }
+
+  function renderInterviewItems() {
+    const questions = window.INTERVIEW_QUESTIONS || [];
+    const filtered = questions.filter((q) => {
+      const matchLvl = iqFilterLevel === "all" || q.level === iqFilterLevel;
+      const matchCat = iqFilterCat === "all" || q.category === iqFilterCat;
+      const matchSearch = !iqSearchQuery ||
+        q.title.toLowerCase().includes(iqSearchQuery) ||
+        (Array.isArray(q.answer) ? q.answer.join(" ") : q.answer).toLowerCase().includes(iqSearchQuery) ||
+        (q.tip || "").toLowerCase().includes(iqSearchQuery);
+      return matchLvl && matchCat && matchSearch;
+    });
+
+    if (!filtered.length) {
+      return `<div class="empty">${icon("search")}<div>Ushbu filtr bo'yicha savollar topilmadi.</div></div>`;
+    }
+
+    return filtered.map((q) => {
+      const isMastered = masteredIq.has(q.id);
+      return `
+        <article class="iq-card" id="${q.id}" data-id="${q.id}">
+          <button class="iq-card-header" data-iq-toggle="${q.id}" aria-expanded="false">
+            <span class="iq-badge ${q.level}">${q.level}</span>
+            <div class="iq-title-wrap">
+              <div class="iq-title">${esc(q.title)}</div>
+              <div class="iq-meta">
+                <span>${esc(q.categoryLabel)}</span>
+                ${q.subskillId ? `<span>· Mavzu: <code class="inline-code">${q.subskillId}</code></span>` : ""}
+              </div>
+            </div>
+            <span class="iq-chev">${icon("chev-down", "ic")}</span>
+          </button>
+          <div class="iq-card-body">
+            <div class="iq-answer-label">${icon("target", "ic ic-sm")} Model javob (Kutiladigan tushuntirish):</div>
+            <div>${markdown(q.answer)}</div>
+            ${q.tip ? `
+              <div class="iq-tip-box">
+                <h4>${icon("sparkles", "ic ic-sm")} Senior maslahati & Intervyu sirlari</h4>
+                <p>${esc(q.tip)}</p>
+              </div>
+            ` : ""}
+            <div class="iq-card-foot">
+              <button class="iq-check-btn ${isMastered ? "done" : ""}" data-iq-check="${q.id}">
+                ${icon(isMastered ? "check" : "target", "ic ic-sm")} ${isMastered ? "O'zlashtirildi" : "O'zlashtirish"}
+              </button>
+              ${q.skillSlug ? `
+                <a href="#/s/${q.skillSlug}/${q.subskillId || ""}">
+                  ${icon("arrow-right", "ic ic-sm")} Bu mavzuni xaritada ko'rish
+                </a>
+              ` : ""}
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  function filterInterviewList() {
+    const listEl = $("#iq-items");
+    if (listEl) {
+      listEl.innerHTML = renderInterviewItems();
+    }
+  }
+
+  function renderInterview() {
+    const questions = window.INTERVIEW_QUESTIONS || [];
+    const doneCount = Array.from(masteredIq).filter((id) => questions.some((q) => q.id === id)).length;
+
+    view().innerHTML = `
+      ${loadErrorBlock()}
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Bosh sahifa</a><span class="sep">/</span><span aria-current="page">Intervyu savol-javoblari</span></nav>
+      <header class="skill-head reveal" style="margin-bottom:var(--sp-5)">
+        <div class="idx">TECHNICAL INTERVIEW PREPARATION</div>
+        <h1>Intervyu Savol-Javoblari</h1>
+        <p class="lead" style="margin-top:8px">PHP, Laravel, MySQL, Kesh, Arxitektura va Xavfsizlik bo'yicha real texnik intervyularda eng ko'p tushadigan chuqur savollar, model javoblar va Senior maslahatlari.</p>
+      </header>
+
+      <section class="interview-stats" aria-label="Intervyu statistikasi">
+        <div class="stat">
+          <div class="label">${icon("help", "ic ic-sm")}Jami savollar</div>
+          <div class="value">${questions.length} ta</div>
+        </div>
+        <div class="stat">
+          <div class="label">${icon("check", "ic ic-sm")}O'zlashtirildi</div>
+          <div class="value" id="iq-stat-done">${doneCount} <small>/ ${questions.length}</small></div>
+          <div class="bar"><i id="iq-stat-bar" style="width:${pct(doneCount / (questions.length || 1))}%"></i></div>
+        </div>
+        <div class="stat">
+          <div class="label">${icon("target", "ic ic-sm")}Tayyorgarlik darajasi</div>
+          <div class="value" id="iq-stat-pct">${pct(doneCount / (questions.length || 1))}%</div>
+        </div>
+      </section>
+
+      <div class="interview-filters">
+        <div class="interview-search">
+          ${icon("search")}
+          <input type="search" id="iq-search-input" placeholder="Savollar ichidan qidiring (masalan: N+1, idempotency, lock, session, kafka)..." value="${esc(iqSearchQuery)}" />
+        </div>
+        <div class="interview-filter-row">
+          <span class="interview-filter-label">Daraja:</span>
+          <div class="interview-pills" id="iq-level-pills">
+            <button data-iq-lvl="all" aria-pressed="${iqFilterLevel === "all"}">Barchasi</button>
+            <button data-iq-lvl="junior" aria-pressed="${iqFilterLevel === "junior"}">Junior</button>
+            <button data-iq-lvl="middle" aria-pressed="${iqFilterLevel === "middle"}">Middle</button>
+            <button data-iq-lvl="senior" aria-pressed="${iqFilterLevel === "senior"}">Senior</button>
+            <button data-iq-lvl="lead" aria-pressed="${iqFilterLevel === "lead"}">Lead</button>
+          </div>
+        </div>
+        <div class="interview-filter-row">
+          <span class="interview-filter-label">Soha:</span>
+          <div class="interview-pills" id="iq-cat-pills">
+            ${IQ_CATEGORIES.map((c) => `<button data-iq-cat="${c.id}" aria-pressed="${iqFilterCat === c.id}">${c.label}</button>`).join("")}
+          </div>
+        </div>
+      </div>
+
+      <div class="iq-list" id="iq-items">
+        ${renderInterviewItems()}
+      </div>
+    `;
+
+    const searchInp = $("#iq-search-input");
+    if (searchInp) {
+      searchInp.addEventListener("input", (e) => {
+        iqSearchQuery = e.target.value.toLowerCase().trim();
+        filterInterviewList();
+      });
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Router
+   * ------------------------------------------------------------------ */
+  function route() {
+    const hash = decodeURIComponent(location.hash || "#/");
+    const m = hash.match(/^#\/s\/([^/]+)(?:\/(.+))?$/);
+    const mLevels = hash.match(/^#\/levels(?:\?lvl=([a-z]+))?$/);
+    const mInterview = hash.match(/^#\/interview(?:\?(.*))?$/);
+    document.body.classList.remove("nav-open");
+    $("#menu-btn").setAttribute("aria-expanded", "false");
+
+    if (m && BY_SLUG[m[1]]) {
+      const s = BY_SLUG[m[1]];
+      document.title = `${s.title} · Laravel Skill Map`;
+      renderSkill(s, m[2]);
+      markActive(s.slug, false, false);
+      if (!m[2]) window.scrollTo(0, 0);
+    } else if (mLevels) {
+      document.title = "Darajalar xaritasi · Laravel Skill Map";
+      renderLevels(mLevels[1] || "junior");
+      markActive(null, true, false);
+      window.scrollTo(0, 0);
+    } else if (mInterview) {
+      document.title = "Intervyu Savol-Javoblari · Laravel Skill Map";
+      renderInterview();
+      markActive(null, false, true);
+      window.scrollTo(0, 0);
+    } else {
+      document.title = "Laravel Skill Map";
+      renderHome();
+      markActive(null, false, false);
+      window.scrollTo(0, 0);
+    }
+    view().focus({ preventScroll: true });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Command palette (search)
+   * ------------------------------------------------------------------ */
+  const norm = (s) => String(s).toLowerCase().replace(/[`*_]/g, "").replace(/[‘’ʻʼ`]/g, "'");
+  let INDEX = [];
+  function buildIndex() {
+    INDEX = [];
+    SKILLS.forEach((s) => {
+      INDEX.push({ kind: "skill", s, title: s.title, nt: norm(s.title), nd: norm(s.description) });
+      s.subskills.forEach((x) => INDEX.push({ kind: "sub", s, x, title: x.title, nt: norm(x.title), nd: norm(x.description) }));
+    });
+  }
+
+  function searchIndex(q) {
+    const nq = norm(q).trim();
+    if (!nq) return [];
+    const terms = nq.split(/\s+/);
+    const res = [];
+    for (const it of INDEX) {
+      let score = 0;
+      if (it.nt === nq) score = 100;
+      else if (it.nt.startsWith(nq)) score = 80;
+      else if (it.nt.includes(nq)) score = 60;
+      else if (terms.every((t) => it.nt.includes(t))) score = 45;
+      else if (it.nd && it.nd.includes(nq)) score = 20;
+      else if (it.nd && terms.every((t) => it.nt.includes(t) || it.nd.includes(t))) score = 10;
+      if (score) res.push({ ...it, score: score + (it.kind === "skill" ? 5 : 0) });
+    }
+    return res.sort((a, b) => b.score - a.score || a.s.index - b.s.index).slice(0, 60);
+  }
+
+  function mark(title, q) {
+    const plain = title.replace(/`/g, "");
+    const nq = norm(q).trim();
+    const i = norm(plain).indexOf(nq);
+    if (!nq || i < 0) return esc(plain);
+    return esc(plain.slice(0, i)) + `<mark>${esc(plain.slice(i, i + nq.length))}</mark>` + esc(plain.slice(i + nq.length));
+  }
+
+  let palSel = 0, palItems = [], lastFocus = null;
+  const pal = () => $("#palette"), palInput = () => $("#palette-input"), palList = () => $("#palette-results");
+
+  function renderPalette() {
+    const q = palInput().value;
+    let rows;
+    if (!q.trim()) {
+      const recent = BY_SLUG[store.get(KEYS.last, "")];
+      rows = (recent ? [recent] : []).concat(SKILLS.filter((s) => s !== recent).slice(0, 7))
+        .map((s) => ({ kind: "skill", s, title: s.title }));
+    } else rows = searchIndex(q);
+    palItems = rows;
+    palSel = 0;
+    if (!rows.length) {
+      palList().innerHTML = `<div class="empty">${icon("search")}<div>“${esc(q)}” bo'yicha hech narsa topilmadi.</div></div>`;
+      return;
+    }
+    const skills = rows.filter((r) => r.kind === "skill"), subs = rows.filter((r) => r.kind === "sub");
+    palItems = skills.concat(subs);
+    let n = 0;
+    const item = (r) => {
+      const idx = n++;
+      const href = r.kind === "skill" ? `#/s/${r.s.slug}` : `#/s/${r.s.slug}/${r.x.id}`;
+      return `<a class="palette-item" role="option" id="po-${idx}" data-idx="${idx}" href="${href}" aria-selected="${idx === 0}">
+        <span class="num">${r.kind === "skill" ? pad(r.s.num) : r.x.num}</span>
+        <span style="min-width:0"><span class="t" style="display:block">${mark(r.title, q)}</span>
+          ${r.kind === "sub" ? `<span class="s" style="display:block">${esc(r.s.title)}${r.x.description ? "" : " · tavsif yo'q"}</span>`
+                             : `<span class="s" style="display:block">${r.s.subskills.length} subskill · ${esc(r.s.groupRef ? r.s.groupRef.title : "")}</span>`}</span>
+        ${icon("enter", "ic ic-sm go")}
+      </a>`;
+    };
+    palList().innerHTML =
+      (skills.length ? `<div class="palette-group">${q.trim() ? "Skill'lar" : "Tezkor o'tish"}</div>${skills.map(item).join("")}` : "") +
+      (subs.length ? `<div class="palette-group">Subskill'lar · ${subs.length}</div>${subs.map(item).join("")}` : "");
+    palInput().setAttribute("aria-activedescendant", "po-0");
+  }
+
+  function moveSel(d) {
+    if (!palItems.length) return;
+    palSel = (palSel + d + palItems.length) % palItems.length;
+    $$(".palette-item", palList()).forEach((el) => el.setAttribute("aria-selected", String(Number(el.dataset.idx) === palSel)));
+    const el = $(`#po-${palSel}`);
+    if (el) { el.scrollIntoView({ block: "nearest" }); palInput().setAttribute("aria-activedescendant", el.id); }
+  }
+
+  function openPalette() {
+    lastFocus = document.activeElement;
+    pal().classList.add("open");
+    palInput().value = "";
+    renderPalette();
+    setTimeout(() => palInput().focus(), 0);
+  }
+  function closePalette() {
+    pal().classList.remove("open");
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function bindPalette() {
+    $("#search-trigger").addEventListener("click", openPalette);
+    palInput().addEventListener("input", renderPalette);
+    palInput().addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown") { e.preventDefault(); moveSel(1); }
+      else if (e.key === "ArrowUp") { e.preventDefault(); moveSel(-1); }
+      else if (e.key === "Enter") {
+        e.preventDefault();
+        const el = $(`#po-${palSel}`);
+        if (el) { closePalette(); location.hash = el.getAttribute("href"); }
+      }
+    });
+    pal().addEventListener("click", (e) => {
+      if (e.target === pal()) closePalette();
+      if (e.target.closest(".palette-item")) closePalette();
+    });
+    pal().addEventListener("mousemove", (e) => {
+      const el = e.target.closest(".palette-item");
+      if (el && Number(el.dataset.idx) !== palSel) { palSel = Number(el.dataset.idx); moveSel(0); }
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Chrome: theme, menu, drawer, shortcuts, import/export
+   * ------------------------------------------------------------------ */
+  let toastTimer;
+  function toast(msg) {
+    const t = $("#toast");
+    $("span", t).textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+  }
+
+  function copyText(str) {
+    const ok = () => toast("Havola nusxalandi");
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(str).then(ok, () => fallbackCopy(str, ok));
+    else fallbackCopy(str, ok);
+  }
+  function fallbackCopy(str, ok) {
+    const ta = document.createElement("textarea");
+    ta.value = str; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); ok(); } catch { toast("Nusxalab bo'lmadi"); }
+    ta.remove();
+  }
+
+  function setMenu(open) {
+    $("#more-menu").classList.toggle("open", open);
+    $("#more-btn").setAttribute("aria-expanded", String(open));
+  }
+
+  function bindChrome() {
+    $("#theme-btn").addEventListener("click", () => {
+      const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+      document.documentElement.dataset.theme = next;
+      $('meta[name="theme-color"]').setAttribute("content", next === "light" ? "#F7F9FC" : "#0B1120");
+      try { localStorage.setItem(KEYS.theme, next); } catch { /* ignore */ }
+    });
+
+    $("#menu-btn").addEventListener("click", () => {
+      const open = !document.body.classList.contains("nav-open");
+      document.body.classList.toggle("nav-open", open);
+      $("#menu-btn").setAttribute("aria-expanded", String(open));
+    });
+    $("#scrim").addEventListener("click", () => { document.body.classList.remove("nav-open"); $("#menu-btn").setAttribute("aria-expanded", "false"); });
+
+    $("#more-btn").addEventListener("click", (e) => { e.stopPropagation(); setMenu(!$("#more-menu").classList.contains("open")); });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".menu-wrap")) setMenu(false); });
+
+    $("#more-menu").addEventListener("click", (e) => {
+      const a = e.target.closest("[data-action]");
+      if (!a) return;
+      setMenu(false);
+      if (a.dataset.action === "export") {
+        const blob = new Blob([JSON.stringify({ app: "laravel-skill-map", version: 1, exportedAt: new Date().toISOString(), progress }, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = Object.assign(document.createElement("a"), { href: url, download: `skill-progress-${new Date().toISOString().slice(0, 10)}.json` });
+        document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        toast("Progress eksport qilindi");
+      }
+      if (a.dataset.action === "reset") {
+        if (!confirm("Barcha progress o'chiriladi. Davom etasizmi?")) return;
+        progress = {}; store.set(KEYS.progress, progress);
+        route(); updateSidebarProgress(); toast("Progress tozalandi");
+      }
+    });
+    $("#more-menu label").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#import-input").click(); } });
+    $("#import-input").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      e.target.value = "";
+      setMenu(false);
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        const src = data && typeof data.progress === "object" ? data.progress : data;
+        const clean = {};
+        Object.entries(src || {}).forEach(([k, v]) => { if (SUB_BY_ID[k] && Number.isInteger(v) && v > 0 && v <= 4) clean[k] = v; });
+        progress = clean; store.set(KEYS.progress, progress);
+        route(); updateSidebarProgress();
+        toast(`${Object.keys(clean).length} ta mavzu holati import qilindi`);
+      } catch { toast("JSON faylni o'qib bo'lmadi"); }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal().classList.contains("open") ? closePalette() : openPalette(); return; }
+      if (e.key === "/" && !typing) { e.preventDefault(); openPalette(); return; }
+      if (e.key === "Escape") {
+        if (pal().classList.contains("open")) closePalette();
+        else if ($("#more-menu").classList.contains("open")) { setMenu(false); $("#more-btn").focus(); }
+        else if (document.body.classList.contains("nav-open")) { document.body.classList.remove("nav-open"); $("#menu-btn").setAttribute("aria-expanded", "false"); }
+      }
+      if (e.key === "Tab" && pal().classList.contains("open")) {
+        e.preventDefault(); palInput().focus();
+      }
+    });
+
+    window.addEventListener("hashchange", route);
+    window.addEventListener("storage", (e) => {
+      if (e.key === KEYS.progress) { progress = store.get(KEYS.progress, {}); route(); updateSidebarProgress(); }
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Boot
+   * ------------------------------------------------------------------ */
+  bindChrome();
+  bindPalette();
+  loadData().then(() => {
+    buildModel();
+    buildIndex();
+    renderSidebar();
+    route();
+  });
+})();
