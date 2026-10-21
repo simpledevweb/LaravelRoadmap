@@ -357,6 +357,105 @@
       `<span data-st="${i}"><i class="st-dot"></i>${s.label} <b>${counts[i]}</b></span>`).join("")}</div>`;
   }
 
+  const TECH_STACK = [
+    {
+      title: "PHP",
+      ver: "7.4+ → 8.4",
+      desc: "Tipizatsiya, Attributes, Enums, Fibers, JIT, OPcache va Property Hooks.",
+      tags: ["PHP 8.3/8.4", "OOP", "OPcache", "JIT"],
+      slug: "php",
+      icon: "code"
+    },
+    {
+      title: "Laravel Framework",
+      ver: "10+ / 11+",
+      desc: "Service Container, Eloquent ORM, Pipeline, Octane, Reverb va Artisan ekotizimi.",
+      tags: ["Laravel 11", "Eloquent", "Octane", "Artisan"],
+      slug: "laravel",
+      icon: "rocket"
+    },
+    {
+      title: "MySQL & PostgreSQL",
+      ver: "MySQL 8.0+ / PG 15+",
+      desc: "InnoDB, ACID, B-Tree indekslar, EXPLAIN, Partitioning va Tranzaksiyalar.",
+      tags: ["MySQL 8", "PostgreSQL", "ACID", "Indexes"],
+      slug: "mysql",
+      icon: "database"
+    },
+    {
+      title: "Redis In-Memory",
+      ver: "Redis 7.0+",
+      desc: "Cache-Aside, Distributed Lock (Redlock), Streams, Pub/Sub va Eviction siyosatlari.",
+      tags: ["Redis 7", "Cache-Aside", "Redlock", "Streams"],
+      slug: "redis",
+      icon: "gauge"
+    },
+    {
+      title: "Docker & Compose",
+      ver: "Docker 24+ / Compose v2",
+      desc: "Multi-stage Dockerfile, Alpine, konteynerlar izolyatsiyasi, volume va tarmoqlar.",
+      tags: ["Multi-stage", "Alpine", "Compose", "Linux"],
+      slug: "docker",
+      icon: "boxes"
+    },
+    {
+      title: "Nginx & PHP-FPM / Octane",
+      ver: "Nginx 1.24+ / FastCGI",
+      desc: "pm.max_children tuning, Reverse Proxy, FrankenPHP, Swoole va HTTP/2 / HTTPS.",
+      tags: ["PHP-FPM", "Nginx", "FrankenPHP", "FastCGI"],
+      slug: "php-fpm",
+      icon: "server"
+    },
+    {
+      title: "Laravel Horizon & Queues",
+      ver: "Horizon 5+ / Queues",
+      desc: "Asinxron ishlov, Idempotent job'lar, auto-balancing, batching, chaining va Supervisor.",
+      tags: ["Horizon", "Queues", "Supervisor", "Workers"],
+      slug: "queues-and-background-jobs",
+      icon: "queue"
+    },
+    {
+      title: "RabbitMQ & Apache Kafka",
+      ver: "RabbitMQ 3.12+ / Kafka 3+",
+      desc: "Event-Driven arxitektura, xabarlar brokiri, stream processing va consumer groups.",
+      tags: ["RabbitMQ", "Kafka", "EDA", "Events"],
+      slug: "rabbitmq",
+      icon: "branch"
+    },
+    {
+      title: "Sanctum & API Security",
+      ver: "Sanctum / OAuth 2.0",
+      desc: "SPA Cookie-based sessiyalar, Bearer API Tokenlar, HMAC webhooks, CSRF va OWASP himoyasi.",
+      tags: ["Sanctum", "OAuth 2.0", "HMAC", "OWASP Top 10"],
+      slug: "laravel-sanctum",
+      icon: "shield"
+    },
+    {
+      title: "Pest & PHPUnit",
+      ver: "Pest v2/v3 · PHPUnit 10+",
+      desc: "Unit, Feature va Architecture testing (`arch()`), Mocking, Fake va TDD metodologiyasi.",
+      tags: ["Pest PHP", "PHPUnit 10", "Arch Testing", "TDD"],
+      slug: "pest",
+      icon: "flask"
+    },
+    {
+      title: "PHPStan & Larastan",
+      ver: "Level 8 / Max",
+      desc: "Statik kod tahlili, qat'iy tiplar nazorati, yashirin buglarni CI bosqichidayoq aniqlash.",
+      tags: ["Larastan", "Level 8+", "Strict Types", "CI/CD"],
+      slug: "phpstan",
+      icon: "check"
+    },
+    {
+      title: "DDD & Clean Architecture",
+      ver: "Hexagonal / DDD",
+      desc: "Entities, Value Objects, Aggregate Roots, Dependency Inversion va Bounded Contexts.",
+      tags: ["DDD", "Clean Arch", "SOLID", "Patterns"],
+      slug: "domain-driven-design-ddd",
+      icon: "layers"
+    }
+  ];
+
   function renderHome() {
     const subs = allSubs();
     const st = statsFor(subs);
@@ -376,6 +475,17 @@
             ${last ? `<a class="btn btn-primary" href="#/s/${last.slug}">Davom ettirish: ${esc(last.title)} ${icon("arrow-right")}</a>`
                    : first ? `<a class="btn btn-primary" href="#/s/${first.slug}">Boshlash: ${esc(first.title)} ${icon("arrow-right")}</a>` : ""}
             <button class="btn" data-scroll-groups>Bo'limlarni ko'rish</button>
+          </div>
+          <div class="hero-stack-chips">
+            <span class="hero-stack-label">Stack:</span>
+            <a href="#/s/php" class="stack-chip"><span class="dot"></span>PHP 7.4+ → 8.4</a>
+            <a href="#/s/laravel" class="stack-chip"><span class="dot"></span>Laravel 10+ / 11+</a>
+            <a href="#/s/mysql" class="stack-chip"><span class="dot"></span>MySQL 8.0+</a>
+            <a href="#/s/redis" class="stack-chip"><span class="dot"></span>Redis 7+</a>
+            <a href="#/s/docker" class="stack-chip"><span class="dot"></span>Docker</a>
+            <a href="#/s/php-fpm" class="stack-chip"><span class="dot"></span>PHP-FPM / Octane</a>
+            <a href="#/s/queues-and-background-jobs" class="stack-chip"><span class="dot"></span>Queues & Horizon</a>
+            <a href="#/s/pest" class="stack-chip"><span class="dot"></span>Pest / PHPUnit</a>
           </div>
         </div>
         <aside class="panel hero-panel" aria-label="Umumiy progress">
@@ -400,6 +510,35 @@
           <div class="value">${st.described}<small> / ${st.total}</small></div>
           <div class="bar"><i style="width:${(st.described / (st.total || 1)) * 100}%"></i></div></div>
       </section>
+
+      <div class="section-head" id="stack">
+        <div>
+          <span class="kicker">// ASOSIY STEK</span>
+          <h2>Texnologiyalar steki</h2>
+          <p>Yo'l xaritasida qamrab olingan asosiy texnologiyalar, vositalar va ularning zamonaviy versiyalari</p>
+        </div>
+      </div>
+      <div class="stack-grid">
+        ${TECH_STACK.map((t) => `
+          <a class="stack-card" href="#/s/${t.slug}">
+            <div>
+              <div class="stack-card-head">
+                <span class="stack-card-icon">${icon(t.icon)}</span>
+                <span class="stack-card-ver">${esc(t.ver)}</span>
+              </div>
+              <h3>${esc(t.title)}</h3>
+              <p>${esc(t.desc)}</p>
+              <div class="stack-card-tags">
+                ${t.tags.map((tag) => `<span class="stack-tag">${esc(tag)}</span>`).join("")}
+              </div>
+            </div>
+            <div class="stack-card-foot">
+              <span>Xaritada o'rganish</span>
+              <span class="stack-card-link">Ko'rish ${icon("arrow-right", "ic ic-sm")}</span>
+            </div>
+          </a>
+        `).join("")}
+      </div>
 
       ${focus.length ? `
         <div class="section-head"><div><span class="kicker">// 01</span><h2>Hozir ustida ishlayapsiz</h2><p>Learning va Practicing holatidagi mavzular</p></div></div>
