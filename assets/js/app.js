@@ -997,14 +997,6 @@
       toggleBookmarkIq(iqBookmark.dataset.iqBookmark);
       return;
     }
-    const iqCheatsheet = t.closest("[data-iq-cheatsheet]");
-    if (iqCheatsheet) {
-      iqCheatsheetMode = !iqCheatsheetMode;
-      document.body.classList.toggle("iq-cheatsheet-active", iqCheatsheetMode);
-      renderInterview();
-      toast(iqCheatsheetMode ? "📄 Cheatsheet rejimi yoqildi (Chop etish mumkin)" : "Cheatsheet rejimi o'chirildi");
-      return;
-    }
     const iqStartMock = t.closest("[data-iq-start-mock]");
     if (iqStartMock) {
       openMockModal("setup");
@@ -1086,31 +1078,6 @@
       practiceBtn.setAttribute("aria-pressed", String(iqPracticeMode));
       filterInterviewList();
       toast(iqPracticeMode ? "Sinov rejimi yoqildi! Model javoblar yashirildi." : "Sinov rejimi o'chirildi.");
-      return;
-    }
-    const expandBtn = t.closest("[data-iq-expand-all]");
-    if (expandBtn) {
-      iqAllExpanded = !iqAllExpanded;
-      $$(".iq-card").forEach((card) => {
-        card.classList.toggle("open", iqAllExpanded);
-        const toggleBtn = card.querySelector("[data-iq-toggle]");
-        if (toggleBtn) toggleBtn.setAttribute("aria-expanded", String(iqAllExpanded));
-      });
-      expandBtn.innerHTML = `${icon(iqAllExpanded ? "collapse" : "expand", "ic ic-sm")} ${iqAllExpanded ? "Barchasini yopish" : "Barchasini ochish"}`;
-      return;
-    }
-    const randomBtn = t.closest("[data-iq-random]");
-    if (randomBtn) {
-      const filtered = getIqFilteredList();
-      if (filtered.length) {
-        const randQ = filtered[Math.floor(Math.random() * filtered.length)];
-        const card = $(`#${CSS.escape(randQ.id)}`);
-        if (card) {
-          card.classList.add("open");
-          card.scrollIntoView({ behavior: "smooth", block: "center" });
-          toast(`Tasodifiy savol ochildi: #${randQ.id.replace('iq-', '')}`);
-        }
-      }
       return;
     }
     const clearBtn = t.closest("[data-iq-clear-search]");
@@ -1246,7 +1213,6 @@
   let iqFilterCat = "all";
   let iqFilterStatus = "all";
   let iqPracticeMode = false;
-  let iqAllExpanded = false;
   let iqSearchQuery = "";
 
   const IQ_CATEGORIES = [
@@ -1295,7 +1261,6 @@
     updateIqStats();
   }
 
-  let iqCheatsheetMode = false;
 
   function toggleBookmarkIq(id) {
     if (bookmarkedIq.has(id)) {
@@ -1400,7 +1365,7 @@
     return filtered.map((q) => {
       const isMastered = masteredIq.has(q.id);
       const isBookmarked = bookmarkedIq.has(q.id);
-      const isOpen = iqAllExpanded || iqCheatsheetMode;
+      const isOpen = false;
       const cleanNum = q.id.replace("iq-", "");
 
       return `
@@ -1421,7 +1386,7 @@
             <span class="iq-chev">${icon("chev-down", "ic")}</span>
           </button>
           <div class="iq-card-body">
-            ${(iqPracticeMode && !iqCheatsheetMode) ? `
+            ${iqPracticeMode ? `
               <div class="iq-practice-prompt" id="prompt-${q.id}">
                 <p><strong>${icon("target", "ic ic-sm")} Sinov rejimi:</strong> Savolga avval o'zingiz mustaqil javob berishga urinib ko'ring, so'ngra model javob bilan tekshiring.</p>
                 <button class="iq-reveal-btn" data-iq-reveal="${q.id}">Javobni ko'rish →</button>
@@ -1580,35 +1545,12 @@
               ${icon("rocket", "ic ic-sm")}
               <span>Mock Imtihon</span>
             </button>
-            <button class="iq-tool-btn ${iqCheatsheetMode ? "active" : ""}" data-iq-cheatsheet aria-pressed="${iqCheatsheetMode}" title="Tezkor xulosalar va chop etish">
-              ${icon("file", "ic ic-sm")}
-              <span>Cheatsheet</span>
-            </button>
             <button class="iq-tool-btn ${iqPracticeMode ? "active" : ""}" data-iq-practice aria-pressed="${iqPracticeMode}" title="Model javoblarni yashirib, o'zingizni sinash">
               ${icon("target", "ic ic-sm")}
               <span>Sinov rejimi</span>
             </button>
-            <button class="iq-tool-btn" data-iq-expand-all title="Barcha kartalarni birdan ochish yoki yopish">
-              ${icon(iqAllExpanded ? "collapse" : "expand", "ic ic-sm")}
-              <span>${iqAllExpanded ? "Yopish" : "Ochish"}</span>
-            </button>
-            <button class="iq-tool-btn" data-iq-random title="Filtrlanganlar ichidan tasodifiy savolni ochish">
-              ${icon("refresh", "ic ic-sm")}
-              <span>Tasodifiy</span>
-            </button>
           </div>
         </div>
-
-        ${iqCheatsheetMode ? `
-          <div class="iq-cheatsheet-banner">
-            <div>
-              <strong>📄 Cheatsheet rejimi:</strong> Barcha savollar va xulosalar ochiq holatda.
-            </div>
-            <button class="btn btn-sm btn-primary" onclick="window.print()">
-              ${icon("download", "ic ic-sm")} PDF / Chop etish
-            </button>
-          </div>
-        ` : ""}
 
         <div class="iq-pills-wrap">
           <div class="iq-pills-row">

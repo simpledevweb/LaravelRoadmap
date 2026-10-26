@@ -1403,20 +1403,6 @@ code, kbd, pre { font-variant-ligatures: none; }
   opacity: 0.92; transform: translateY(-1px); box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
 }
 
-/* Cheatsheet Mode */
-.iq-cheatsheet-active .iq-card {
-  padding: 14px 18px; border-radius: var(--r);
-}
-.iq-cheatsheet-active .iq-card-body {
-  padding: 12px 0 0; background: transparent; border-top: 1px dashed var(--border);
-}
-.iq-cheatsheet-active .iq-title { font-size: 14.5px; }
-.iq-cheatsheet-banner {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 12px 18px; border-radius: var(--r); margin-bottom: var(--sp-4);
-  background: var(--surface-2); border: 1px solid var(--border); font-size: 13px;
-}
-
 /* Mock Interview Simulator Modal */
 .mock-overlay {
   position: fixed; inset: 0; z-index: 9999;
