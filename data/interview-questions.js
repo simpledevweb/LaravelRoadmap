@@ -31,7 +31,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-2",
     title: "Late Static Binding (self:: vs static::) nima va u qachon ishlatiladi?",
-    level: "middle",
+    level: "junior",
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
@@ -113,7 +113,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-5",
     title: "Laravel Request Lifecycle qanday kechadi? public/index.php dan controller'gacha nimalar sodir bo'ladi?",
-    level: "middle",
+    level: "junior",
     category: "laravel",
     categoryLabel: "Laravel",
     skillSlug: "laravel",
@@ -231,7 +231,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-10",
     title: "Optimistic Locking va Pessimistic Locking o'rtasidagi farq nima? Qaysi holatda qaysi biri tanlanadi?",
-    level: "senior",
+    level: "middle",
     category: "database",
     categoryLabel: "Ma'lumotlar bazasi",
     skillSlug: "database-transactions",
@@ -376,7 +376,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-16",
     title: "Queue Workerlarda At-Least-Once Delivery nima va Job Idempotency nima uchun shart?",
-    level: "senior",
+    level: "middle",
     category: "async",
     categoryLabel: "Navbatlar",
     skillSlug: "queues-and-background-jobs",
@@ -628,7 +628,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-25",
     title: "Docker konteynerlarida PHP-FPM yoki Queue Worker'larga signallarni to'g'ri uzatish (Graceful Shutdown) nega muhim?",
-    level: "senior",
+    level: "middle",
     category: "devops",
     categoryLabel: "DevOps & Server",
     skillSlug: "docker",
@@ -850,7 +850,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-33",
     title: "MySQL B-Tree indekslar qanday ishlaydi va nima uchun LIKE '%so'z' so'rovida indeksdan umuman foydalanilmaydi?",
-    level: "middle",
+    level: "junior",
     category: "database",
     categoryLabel: "Ma'lumotlar bazasi",
     skillSlug: "database-indexing",
@@ -929,7 +929,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-36",
     title: "Avtomatlashtirilgan testlarda Dummy, Stub, Fake va Mock o'rtasidagi farq nima (Test Doubles)?",
-    level: "middle",
+    level: "junior",
     category: "testing",
     categoryLabel: "Testlash",
     skillSlug: "unit-testing",
@@ -995,7 +995,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-39",
     title: "Dependency Injection (DI) va Service Locator patternlari farqi nima va Service Locator nima uchun Anti-pattern hisoblanadi?",
-    level: "middle",
+    level: "junior",
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "object-oriented-programming-oop",
@@ -1123,7 +1123,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-44",
     title: "PHP da Copy-on-Write (COW) mexanizmi qanday ishlaydi va massivlarni argument sifatida uzatishda xotira qachon ajratiladi?",
-    level: "middle",
+    level: "junior",
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
@@ -1162,7 +1162,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-46",
     title: "PHP Magic Methods (__call, __get, __set) qanday ishlaydi va nima uchun haddan tashqari ko'p ishlatish 'Anti-pattern' hisoblanadi?",
-    level: "middle",
+    level: "junior",
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "object-oriented-programming-oop",
@@ -1186,7 +1186,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-47",
     title: "Laravel Pipeline Pattern qanday ishlaydi va o'zimizning murakkab biznes jarayonlarimizda undan qanday foydalanamiz?",
-    level: "senior",
+    level: "middle",
     category: "laravel",
     categoryLabel: "Laravel",
     skillSlug: "laravel",
@@ -1215,7 +1215,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-48",
     title: "Laravel Service Providerlarida register() va boot() metodlari qanday farqlanadi va Deferred Service Providers nima?",
-    level: "middle",
+    level: "junior",
     category: "laravel",
     categoryLabel: "Laravel",
     skillSlug: "laravel",
@@ -1237,7 +1237,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-49",
     title: "Laravel Facades qanday qilib statik chaqiruvni dynamic container instansiyasiga yo'naltiradi va ularni testlarda qanday mock qilamiz?",
-    level: "middle",
+    level: "junior",
     category: "laravel",
     categoryLabel: "Laravel",
     skillSlug: "laravel",
@@ -1284,7 +1284,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-51",
     title: "Laravel Custom Casts (CastsAttributes) nima va ma'lumotlar bazasidagi JSON ustunni Value Object'ga qanday xaritalaymiz?",
-    level: "middle",
+    level: "junior",
     category: "laravel",
     categoryLabel: "Laravel",
     skillSlug: "eloquent-orm",
@@ -1334,7 +1334,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-53",
     title: "Eloquent chunk() vs cursor() vs chunkById(): Katta hajmdagi ma'lumotlarni update qilishda chunk() nega xavfli va nima uchun chunkById() shart?",
-    level: "senior",
+    level: "middle",
     category: "database",
     categoryLabel: "Ma'lumotlar bazasi",
     skillSlug: "eloquent-orm",
@@ -1356,7 +1356,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-54",
     title: "Polymorphic Relations nima va nima uchun production da doim Relation::morphMap() ishlatilishi shart?",
-    level: "middle",
+    level: "junior",
     category: "database",
     categoryLabel: "Ma'lumotlar bazasi",
     skillSlug: "eloquent-orm",
@@ -1413,7 +1413,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-56",
     title: "Covering Index (Index-Only Scan) nima va nega SELECT * indeksdan to'liq foydalanishni to'xtatadi?",
-    level: "senior",
+    level: "middle",
     category: "database",
     categoryLabel: "Ma'lumotlar bazasi",
     skillSlug: "database-indexing",
@@ -1433,7 +1433,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-57",
     title: "Eloquent SoftDeletes katta jadvallarda so'rovlarni nega keskin sekinlashtiradi va qanday indeks bilan optimallashtiriladi?",
-    level: "middle",
+    level: "junior",
     category: "database",
     categoryLabel: "Ma'lumotlar bazasi",
     skillSlug: "eloquent-orm",
@@ -1595,7 +1595,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-64",
     title: "Dead Letter Queue (DLQ) nima va qayta-qayta xato beruvchi zaharli xabarlar (Poison Messages) qanday boshqariladi?",
-    level: "senior",
+    level: "middle",
     category: "async",
     categoryLabel: "Navbatlar & Async",
     skillSlug: "queues-and-background-jobs",
@@ -1614,7 +1614,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-65",
     title: "Laravel Job Chaining va Job Batching farqi nima va batch ichida bitta job yiqilsa allowFailures qanday ishlaydi?",
-    level: "middle",
+    level: "junior",
     category: "async",
     categoryLabel: "Navbatlar & Async",
     skillSlug: "queues-and-background-jobs",
@@ -1661,7 +1661,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-67",
     title: "JWT (JSON Web Token) da Refresh Token Rotation va Blacklist mexanizmlari qanday ishlaydi?",
-    level: "senior",
+    level: "middle",
     category: "security",
     categoryLabel: "Xavfsizlik",
     skillSlug: "jwt",
@@ -1705,7 +1705,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-69",
     title: "IDOR (Insecure Direct Object Reference) zaifligi nima va Laravel Policies & Gates undan qanday himoyalaydi?",
-    level: "middle",
+    level: "junior",
     category: "security",
     categoryLabel: "Xavfsizlik",
     skillSlug: "web-application-security",
@@ -1749,7 +1749,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-71",
     title: "Data Encryption: Laravel modelida Asymmetric vs Symmetric shifrlash va encrypted cast qanday ishlaydi?",
-    level: "middle",
+    level: "junior",
     category: "security",
     categoryLabel: "Xavfsizlik",
     skillSlug: "web-application-security",
@@ -1792,7 +1792,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-73",
     title: "Liskov Substitution Principle (LSP) nima va voris sinfda qanday xatolar LSP ning buzilishiga olib keladi?",
-    level: "middle",
+    level: "junior",
     category: "architecture",
     categoryLabel: "Arxitektura",
     skillSlug: "solid-principles",
@@ -1872,7 +1872,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-77",
     title: "PHPStan / Larastan da Level 9 va Type Coverage nima va ular runtime Type Error xatolarini qanday 0 ga tushiradi?",
-    level: "senior",
+    level: "middle",
     category: "testing",
     categoryLabel: "Testlash",
     skillSlug: "phpstan",
@@ -2022,7 +2022,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-83",
     title: "Incident Triage: MySQL serverda CPU 100% ga chiqib ketdi. Slow Query Log va EXPLAIN orqali muammoni qanday topasiz?",
-    level: "senior",
+    level: "middle",
     category: "database",
     categoryLabel: "Ma'lumotlar bazasi",
     skillSlug: "database-optimization",
@@ -2087,7 +2087,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-85",
     title: "PHP 8.4: Yangi array funksiyalari (array_find, array_all, array_any) qanday ishlaydi va ular kodni qanday soddalashtiradi?",
-    level: "middle",
+    level: "junior",
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
@@ -2141,7 +2141,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-87",
     title: "Laravel 11 ning Slim Application Skeleton tuzilishi: Http Kernel, Console Kernel va Middleware qayerga ko'chdi?",
-    level: "middle",
+    level: "junior",
     category: "laravel",
     categoryLabel: "Laravel",
     skillSlug: "laravel",
@@ -2273,7 +2273,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-92",
     title: "Refactoring: 'God Controller' (Fat Controller) qanday qilib Clean Architecture va Single Responsibility bo'yicha ajratiladi?",
-    level: "middle",
+    level: "junior",
     category: "architecture",
     categoryLabel: "Arxitektura & Tizim Dizayni",
     skillSlug: "clean-architecture",
@@ -2397,7 +2397,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-97",
     title: "Database Indexing: Index Cardinality nima va past kardinallikka ega ustunlarni (status, gender) indekslash nega ko'pincha foydasiz?",
-    level: "senior",
+    level: "middle",
     category: "database",
     categoryLabel: "Ma'lumotlar bazasi",
     skillSlug: "database-indexing",
@@ -2530,7 +2530,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-103",
     title: "Testing: Minglab testlar yozilganda Feature testlar sekinlashib ketishining sabablari va ularni 5 barobar tezlashtirish usullari?",
-    level: "senior",
+    level: "middle",
     category: "testing",
     categoryLabel: "Testlash",
     skillSlug: "feature-testing",
@@ -2554,7 +2554,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     id: "iq-104",
     title: "DevOps: Docker Multi-Stage Build orqali PHP/Laravel production image hajmini qanday qilib 10 barobarga qisqartiramiz?",
-    level: "senior",
+    level: "middle",
     category: "devops",
     categoryLabel: "DevOps & Server",
     skillSlug: "docker",
@@ -2692,7 +2692,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-109",
     "title": "PHP: Attributes (Metadata) qanday ishlaydi va ular eski DocBlock izohlaridan nimasi bilan ustun?",
-    "level": "middle",
+    "level": "junior",
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
@@ -2746,7 +2746,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-111",
     "title": "PHP: Readonly Classes va Readonly Properties: Ularning nozik jihatlari va cheklovlari nimalardan iborat?",
-    "level": "middle",
+    "level": "junior",
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
@@ -2790,7 +2790,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-113",
     "title": "PHP: Error vs Exception iyerarxiyasi: Fatal xatolarni 'try-catch' bilan tutish qachondan boshlab mumkin bo'ldi?",
-    "level": "middle",
+    "level": "junior",
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
@@ -2817,7 +2817,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-114",
     "title": "PHP: Composer Autoload turlari: PSR-4, classmap va files. Productionda 'composer dump-autoload -o' nega muhim?",
-    "level": "middle",
+    "level": "junior",
     "category": "php",
     "categoryLabel": "Composer",
     "skillSlug": "composer",
@@ -2857,7 +2857,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-116",
     "title": "Laravel: Macroable traiti qanday ishlaydi va freymvork ichki sinflarini kengaytirishda u qachon ishlatiladi?",
-    "level": "middle",
+    "level": "junior",
     "category": "laravel",
     "categoryLabel": "Laravel",
     "skillSlug": "laravel",
@@ -2930,7 +2930,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-119",
     "title": "Laravel Eloquent: Global Scope va Local Scope farqi: withoutGlobalScope qachon va nima uchun qo'llaniladi?",
-    "level": "middle",
+    "level": "junior",
     "category": "laravel",
     "categoryLabel": "Laravel",
     "skillSlug": "eloquent-orm",
@@ -2956,7 +2956,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-120",
     "title": "Laravel Eloquent: Enforced MorphMap nima va nega polimorfik bog'lanishlarda to'liq klass nomini saqlamaslik kerak?",
-    "level": "senior",
+    "level": "middle",
     "category": "laravel",
     "categoryLabel": "Laravel",
     "skillSlug": "eloquent-orm",
@@ -3015,7 +3015,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-122",
     "title": "Laravel Database Transactions: Nested Transactions va Savepoints qanday ishlaydi?",
-    "level": "senior",
+    "level": "middle",
     "category": "database",
     "categoryLabel": "Ma'lumotlar bazasi",
     "skillSlug": "database-transactions",
@@ -3059,7 +3059,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-124",
     "title": "Laravel Rate Limiting: ThrottleRequests middleware'i qanday ishlaydi va Redis bilan distributed limit qanday o'rnatiladi?",
-    "level": "senior",
+    "level": "middle",
     "category": "security",
     "categoryLabel": "Xavfsizlik",
     "skillSlug": "web-application-security",
@@ -3081,7 +3081,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-125",
     "title": "Laravel: Pipeline Pattern nima va o'zimizning mustaqil Pipeline'imizni qanday quramiz?",
-    "level": "senior",
+    "level": "middle",
     "category": "architecture",
     "categoryLabel": "Arxitektura & Tizim Dizayni",
     "skillSlug": "design-patterns",
@@ -3110,7 +3110,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-126",
     "title": "Laravel: FormRequest after validation hooks ('after()') qachon kerak bo'ladi?",
-    "level": "middle",
+    "level": "junior",
     "category": "laravel",
     "categoryLabel": "Laravel",
     "skillSlug": "laravel",
@@ -3141,7 +3141,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-127",
     "title": "Laravel: Signed URLs (URL::temporarySignedRoute) qanday ishlaydi va ular qanday xavfsizlik kafolatini beradi?",
-    "level": "middle",
+    "level": "junior",
     "category": "security",
     "categoryLabel": "Xavfsizlik",
     "skillSlug": "web-application-security",
@@ -3190,7 +3190,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-129",
     "title": "Laravel Eloquent: Lazy Eager Loading: load() va loadMissing() metodlarining muhim farqi nima?",
-    "level": "middle",
+    "level": "junior",
     "category": "eloquent",
     "categoryLabel": "Eloquent ORM",
     "skillSlug": "eloquent-orm",
@@ -3209,7 +3209,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-130",
     "title": "Laravel: Model Pruning (Prunable va MassPrunable) katta bazalarda eski loglar va sessiyalarni qanday tozalaydi?",
-    "level": "senior",
+    "level": "middle",
     "category": "laravel",
     "categoryLabel": "Laravel",
     "skillSlug": "eloquent-orm",
@@ -3237,7 +3237,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-131",
     "title": "Laravel: API Resources: AnonymousResourceCollection va maxsus ResourceCollection farqi nima?",
-    "level": "middle",
+    "level": "junior",
     "category": "laravel",
     "categoryLabel": "REST API",
     "skillSlug": "rest-api",
@@ -3263,7 +3263,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-132",
     "title": "Laravel 11: Context Facade nima va taqsimlangan loglarda (Distributed Tracing) u qanday yordam beradi?",
-    "level": "senior",
+    "level": "middle",
     "category": "laravel",
     "categoryLabel": "Laravel",
     "skillSlug": "logging-and-monitoring",
@@ -3307,7 +3307,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-134",
     "title": "Laravel Queues: ShouldBeUnique va ShouldBeUniqueUntilProcessing interfeyslarining nozik farqi nima?",
-    "level": "senior",
+    "level": "middle",
     "category": "async",
     "categoryLabel": "Navbatlar & Async",
     "skillSlug": "queues-and-background-jobs",
@@ -3325,7 +3325,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-135",
     "title": "Laravel: Scoped Route Model Binding nima va u IDOR xavfsizlik muammosini qanday bartaraf etadi?",
-    "level": "senior",
+    "level": "middle",
     "category": "laravel",
     "categoryLabel": "Laravel",
     "skillSlug": "laravel",
@@ -3371,7 +3371,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-137",
     "title": "Database: Covering Index (Index-Only Scan) nima va u so'rovni nega 100 barobargacha tezlashtiradi?",
-    "level": "senior",
+    "level": "middle",
     "category": "database",
     "categoryLabel": "Ma'lumotlar bazasi",
     "skillSlug": "database-indexing",
@@ -3393,7 +3393,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-138",
     "title": "Database: Prefix Index nima va uzun satrlarni (URL, Email, Hash) indekslashda u qanday xotira tejaydi?",
-    "level": "middle",
+    "level": "junior",
     "category": "database",
     "categoryLabel": "Ma'lumotlar bazasi",
     "skillSlug": "database-indexing",
@@ -3530,7 +3530,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-145",
     "title": "Laravel: Read/Write Database Splitting va 'sticky' konfiguratsiyasi nima uchun kerak?",
-    "level": "senior",
+    "level": "middle",
     "category": "laravel",
     "categoryLabel": "Laravel",
     "skillSlug": "database-design",
@@ -3553,7 +3553,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-146",
     "title": "Database: JSON ustunlarini indekslash: Virtual Generated Columns va Functional Indexes qanday ishlaydi?",
-    "level": "senior",
+    "level": "middle",
     "category": "database",
     "categoryLabel": "Ma'lumotlar bazasi",
     "skillSlug": "database-indexing",
@@ -3658,7 +3658,7 @@ window.INTERVIEW_QUESTIONS = [
   {
     "id": "iq-151",
     "title": "SQL: Recursive CTE (WITH RECURSIVE) nima va cheksiz iyerarxik daraxtlarni (Menyular, Kategoriyalar) bitta so'rovda qanday olamiz?",
-    "level": "senior",
+    "level": "middle",
     "category": "database",
     "categoryLabel": "SQL",
     "skillSlug": "sql",
@@ -4744,6 +4744,1238 @@ window.INTERVIEW_QUESTIONS = [
       "- Natijada jamoaning texnik xotirasi (Institutional Memory) saqlanib qoladi va bir xil xatolar qayta takrorlanmaydi."
     ],
     "tip": "ADR lar har qanday professional muhandislik madaniyatining asosi bo'lib, qarorlarning hissiyotlar bilan emas, dalillar bilan qabul qilinganini isbotlaydi."
+  },
+
+  // --- PHP tili (JUNIOR) ---
+  {
+    "id": "iq-201",
+    "title": "PHP: include, require, include_once va require_once farqi nima va qachon qaysi biri ishlatiladi?",
+    "level": "junior",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.1",
+    "answer": [
+      "`include` va `require` fayllarni joriy skriptga qo'shish uchun xizmat qiladi, ammo ularning xatolik yuz bergandagi harakati tubdan farq qiladi:",
+      "",
+      "1. **`include` vs `require`:**",
+      "   - `include`: Agar ko'rsatilgan fayl topilmasa, `E_WARNING` xatosi chiqadi va skript o'z ishini davom ettiradi. Bu saytning ikkinchi darajali qismlari (masalan, footer, banner) uchun ishlatilishi mumkin.",
+      "   - `require`: Agar fayl topilmasa, `E_COMPILE_ERROR` (Fatal Error) yuz beradi va skript ijrosi darhol to'xtatiladi. Bu kritik konfiguratsiyalar, sinflar yoki ma'lumotlar bazasi ulanishlari uchun shart.",
+      "",
+      "2. **`_once` qo'shimchasi:**",
+      "   - `include_once` va `require_once`: Fayl avval qo'shilgan yoki qo'shilmaganligini tekshiradi. Agar fayl ilgari chaqirilgan bo'lsa, uni ikkinchi marta yuklamaydi.",
+      "   - Bu sinflar va funksiyalarning takror e'lon qilinishi (masalan, `Fatal error: Cannot redeclare class...`) ning oldini oladi.",
+      "",
+      "3. **Zamonaviy PHP da o'rni:**",
+      "   - Zamonaviy dasturlashda fayllarni qo'lda `require` qilish o'rniga Composer PSR-4 avtoyuklagichi (Autoloading) ishlatiladi. `require_once __DIR__ . '/../vendor/autoload.php'` faqatgina kirish nuqtasida (`index.php`) bir marta chaqiriladi."
+    ],
+    "tip": "Intervyuda xatolik darajasi (Warning vs Fatal Error) va nima uchun zamonaviy loyihalarda qo'lda require kam ishlatilib, Composer autoloading afzal ko'rilishini tushuntiring."
+  },
+  {
+    "id": "iq-202",
+    "title": "PHP: isset(), empty() va is_null() funksiyalari o'rtasidagi farqlar nima?",
+    "level": "junior",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.4",
+    "answer": [
+      "Ushbu funksiyalar qiymat va o'zgaruvchining mavjudligini tekshirishda juda muhim nozik farqlarga ega:",
+      "",
+      "1. **`isset($var)`:**",
+      "   - O'zgaruvchi e'lon qilingan va uning qiymati `null` EMASLIGINI tekshiradi.",
+      "   - Agar o'zgaruvchi mavjud bo'lmasa, ogohlantirish (Notice/Warning) chiqarmasdan `false` qaytaradi.",
+      "   - `isset('')`, `isset(0)`, `isset(false)` barchasi `true` qaytaradi, faqat `$var = null` bo'lsa `false` beradi.",
+      "",
+      "2. **`empty($var)`:**",
+      "   - O'zgaruvchi mavjud emasligini yoki uning qiymati bo'sh / falsy ekanligini tekshiradi.",
+      "   - `''` (bo'sh satr), `0`, `0.0`, `'0'`, `null`, `false`, `[]` (bo'sh massiv) uchun `empty()` `true` qaytaradi.",
+      "   - O'zgaruvchi e'lon qilinmagan bo'lsa ham hech qanday xatosiz `true` qaytaradi.",
+      "",
+      "3. **`is_null($var)`:**",
+      "   - Qiymat aynan `null` ekanligini (`$var === null`) tekshiradi.",
+      "   - Agar o'zgaruvchi mavjud bo'lmasa, `Warning: Undefined variable` xatosi chiqadi (chunki u o'zgaruvchining o'zini argument sifatida kutadi).",
+      "",
+      "4. **Zamonaviy usul (PHP 7+):** Null Coalescing operatori (`$a ?? 'default'`) ichki tuzilishida aynan `isset()` kabi ishlaydi."
+    ],
+    "tip": "'0' (string nol) empty() da true qaytarishi ko'p dasturchilarni chalg'itadi. Masalan, mahsulot soni 0 bo'lsa, empty() uni bo'sh deb o'ylaydi, shuning uchun raqamlar tekshirilganda isset() yoki strict !== null ishlatish kerakligini ayting."
+  },
+  {
+    "id": "iq-203",
+    "title": "PHP: Anonymous Functions (Closures) va Arrow Functions (fn() => ...) farqi nima? use kaliti qachon kerak?",
+    "level": "junior",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.3",
+    "answer": [
+      "PHP da nomsiz funksiyalar (Closures) va PHP 7.4 da kiritilgan Arrow Functions kodni qisqa va qulay yozish imkonini beradi:",
+      "",
+      "1. **Klassik Anonymous Function (Closure):**",
+      "   - Tashqi qamrovdagi (outer scope) o'zgaruvchilarni ichkariga olib kirish uchun `use ($var)` kalit so'zi majburiy hisoblanadi.",
+      "   - Agar o'zgaruvchini qiymat bo'yicha emas, havola (reference) bo'yicha o'zgartirmoqchi bo'lsak, `use (&$var)` ishlatiladi.",
+      "   ```php\n   $factor = 2;\n   $double = function($x) use ($factor) {\n       return $x * $factor;\n   };\n   ```",
+      "",
+      "2. **Arrow Functions (`fn($x) => $x * $factor`):**",
+      "   - Tashqi o'zgaruvchilarni avtomatik tarzda (by-value) ushlaydi, `use` yozish shart emas.",
+      "   - Faqatgina **bitta ifoda (single expression)** dan iborat bo'lishi mumkin va uning natijasini avtomatik `return` qiladi.",
+      "   - Tashqi o'zgaruvchini o'zgartira olmaydi (chunki nusxasini oladi).",
+      "",
+      "3. **Laravelda qo'llanilishi:**",
+      "   - Collection metodlarida: `$users->map(fn($u) => $u->name);`",
+      "   - Eloquent so'rovlarida: `$query->whereHas('posts', fn($q) => $q->where('active', true));`"
+    ],
+    "tip": "Arrow funksiyalarda 'use' yozilmasligi va u doim bitta ifodani qaytarishi, murakkab ko'p qatorli mantiqlar uchun esa klassik function() use () kerakligini ta'kidlang."
+  },
+  {
+    "id": "iq-204",
+    "title": "OOP: Interface va Abstract Class o'rtasidagi asosiy farqlar nima va qachon qaysi biri tanlanadi?",
+    "level": "junior",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "skillSlug": "oop",
+    "subskillId": "3.2",
+    "answer": [
+      "Ikkalasi ham polimorfizm va arxitekturaviy kontraktlar tuzish uchun xizmat qiladi, biroq ularning mohiyati turlicha:",
+      "",
+      "1. **Interface (Kontrakt - 'Nima qila olishi'):**",
+      "   - Faqat metodlarning imzolarini (nomi, argumenti, qaytarish tipi) e'lon qiladi, hech qanday metod tanasi (body) bo'lmaydi.",
+      "   - Xususiyatlar (properties) saqlay olmaydi (faqat konstantalar bo'lishi mumkin).",
+      "   - Sinf bir vaqtning o'zida bir nechta interfeysni amalga oshirishi (`implements InterfaceA, InterfaceB`) mumkin.",
+      "   - *Qachon:* Har xil ob'ektlarga umumiy qobiliyat berishda (masalan, `Loggable`, `Jsonable`, `ShouldQueue`).",
+      "",
+      "2. **Abstract Class (Umumiy asos - 'U nima o'zi'):**",
+      "   - Ham abstrakt metodlarni, ham to'liq yozilgan (realizatsiyasi bor) metodlarni saqlashi mumkin.",
+      "   - Holat (properties: private, protected, public) saqlay oladi.",
+      "   - PHP da bitta sinf faqat bitta abstrakt sinfdan meros olishi (`extends BaseClass`) mumkin.",
+      "   - *Qachon:* Bir-biriga yaqin qarindosh sinflar orasida umumiy kodni qayta ishlatishda (masalan, `BaseController`, `BaseRepository`)."
+    ],
+    "tip": "'Is-A' (bu - bitta tur, masalan Car is a Vehicle -> Abstract class) va 'Can-Do' (buni bajara oladi, masalan Flyable -> Interface) mantiqiy qoidasini keltiring."
+  },
+  {
+    "id": "iq-205",
+    "title": "PHP: Trait nima va undan foydalanishda Method Conflict (nomlar to'qnashuvi) qanday yechiladi?",
+    "level": "junior",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.3",
+    "answer": [
+      "PHP bitta merosxo'rlik (single inheritance) tilidir. Trait - bu bir nechta mustaqil sinflar o'rtasida metodlarni qayta ishlatish (horizontal code reuse) mexanizmidir:",
+      "",
+      "1. **Qo'llanishi:**",
+      "   - Laravelda deyarli barcha joyda uchraydi: `HasFactory`, `Notifiable`, `SoftDeletes`, `AuthorizesRequests`.",
+      "",
+      "2. **Precedence (Prioritet qoidasi):**",
+      "   - Sinfdagi metod Trait metodini ustiga yozadi (override qiladi).",
+      "   - Trait metodi esa ota sinfdan (`parent`) meros olingan metod ustiga yoziladi: `Class > Trait > Parent`.",
+      "",
+      "3. **Method Conflict (To'qnashuv):**",
+      "   - Agar ikkita turli traitda bir xil nomli metod bo'lsa, PHP `Fatal error` beradi.",
+      "   - Buni `insteadof` va `as` operatorlari bilan yechiladi:",
+      "   ```php\n   class User {\n       use TraitA, TraitB {\n           TraitA::log insteadof TraitB; // TraitA niki ishlasin\n           TraitB::log as logFromB;      // TraitB niki boshqa nomda bo'lsin\n       }\n   }\n   ```"
+    ],
+    "tip": "Traitlar juda foydali, lekin haddan tashqari ko'p trait ishlatish klassning qayerdan nima metod olayotganini tushunishni qiyinlashtiradi ('Trait Hell')."
+  },
+
+  // --- Laravel asoslari (JUNIOR) ---
+  {
+    "id": "iq-206",
+    "title": "Laravel: Route Parameters, Optional Parameters va Route Constraints (where) qanday ishlaydi?",
+    "level": "junior",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "laravel",
+    "subskillId": "2.2",
+    "answer": [
+      "Laravel marshrutlash tizimi URL dinamik parametrlarini qulay boshqarish uchun keng imkoniyatlar beradi:",
+      "",
+      "1. **Majburiy parametrlar:**",
+      "   ```php\n   Route::get('/users/{id}', [UserController::class, 'show']);\n   ```",
+      "   Controller metodida argument sifatida qabul qilinadi: `public function show($id)`.",
+      "",
+      "2. **Ixtiyoriy parametrlar (Optional Parameters):**",
+      "   - Parametr oxiriga `?` qo'yiladi va controller metodida standart qiymat beriladi:",
+      "   ```php\n   Route::get('/reports/{year?}', function ($year = null) {\n       return $year ?? date('Y');\n   });\n   ```",
+      "",
+      "3. **Muntazam ifodalar bilan cheklash (Route Constraints):**",
+      "   - `where()` yordamida parametr faqat ma'lum formatda bo'lishi ta'minlanadi. Agar mos kelmasa, 404 xatosi qaytadi:",
+      "   ```php\n   Route::get('/users/{id}', ...)->where('id', '[0-9]+');\n   Route::get('/posts/{slug}', ...)->whereAlphaNumeric('slug');\n   ```",
+      "   - Global qoida o'rnatish uchun `Route::pattern('id', '[0-9]+')` ishlatiladi."
+    ],
+    "tip": "whereNumber('id'), whereAlpha('name') kabi qulay helperlar Laravel 8+ da mavjudligini aytib o'tish javobingizni boyitadi."
+  },
+  {
+    "id": "iq-207",
+    "title": "Laravel: Middleware nima va u so'rov oqimida qanday ishlaydi? Global, Group va Route middleware farqlari?",
+    "level": "junior",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "laravel",
+    "subskillId": "2.3",
+    "answer": [
+      "Middleware - bu ilovaga kelayotgan HTTP so'rovlarni Controller'ga yetib bormasdan oldin yoki javob (Response) mijozga qaytishidan oldin filtrlovchi oraliq qatlamdir:",
+      "",
+      "1. **Ishlash mexanizmi (Pipeline / Onion arxitekturasi):**",
+      "   ```php\n   public function handle(Request $request, Closure $next)\n   {\n       // 1. So'rov controllerga borishidan OLDIN bajariladigan mantiq (masalan, auth tekshirish)\n       if (!auth()->check()) return redirect('/login');\n       \n       $response = $next($request); // Controller ishga tushadi\n       \n       // 2. Javob qaytayotgan paytda bajariladigan mantiq (masalan, header qo'shish)\n       return $response;\n   }\n   ```",
+      "",
+      "2. **Middleware turlari:**",
+      "   - **Global Middleware:** Har bir HTTP so'rovda istisnosiz ishlaydi (masalan, `TrimStrings`, CORS, Session boshqaruvi).",
+      "   - **Middleware Groups:** Marshrutlar guruhiga biriktiriladi (masalan, `web` guruhi - sessiya, CSRF token; `api` guruhi - token auth, rate limiting).",
+      "   - **Route Middleware:** Faqat bitta marshrutga alohida biriktiriladi (masalan, `->middleware('auth')`)."
+    ],
+    "tip": "Laravel 11 da barcha middlewarelar endi Http/Kernel.php da emas, balki bootstrap/app.php faylida ->withMiddleware() orqali sozlanishini eslab o'ting."
+  },
+  {
+    "id": "iq-208",
+    "title": "Laravel Eloquent: find(), findOrFail(), first() va firstOrFail() metodlarining farqi nima?",
+    "level": "junior",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "eloquent-orm",
+    "subskillId": "13.1",
+    "answer": [
+      "Ushbu metodlar ma'lumotlar bazasidan bitta yozuvni olishda xato holatlarini boshqarish bilan farqlanadi:",
+      "",
+      "1. **`find($id)` vs `findOrFail($id)`:**",
+      "   - `find($id)`: Berilgan birlamchi kalit (Primary Key) bo'yicha qidiradi. Agar yozuv topilsa - Model qaytaradi, topilmasa - `null` qaytaradi.",
+      "   - `findOrFail($id)`: Agar yozuv topilmasa, `Illuminate\\Database\\Eloquent\\ModelNotFoundException` tashlaydi. Laravel buni avtomatik tarzda **404 HTTP Not Found** sahifasiga o'giradi. Bu qo'shimcha `if (!$user)` tekshiruvini yozishdan asraydi.",
+      "",
+      "2. **`first()` vs `firstOrFail()`:**",
+      "   - `first()`: Qidiruv shartlariga (`where`) mos keluvchi birinchi qatorni qaytaradi. Topilmasa `null`.",
+      "   - `firstOrFail()`: Shartga mos birinchi qatorni qidiradi, agar yozuv mavjud bo'lmasa, darhol 404 (ModelNotFoundException) beradi.",
+      "",
+      "3. **Amaliy maslahat:** API larda va veb-sahifalarda resurs topilmagan holatni xavfsiz va toza boshqarish uchun har doim `OrFail` qo'shimchali metodlarni ishlatish eng yaxshi amaliyotdir."
+    ],
+    "tip": "OrFail metodlari 404 status qaytarishi tufayli controller kodida ortiqcha if (!$item) { abort(404); } tekshiruvlarini qisqartirishini tushuntiring."
+  },
+  {
+    "id": "iq-209",
+    "title": "Laravel: Migrations nima? up() va down() vazifalari hamda rollback, refresh va fresh farqlari?",
+    "level": "junior",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "database-design",
+    "subskillId": "14.2",
+    "answer": [
+      "Migratsiyalar - bu ma'lumotlar bazasi strukturasi uchun Version Control (Git kabi) tizimidir. Jamoaning barcha a'zolarida DB strukturasi bir xil bo'lishini ta'minlaydi:",
+      "",
+      "1. **`up()` va `down()` metodlari:**",
+      "   - `up()`: Yangi jadval yoki ustun yaratish kabi o'zgarishlarni kiritadi.",
+      "   - `down()`: `up()` da qilingan ishni aynan teskarisiga qaytaradi (masalan, `Schema::dropIfExists('users')`).",
+      "",
+      "2. **Buyruqlar farqi:**",
+      "   - `php artisan migrate:rollback`: Eng oxirgi bajarilgan migratsiyalar partiyasini (batch) `down()` orqali ortga qaytaradi.",
+      "   - `php artisan migrate:refresh`: Avval barcha migratsiyalarni `down()` qilib orqaga qaytaradi, so'ngra qaytadan `up()` qiladi.",
+      "   - `php artisan migrate:fresh`: `down()` metodlarini chaqirib o'tirmasdan, bazadagi barcha jadvallarni to'g'ridan-to'g'ri `DROP` qilib tashlaydi va noldan barcha migratsiyalarni ishga tushiradi (eng tez va xatosiz tozalash usuli)."
+    ],
+    "tip": "Production serverda hech qachon migrate:fresh ishlatmaslik kerakligini, chunki u barcha mavjud ma'lumotlarni o'chirib yuborishini eslatib o'ting."
+  },
+  {
+    "id": "iq-210",
+    "title": "Eloquent: hasOne, hasMany va belongsTo bog'lanishlari qanday farqlanadi va Foreign Key qayerda joylashadi?",
+    "level": "junior",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "eloquent-orm",
+    "subskillId": "13.2",
+    "answer": [
+      "Eloquent relatsiyalarida asosiy tushuncha - qaysi model ota (parent) va qaysi biri bola (child) ekanligini hamda Foreign Key qayerda turganini bilishdir:",
+      "",
+      "1. **Qoida: Tashqi kalit (Foreign Key) qayerda joylashgan?**",
+      "   - Kimda Foreign Key (`user_id`, `category_id`) bo'lsa, o'sha model **`belongsTo`** yozadi!",
+      "   - O'zida Foreign Key bo'lmagan, lekin boshqa jadval unga bog'langan model **`hasOne`** yoki **`hasMany`** yozadi.",
+      "",
+      "2. **Misollar:**",
+      "   - `User` va `Profile`: `profiles` jadvalida `user_id` bor. Demak: `User -> hasOne(Profile)`, `Profile -> belongsTo(User)`.",
+      "   - `Post` va `Comment`: `comments` jadvalida `post_id` bor. Demak: `Post -> hasMany(Comment)`, `Comment -> belongsTo(Post)`.",
+      "",
+      "3. **Laravel nomlash konvensiyasi:**",
+      "   - Agar `Comment` modelida `post()` funksiyasi yozilsa, Laravel avtomatik ravishda `comments.post_id` ustunini qidiradi. Agar ustun nomi boshqacha bo'lsa, ikkinchi argumentda ko'rsatiladi: `belongsTo(Post::class, 'custom_post_id')`."
+    ],
+    "tip": "'Kimda foreign key bo'lsa, o'sha belongsTo ishlatadi' degan qisqa va aniq oltin qoidani aytsangiz, suhbat oluvchida ajoyib taassurot qoldirasiz."
+  },
+  {
+    "id": "iq-211",
+    "title": "Eloquent Many-to-Many (belongsToMany) qanday ishlaydi va Pivot jadval nima?",
+    "level": "junior",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "eloquent-orm",
+    "subskillId": "13.2",
+    "answer": [
+      "Many-to-Many (Ko'pga-ko'p) munosabatida bitta ob'ekt ikkinchi ob'ektdan bir nechtasiga ega bo'lishi va aksincha bo'lishi mumkin (masalan, `User` va `Role`):",
+      "",
+      "1. **Pivot jadval:**",
+      "   - Ikki jadvalni bog'lash uchun uchinchi oraliq (Pivot) jadval kerak bo'ladi (masalan, `role_user`).",
+      "   - Standart bo'yicha nomlash: ikkala model nomining birlik shakli, alifbo tartibida, pastki chiziq bilan (`role` va `user` -> `role_user`). Unda `user_id` va `role_id` bo'ladi.",
+      "",
+      "2. **Modelda e'lon qilish:**",
+      "   ```php\n   // User.php\n   public function roles() {\n       return $this->belongsToMany(Role::class)->withTimestamps();\n   }\n   ```",
+      "",
+      "3. **Amallar:**",
+      "   - `attach($roleId)`: Yangi rol biriktirish.",
+      "   - `detach($roleId)`: Rolni olib tashlash.",
+      "   - `sync([1, 2, 3])`: Pivot jadvalini to'liq yangilash (ko'rsatilganlarni qoldirib, qolganlarini avtomatik o'chiradi - eng qulay metod)."
+    ],
+    "tip": "sync() metodi Many-to-Many boshqaruvida xatolarning oldini olishi va ortiqcha detach/attach zanjiridan xalos qilishini ta'kidlang."
+  },
+
+  // --- Database va SQL (JUNIOR) ---
+  {
+    "id": "iq-212",
+    "title": "SQL: WHERE va HAVING o'rtasidagi farq nima? HAVING da nima uchun agregat funksiyalar ishlatiladi?",
+    "level": "junior",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "sql",
+    "subskillId": "9.1",
+    "answer": [
+      "SQL so'rovlarida `WHERE` va `HAVING` ikkalasi ham ma'lumotlarni filtrlash uchun xizmat qiladi, ammo ularning so'rov bajarilish zanjiridagi (Query Execution Order) o'rni tubdan farq qiladi:",
+      "",
+      "1. **`WHERE` (Guruhlashdan OLDIN):**",
+      "   - Ma'lumotlar bazasidagi alohida qatorlarni (rows) guruhlash sodir bo'lishidan oldin filtrlaydi.",
+      "   - Unda agregat funksiyalar (`COUNT()`, `SUM()`, `AVG()`) ishlatib bo'lmaydi, chunki bu paytda hali qatorlar guruhlanmagan bo'ladi.",
+      "",
+      "2. **`HAVING` (Guruhlashdan KEYIN):**",
+      "   - `GROUP BY` orqali hosil qilingan natijaviy guruhlarni filtrlaydi.",
+      "   - Aynan agregat funksiyalar natijasiga shart qo'yish uchun xizmat qiladi.",
+      "",
+      "3. **Misol:**",
+      "   ```sql\n   SELECT department_id, COUNT(*) as total_employees\n   FROM employees\n   WHERE salary > 3000          -- 1. Maoshi 3000 dan oshiq xodimlarni oladi\n   GROUP BY department_id       -- 2. Bo'limlar bo'yicha guruhlaydi\n   HAVING COUNT(*) >= 5;        -- 3. Xodimlar soni 5 tadan ko'p bo'limlarni qoldiradi\n   ```"
+    ],
+    "tip": "So'rov tartibini eslang: FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY. WHERE xom qatorlarni, HAVING esa agregatsiyalangan natijani filtrlaydi."
+  },
+  {
+    "id": "iq-213",
+    "title": "SQL: INNER JOIN, LEFT JOIN, RIGHT JOIN va FULL OUTER JOIN o'rtasidagi farq nima?",
+    "level": "junior",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "sql",
+    "subskillId": "9.2",
+    "answer": [
+      "JOIN turlari ikki jadvaldagi qatorlar qanday shart bilan birlashtirilishini va mos kelmagan qatorlar natijada qolish-qolmasligini belgilaydi:",
+      "",
+      "1. **`INNER JOIN`:**",
+      "   - Faqat ikkala jadvalda ham shartga mos keluvchi (kesishgan) qatorlarni qaytaradi. Agar foydalanuvchining buyurtmasi bo'lmasa, u natijaga kirmaydi.",
+      "",
+      "2. **`LEFT JOIN` (LEFT OUTER JOIN):**",
+      "   - Chap jadvaldagi **barcha** qatorlarni oladi. O'ng jadvaldan faqat mos kelganlari olinadi; mos kelmasa, o'ng jadval ustunlari `NULL` bilan to'ldiriladi. (Masalan, barcha foydalanuvchilar va ularning buyurtmalari; buyurtmasi yo'qlarda `NULL`).",
+      "",
+      "3. **`RIGHT JOIN`:**",
+      "   - O'ng jadvaldagi barcha qatorlarni va chap jadvaldan mos kelganlarini oladi. Amaliyotda kam ishlatiladi (chunki jadvallar o'rnini almashtirib `LEFT JOIN` qilish qulayroq).",
+      "",
+      "4. **`FULL OUTER JOIN`:**",
+      "   - Ikkala jadvaldagi barcha qatorlarni birlashtiradi. Mos kelmagan joylarda har ikki tomondan `NULL` bo'ladi. (MySQL da bevosita qo'llab-quvvatlanmaydi, `UNION` orqali qilinadi)."
+    ],
+    "tip": "Venn diagrammasi orqali tasavvur qiling: INNER JOIN - o'rtadagi kesishma, LEFT JOIN - chap doira to'liq va o'ng doiraning kesishgan qismi."
+  },
+  {
+    "id": "iq-214",
+    "title": "Database: Primary Key va Unique Key o'rtasidagi farq nima? Bitta jadvalda nechta bo'lishi mumkin?",
+    "level": "junior",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "database-design",
+    "subskillId": "14.1",
+    "answer": [
+      "Ikkala kalit ham qatorlarning unikalligini (takrorlanmasligini) ta'minlaydi, biroq quyidagi jiddiy farqlarga ega:",
+      "",
+      "1. **Primary Key (Birlamchi kalit):**",
+      "   - Jadvaldagi har bir qatorni yagona identifikatsiya qiladi.",
+      "   - Hech qachon `NULL` qiymat qabul qila olmaydi (`NOT NULL` majburiy).",
+      "   - Bitta jadvalda **faqat bitta** Primary Key bo'lishi mumkin (lekin u bir nechta ustundan iborat bo'lishi mumkin - Composite PK).",
+      "   - MySQL InnoDB da Primary Key avtomatik ravishda **Clustered Index** hisoblanadi (ma'lumotlar diskda shu kalit tartibida saqlanadi).",
+      "",
+      "2. **Unique Key (Noyob kalit):**",
+      "   - Ustundagi qiymatlarning takrorlanmasligini kafolatlaydi (masalan, `email`, `phone_number`).",
+      "   - `NULL` qiymat qabul qilishi mumkin (va SQL standartiga ko'ra, bitta ustunda bir nechta `NULL` bo'lishi mumkin, chunki `NULL != NULL`).",
+      "   - Bitta jadvalda **istalgancha ko'p** Unique Key bo'lishi mumkin."
+    ],
+    "tip": "Bitta jadvalda faqat bitta Primary Key bo'lishi va u Clustered Index ekanligi, Unique Key esa bir nechta bo'lishi va Secondary Index yaratishini ta'kidlang."
+  },
+
+  // --- Xavfsizlik (JUNIOR) ---
+  {
+    "id": "iq-215",
+    "title": "Security: XSS (Cross-Site Scripting) nima va Blade'da {{ $var }} bilan {!! $var !!} farqi nima?",
+    "level": "junior",
+    "category": "security",
+    "categoryLabel": "Xavfsizlik",
+    "skillSlug": "web-application-security",
+    "subskillId": "51.1",
+    "answer": [
+      "XSS - hujumchi tomonidan veb-sahifaga zararli JavaScript kodlarining joylashtirilishi va boshqa foydalanuvchilar brauzerida ishga tushirilishidir (masalan, cookie yoki tokenni o'g'irlash):",
+      "",
+      "1. **Blade himoyasi (`{{ $var }}`):**",
+      "   - Laravel Blade standarti bo'yicha `{{ $var }}` yozilganda, u PHP ning `htmlspecialchars($var, ENT_QUOTES, 'UTF-8')` funksiyasidan o'tkaziladi.",
+      "   - Natijada `<script>` tegi `&lt;script&gt;` ga aylanadi va brauzer uni kod sifatida emas, oddiy matn sifatida ko'rsatadi. Bu XSS ga qarshi avtomatik himoyadir.",
+      "",
+      "2. **Xavfli chiqarish (`{!! $var !!}`):**",
+      "   - `{!! $var !!}` o'zgaruvchini hech qanday qochirishsiz (raw HTML) to'g'ridan-to'g'ri chiqaradi.",
+      "   - Faqat ishonchli manbalar (masalan, xavfsiz tozalangan WYSIWYG muharriri matni) uchungina ishlatilishi kerak.",
+      "   - Agar foydalanuvchi kiritgan ma'lumot (masalan, izoh yoki profil ismi) `{!! $comment !!}` shaklida chiqarilsa, ilovada ochiq XSS zaifligi paydo bo'ladi."
+    ],
+    "tip": "Hech qachon foydalanuvchi kiritgan ma'lumotni {!! !!} ichiga qo'ymaslik kerakligini, agar HTML chiqarish shart bo'lsa, avval HTMLPurifier kabi kutubxonalar bilan tozalash shartligini ayting."
+  },
+  {
+    "id": "iq-216",
+    "title": "Security: Nega parollarni md5() yoki sha1() bilan saqlash qat'iy taqiqlangan va Bcrypt/Argon2 qanday himoya qiladi?",
+    "level": "junior",
+    "category": "security",
+    "categoryLabel": "Xavfsizlik",
+    "skillSlug": "web-application-security",
+    "subskillId": "51.2",
+    "answer": [
+      "MD5 va SHA-1 parollarni saqlash uchun mutlaqo yaroqsiz hisoblanadi va jiddiy xavfsizlik fojiasiga olib keladi:",
+      "",
+      "1. **MD5 va SHA-1 ning muammolari:**",
+      "   - **Juda tez ishlaydi:** Zamonaviy GPUlar soniyasiga milliardlab MD5 kombinatsiyalarini tekshira oladi (Brute-force).",
+      "   - **Tuzsiz (No Salt):** Agar ikkita foydalanuvchining paroli bir xil bo'lsa, ularning heshi ham bir xil bo'ladi. Hujumchilar oldindan tayyorlangan ulkan jadvallar (Rainbow Tables) orqali parolni bir necha soniyada topib olishadi.",
+      "",
+      "2. **Bcrypt (`Hash::make()`):**",
+      "   - **Sekinlashtirilgan xesh (Slow Hash):** Maxsus `cost` parametri orqali hisoblash qasddan qiyinlashtirilgan (masalan, bitta parolni tekshirish 100-200ms vaqt oladi). Bu brute-force hujumini iqtisodiy jihatdan imkonsiz qiladi.",
+      "   - **Avtomatik tuz (Auto Salt):** Har bir parol uchun yangi tasodifiy tuz (salt) generatsiya qilinadi. Bir xil `123456` paroli har safar mutlaqo boshqacha hesh beradi.",
+      "",
+      "3. **Laravelda:** Har doim `Hash::make($password)` va tekshirishda `Hash::check($input, $hashed)` ishlatiladi."
+    ],
+    "tip": "Bcryptning asosiy kuchi - bu sekinlik (work factor/cost) va avtomatik tuz qo'shilishi ekanligini ta'kidlang."
+  },
+
+  // --- Laravel asoslari (JUNIOR) ---
+  {
+    "id": "iq-217",
+    "title": "Laravel Blade: @include, @yield/@extends va zamonaviy <x-component> yondashuvlarining farqi?",
+    "level": "junior",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "laravel",
+    "subskillId": "2.2",
+    "answer": [
+      "Laravel Blade shablonlash dvigatelida kodni qayta ishlatish evolyutsiyasi quyidagicha kechgan:",
+      "",
+      "1. **`@extends` va `@yield` (Klassik layout merosi):**",
+      "   - Asosiy qolip (`layouts/app.blade.php`) yaratiladi va unda `@yield('content')` joyi belgilanadi. Bolalar sahifasi `@extends('layouts.app')` va `@section('content')` orqali kontent uzatadi.",
+      "",
+      "2. **`@include('view.name', ['data' => $val])`:**",
+      "   - Kichik HTML parchalarini (masalan, tugma, navbar) boshqa fayldan yuklash. Kamchiligi: ma'lumotlar qamrovi (scope) global o'zgaruvchilar bilan chalkashib ketishi oson.",
+      "",
+      "3. **`<x-component>` (Blade Components - zamonaviy standart):**",
+      "   - HTML teglari kabi ishlaydi: `<x-alert type=\"danger\" :message=\"$error\" />`.",
+      "   - Alohida PHP sinfiga ega bo'lishi mumkin (`app/View/Components/Alert.php`), bu esa shablon ichida murakkab PHP kodlarini yozmasdan, barcha mantiqni sinfga o'tkazish imkonini beradi.",
+      "   - Slotlar (`{{ $slot }}`) orqali ichki kontentni oson boshqaradi."
+    ],
+    "tip": "Zamonaviy Laravelda komponentli arxitektura (<x-card>, <x-button>) kodni ancha toza va mustaqil qilishini aytib bering."
+  },
+
+  // --- Testlash (JUNIOR) ---
+  {
+    "id": "iq-218",
+    "title": "Testing: Unit Test va Feature Test o'rtasidagi farq nima va birinchi test qanday yoziladi?",
+    "level": "junior",
+    "category": "testing",
+    "categoryLabel": "Testlash",
+    "skillSlug": "unit-testing",
+    "subskillId": "27.1",
+    "answer": [
+      "Avtomatlashtirilgan testlar kod sifatini va yangi o'zgarishlar eskisini buzmasligini (regression) kafolatlaydi:",
+      "",
+      "1. **Unit Test (Birlik testi):**",
+      "   - Ilovaning eng kichik izolyatsiyalangan bo'lagini (bitta sinf, bitta metod yoki hisoblash funksiyasi) tekshiradi.",
+      "   - Ma'lumotlar bazasi, tarmoq yoki HTTP so'rovlariga ulanmaydi. Shu sababli mikrosekundlarda juda tez ishlaydi.",
+      "   - Masalan: `Calculator::add(2, 3)` natijasi `5` ekanligini tekshirish.",
+      "",
+      "2. **Feature Test (Funksional / Integratsion test):**",
+      "   - Bir nechta qismlarning birgalikda ishlashini tekshiradi (HTTP so'rov, Middleware, Controller, Ma'lumotlar bazasi va Validatsiya).",
+      "   - Masalan: `POST /api/register` so'rovi yuborilganda foydalanuvchi DB da paydo bo'lishi va 201 status qaytishini tekshirish:",
+      "   ```php\n   public function test_user_can_register(): void {\n       $response = $this->postJson('/api/register', [\n           'name' => 'Ali',\n           'email' => 'ali@example.com',\n           'password' => 'secret123'\n       ]);\n       $response->assertStatus(201);\n       $this->assertDatabaseHas('users', ['email' => 'ali@example.com']);\n   }\n   ```"
+    ],
+    "tip": "Laravelda asosiy e'tibor Feature testlarga qaratilishi tavsiya etiladi, chunki ular real foydalanuvchi tajribasini to'liq simulyatsiya qiladi."
+  },
+
+  // --- PHP tili (JUNIOR) ---
+  {
+    "id": "iq-219",
+    "title": "PHP: final kalit so'zi nima va u Class hamda Metodlarga qo'llanganda nimani taqiqlaydi?",
+    "level": "junior",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.2",
+    "answer": [
+      "`final` kalit so'zi ob'ektga yo'naltirilgan dasturlashda vorislik (inheritance) va metodlarni qayta yozishni cheklash uchun ishlatiladi:",
+      "",
+      "1. **`final class`:**",
+      "   - Sinf oldiga `final` qo'yilsa, undan boshqa hech qanday sinf meros ololmaydi (`extends` qilib bo'lmaydi).",
+      "   ```php\n   final class PaymentService {}\n   class CustomPayment extends PaymentService {} // Fatal error: Class CustomPayment may not inherit from final class\n   ```",
+      "",
+      "2. **`final public function`:**",
+      "   - Sinfning aniq bir metodi oldiga `final` qo'yilsa, voris sinflar bu metodni o'zgartira (override qila) olmaydi.",
+      "",
+      "3. **Arxitekturaviy foydasi:**",
+      "   - Kutilmagan nojo'ya ta'sirlarning (side-effects) oldini oladi.",
+      "   - Domain-Driven Design va Clean Architecture da Value Object'lar va muhim xizmatlarni immutability va qat'iy nazoratda saqlash uchun barcha sinflarni standart ravishda `final` qilish tavsiya etiladi."
+    ],
+    "tip": "Barcha yangi sinflarni standart ravishda final qilib boshlash va faqat haqiqatan kengaytirish kerak bo'lgandagina ochish yaxshi dasturlash odati ekanligini eslatib o'ting."
+  },
+
+  // --- Laravel asoslari (JUNIOR) ---
+  {
+    "id": "iq-220",
+    "title": "Laravel: Configuration va .env: env() va config() farqi nima va nima uchun productionda env() chaqirilmasligi kerak?",
+    "level": "junior",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "laravel",
+    "subskillId": "2.1",
+    "answer": [
+      "Laravelda konfiguratsiyalarni boshqarish bo'yicha juda muhim qoida mavjud bo'lib, unga rioya qilmaslik productionda kutilmagan `null` xatolariga olib keladi:",
+      "",
+      "1. **`env()` yordamchisi:**",
+      "   - `.env` faylidagi muhit o'zgaruvchilarini o'qish uchun xizmat qiladi: `env('APP_DEBUG', false)`.",
+      "",
+      "2. **`config()` yordamchisi:**",
+      "   - `config/` papkasidagi konfiguratsiya massivlaridan ma'lumot oladi: `config('app.debug')`.",
+      "",
+      "3. **Kritik qoida va `php artisan config:cache`:**",
+      "   - Productionda unumdorlikni oshirish uchun `php artisan config:cache` buyrug'i ishga tushiriladi.",
+      "   - Ushbu buyruq bajarilgandan so'ng, Laravel `.env` faylini o'qishni butunlay to'xtatadi va barcha konfiguratsiyalarni bitta kesh fayliga jamlaydi.",
+      "   - Natijada, ilovaning boshqa joylarida (Controller, Service, Model) to'g'ridan-to'g'ri chaqirilgan `env('KEY')` har doim **`null`** qaytara boshlaydi!",
+      "",
+      "4. **Yechim:**",
+      "   - `.env` qiymatlarini faqatgina `config/*.php` fayllari ichida `env()` orqali o'qish, kod ichida esa faqat `config('services.stripe.key')` orqali murojaat qilish shart."
+    ],
+    "tip": "Bu intervyularda eng ko'p beriladigan 'trick question'lardan biri. 'Productionda config:cache ishlatilganda kod ichidagi env() null qaytaradi' degan javob 100 ballik javobdir."
+  },
+
+  // --- PHP tili (MIDDLE) ---
+  {
+    "id": "iq-221",
+    "title": "PHP: Katta hajmdagi CSV fayllarni (100MB+) memory_limit dan oshmasdan Generatorlar orqali qanday o'qiymiz?",
+    "level": "middle",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.3",
+    "answer": [
+      "`file()`, `file_get_contents()` yoki butun faylni bitta massivga o'qish 100MB+ fayllarda PHP ning `Allowed memory size exhausted` xatosiga olib keladi. Chunki PHP massivlari xotirada 3-5 barobar ko'proq joy egallaydi:",
+      "",
+      "1. **Generatorlar yechimi (`yield`):**",
+      "   - Fayl qatorma-qator oqim (stream) sifatida o'qiladi va har bir qator qayta ishlangach xotiradan tozalanadi:",
+      "   ```php\n   function readCsv(string $filePath): Generator {\n       $handle = fopen($filePath, 'r');\n       while (($row = fgetcsv($handle)) !== false) {\n           yield $row;\n       }\n       fclose($handle);\n   }\n   \n   // Foydalanish:\n   foreach (readCsv('large_file.csv') as $row) {\n       ProcessRowJob::dispatch($row); // Xotira doimo 5-10MB atrofida qoladi!\n   }\n   ```",
+      "",
+      "2. **LazyCollection (Laravel):**",
+      "   - Laravel ichida aynan shu mexanizm `LazyCollection::make(function () { ... })` orqali chiroyli o'ralgan.",
+      "   - Natijada bir necha gigabaytlik ma'lumotlarni minimal operativ xotira (RAM) sarflab qayta ishlash mumkin."
+    ],
+    "tip": "Oddiy massiv butun faylni bir vaqtning o'zida RAM ga yuklashini, Generator esa faqat joriy bitta elementni ushlab turishini solishtirib bering."
+  },
+
+  // --- Xavfsizlik (MIDDLE) ---
+  {
+    "id": "iq-222",
+    "title": "PHP: serialize() va unserialize() nega xavfli va Insecure Deserialization qanday qilib RCE ga olib kelishi mumkin?",
+    "level": "middle",
+    "category": "security",
+    "categoryLabel": "Xavfsizlik",
+    "skillSlug": "web-application-security",
+    "subskillId": "51.1",
+    "answer": [
+      "Foydalanuvchi nazoratidagi ma'lumotlarni hech qachon to'g'ridan-to'g'ri `unserialize()` qilmaslik kerak:",
+      "",
+      "1. **Hujum mexanizmi (Magic Methods & POP Chains):**",
+      "   - `unserialize()` ob'ektni tiklaganda uning `__wakeup()`, `__destruct()`, `__toString()` kabi sehrli metodlari avtomatik ishga tushadi.",
+      "   - Hujumchi loyihadagi mavjud sinflar (Gadget chains) zanjirini tuzib, `unserialize()` orqali serverda ixtiyoriy buyruqlarni bajarish (Remote Code Execution - RCE) ga erishishi mumkin.",
+      "",
+      "2. **Xavfsiz alternativa:**",
+      "   - Ilovalarda ma'lumotlar almashinuvi va saqlanishi uchun har doim **JSON** (`json_encode()`, `json_decode()`) ishlatilishi shart.",
+      "   - JSON faqat ma'lumotlarni saqlaydi, hech qanday sinf xususiyatlari yoki kod ijrosini ishga tushirmaydi.",
+      "   - Agar `unserialize()` ishlatish shart bo'lsa, PHP 7+ dagi `allowed_classes` opsiyasidan foydalanish shart: `unserialize($data, ['allowed_classes' => false])`."
+    ],
+    "tip": "PHP Serialization zaifligi tarixda ko'plab yirik freymvorklarni buzishga sabab bo'lganini va JSON har doim eng xavfsiz format ekanligini ta'kidlang."
+  },
+
+  // --- Laravel asoslari (MIDDLE) ---
+  {
+    "id": "iq-223",
+    "title": "Laravel: Custom Artisan Commands: Argumentlar, Optionlar va withProgressBar qanday ishlatiladi?",
+    "level": "middle",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "laravel",
+    "subskillId": "2.4",
+    "answer": [
+      "Laravel Artisan konsol buyruqlari fon vazifalarini, hisobotlarni va cronjoblarni bajarishda asosiy vositadir:",
+      "",
+      "1. **Signature sintaksisi (Argument vs Option):**",
+      "   ```php\n   protected $signature = 'users:notify {user : Foydalanuvchi ID si} {--queue : Navbatga tashlash} {--limit=100 : Maksimal son}';\n   ```",
+      "   - `{user}`: Majburiy pozitsion argument (`$this->argument('user')`).",
+      "   - `{--queue}`: Ixtiyoriy boolean flag (`$this->option('queue')` -> true/false).",
+      "   - `{--limit=100}`: Standart qiymatli kalit-qiymat ko'rinishidagi parametr.",
+      "",
+      "2. **Progress Bar (`withProgressBar`):**",
+      "   - Minglab elementlar qayta ishlanganda konsolda vizual holatni ko'rsatish:",
+      "   ```php\n   $this->withProgressBar(User::cursor(), function (User $user) {\n       $user->sendMonthlyReport();\n   });\n   $this->newLine();\n   $this->info('Hisobotlar muvaffaqiyatli yuborildi!');\n   ```"
+    ],
+    "tip": "Katta hajmdagi ma'lumotlar bilan ishlaganda User::all() emas, balki xotirani tejash uchun User::cursor() yoki chunk() bilan ProgressBar ishlatilishini alohida ta'kidlang."
+  },
+  {
+    "id": "iq-224",
+    "title": "Laravel Service Container: Contextual Binding va Tagging (tag/tagged) qachon ishlatiladi?",
+    "level": "middle",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "laravel",
+    "subskillId": "2.1",
+    "answer": [
+      "Murakkab loyihalarda bitta interfeysning bir nechta turli realizatsiyalari bo'lganda Service Container imkoniyatlari quyidagicha qo'llaniladi:",
+      "",
+      "1. **Contextual Binding (Kontekstga bog'liq inyeksiya):**",
+      "   - Ikkita turli kontroller bitta `StorageInterface` ni so'rasa, lekin biriga `S3Storage`, ikkinchisiga `LocalStorage` kerak bo'lsa:",
+      "   ```php\n   $this->app->when(PhotoController::class)\n             ->needs(StorageInterface::class)\n             ->give(S3Storage::class);\n             \n   $this->app->when(LogController::class)\n             ->needs(StorageInterface::class)\n             ->give(LocalStorage::class);\n   ```",
+      "",
+      "2. **Container Tagging (`tag` / `tagged`):**",
+      "   - Bir xil toifadagi turli xizmatlarni bitta guruhga birlashtirish (masalan, barcha hisobot generatorlari):",
+      "   ```php\n   $this->app->tag([PdfReport::class, CsvReport::class, ExcelReport::class], 'reports');\n   \n   // Barchasini birdaniga inyeksiya qilish:\n   $this->app->bind(ReportAggregator::class, function ($app) {\n       return new ReportAggregator($app->tagged('reports'));\n   });\n   ```"
+    ],
+    "tip": "Contextual binding - Open/Closed prinsipini buzmasdan har xil mijozlarga mos klasslarni dinamik berishning eng toza yo'lidir."
+  },
+  {
+    "id": "iq-225",
+    "title": "Laravel: Event / Listener arxitekturasi qanday ishlaydi va Event Discovery mexanizmi nima?",
+    "level": "middle",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "event-driven-architecture",
+    "subskillId": "48.1",
+    "answer": [
+      "Event-Driven (Hodisalarga asoslangan) arxitektura kodni modullarga ajratish va bir-biriga qattiq bog'lanib qolishining (Decoupling) oldini oladi:",
+      "",
+      "1. **Klassik struktura:**",
+      "   - **Event (Hodisa):** Sof ma'lumot ob'ekti (DTO). Masalan: `OrderCreated` hodisasi faqat `$order` modelini saqlaydi.",
+      "   - **Listener (Tinglovchi):** Hodisaga javob beruvchi bitta alohida mantiq. Masalan: `SendInvoiceNotification`, `ReduceStock`, `GenerateReceiptPdf`.",
+      "",
+      "2. **Event Discovery (Avtomatik kashf qilish):**",
+      "   - Eski versiyalarda har bir event va listenerni `EventServiceProvider` dagi `$listen` massivida qo'lda ro'yxatdan o'tkazish talab qilinar edi.",
+      "   - Zamonaviy Laravelda Listenerdagi `handle(OrderCreated $event)` metodining type-hintiga qarab, Laravel ularni avtomatik tarzda bog'laydi.",
+      "",
+      "3. **Asinxronlik (`ShouldQueue`):**",
+      "   - Listenerga `implements ShouldQueue` qo'shilsa, foydalanuvchi sahifani kutib turmaydi, listener fon navbatiga (Queue) tushadi."
+    ],
+    "tip": "Listenerlarda ShouldQueue ishlatilganda tranzaksiya commit bo'lishidan oldin listener ishga tushib ketmasligi uchun ShouldDispatchAfterCommit ni eslab o'ting."
+  },
+
+  // --- Eloquent ORM (MIDDLE) ---
+  {
+    "id": "iq-226",
+    "title": "Eloquent: Subqueries va addSelect() orqali hisoblangan ustunlarni N+1 siz olish qanday amalga oshiriladi?",
+    "level": "middle",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent ORM",
+    "skillSlug": "eloquent-orm",
+    "subskillId": "13.3",
+    "answer": [
+      "Foydalanuvchilar ro'yxatida ularning har birining 'oxirgi login vaqti' yoki 'oxirgi buyurtma summasi' kabi bog'langan hisoblangan qiymatlarni olishda ko'pincha N+1 xatosi yuzaga keladi:",
+      "",
+      "1. **Noto'g'ri usul:**",
+      "   - Foreach ichida `$user->orders()->latest()->first()->amount` chaqirish 100 ta foydalanuvchi uchun 101 ta DB so'rovini hosil qiladi.",
+      "",
+      "2. **To'g'ri usul: `addSelect()` bilan subquery:**",
+      "   ```php\n   $users = User::addSelect([\n       'last_order_amount' => Order::select('amount')\n           ->whereColumn('user_id', 'users.id')\n           ->latest()\n           ->limit(1)\n   ])->paginate(20);\n   \n   // Har bir $user modelida $user->last_order_amount oddiy ustundek mavjud bo'ladi!\n   ```",
+      "",
+      "3. **Afzalligi:**",
+      "   - Barcha ma'lumotlar ma'lumotlar bazasi dvigatelining o'zida bitta yagona SQL so'rovida hisoblanadi va millionlab qatorlarda ham bir necha millisekundda ishlaydi."
+    ],
+    "tip": "addSelect() subquery nafaqat qiymatni tez olish, balki natijani shu hisoblangan ustun bo'yicha saralash (orderBy('last_order_amount')) imkonini ham berishini ayting."
+  },
+
+  // --- Laravel asoslari (MIDDLE) ---
+  {
+    "id": "iq-227",
+    "title": "Laravel Notifications: Mail, Database, SMS va Broadcast kanallariga bitta buyruq orqali xabar yuborish qanday ishlaydi?",
+    "level": "middle",
+    "category": "laravel",
+    "categoryLabel": "Laravel asoslari",
+    "skillSlug": "laravel",
+    "subskillId": "2.5",
+    "answer": [
+      "Laravel Notification tizimi bitta xabarni turli aloqa kanallari orqali yetkazish uchun abstraksiya qatlamini taqdim etadi:",
+      "",
+      "1. **`via($notifiable)` metodi:**",
+      "   - Bildirishnoma qaysi kanallardan yuborilishini belgilaydi:",
+      "   ```php\n   public function via($notifiable): array {\n       return $notifiable->prefers_sms ? ['sms', 'database'] : ['mail', 'database'];\n   }\n   ```",
+      "",
+      "2. **Kanalga xos metodlar:**",
+      "   - `toMail($notifiable)`: Email shabloni (`MailMessage`).",
+      "   - `toDatabase($notifiable)`: `notifications` jadvaliga JSON formatda yoziladigan massiv.",
+      "   - `toBroadcast($notifiable)`: Websocket orqali real-vaqtda brauzerga uzatiladigan ma'lumot.",
+      "",
+      "3. **Yuborish:**",
+      "   - `$user->notify(new OrderPaidNotification($order));` yoki",
+      "   - `Notification::send($users, new SystemMaintenanceNotification());` (ommaviy yuborish)."
+    ],
+    "tip": "Notification klassiga ShouldQueue interfeysini qo'shish orqali barcha kanallar bo'ylab xabar yuborishni avtomatik asinxron fon rejimiga o'tkazish mumkinligini ayting."
+  },
+
+  // --- Database va SQL (MIDDLE) ---
+  {
+    "id": "iq-228",
+    "title": "MySQL EXPLAIN: 'type' ustunidagi ALL, index, range, ref, eq_ref, const ko'rsatkichlarining ma'nosi va tezlik tartibi?",
+    "level": "middle",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "database-optimization",
+    "subskillId": "15.1",
+    "answer": [
+      "MySQL `EXPLAIN` tahlilida `type` ustuni ma'lumotlar bazasi so'rov qatorlarini qanday usulda qidirganini (Join Type) bildiradi. Tezlik tartibi (Eng yaxshidan eng yomonga qarab):",
+      "",
+      "1. **`system` / `const` (Eng tez):** Primary Key yoki Unique ustun bo'yicha aniq bitta qiymat qidirilganda (masalan, `WHERE id = 5`). O(1) vaqt.",
+      "2. **`eq_ref`:** JOIN paytida Primary Key yoki Unique NOT NULL ustun bo'yicha bitta qator biriktirilganda (eng ideal JOIN).",
+      "3. **`ref`:** Oddiy (Unique bo'lmagan) indeks bo'yicha tenglik qidirilganda (masalan, `WHERE status = 'active'`).",
+      "4. **`range`:** Indekslangan ustunda diapazonli shartlar ishlatilganda (`BETWEEN`, `>`, `<`, `IN()`).",
+      "5. **`index` (Xavfli):** Indeks to'liq aylanib chiqildi (Full Index Scan). `ALL` dan ko'ra yaxshiroq, chunki ma'lumotlar diskdan emas, RAM dagi indeksdan o'qiladi.",
+      "6. **`ALL` (Eng yomon - Halokatli):** To'liq jadval skaneri (Full Table Scan). Indekslar umuman ishlatilmagan, barcha qatorlar diskdan ketma-ket o'qilgan."
+    ],
+    "tip": "EXPLAIN da har doim 'ALL' va 'index' larni yo'qotib, kamida 'range' yoki 'ref' darajasiga keltirish optimallashtirishning asosiy maqsadi ekanligini ayting."
+  },
+  {
+    "id": "iq-229",
+    "title": "SQL Tranzaksiyalari: ACID tamoyillari (Atomicity, Consistency, Isolation, Durability) amalda nimani anglatadi?",
+    "level": "middle",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "database-transactions",
+    "subskillId": "17.1",
+    "answer": [
+      "ACID - bu ma'lumotlar bazasi tranzaksiyalarining ishonchliligini kafolatlovchi to'rtta fundamental tamoyildir:",
+      "",
+      "1. **A - Atomicity (Bo'linmaslik):**",
+      "   - 'Hammasi yoki hech narsa' (All-or-Nothing). Tranzaksiyadagi 10 ta buyruqdan 9 tasi bajarilib, 10-chisi xato bersa, avvalgi 9 tasi ham bekor qilinadi (`ROLLBACK`).",
+      "",
+      "2. **C - Consistency (Muvofiqlik):**",
+      "   - Baza har doim o'rnatilgan qoidalarga (Foreign Key, Unique, Check constraints) muvofiq qoladi. Balans noldan kamayib ketmasligi shart bo'lsa, xato holatda tranzaksiya rad etiladi.",
+      "",
+      "3. **I - Isolation (Yakkalanish):**",
+      "   - Bir vaqtning o'zida parallel bajarilayotgan tranzaksiyalar bir-birining oraliq (hali commit bo'lmagan) holatlarini ko'rmasligi kerak.",
+      "",
+      "4. **D - Durability (Bardavomlik):**",
+      "   - Tranzaksiya muvaffaqiyatli yakunlangach (`COMMIT`), server toki to'satdan uzilib qolsa ham, ma'lumotlar yo'qolmaydi (Write-Ahead Logging / WAL orqali diskka yozilgan bo'ladi)."
+    ],
+    "tip": "Bank o'tkazmasi misolini keltiring: A foydalanuvchidan 100$ yechildi va B ga o'tkazilayotganda elektr o'chdi. Atomicity tufayli pul yo'qolib ketmaydi, rollback bo'ladi."
+  },
+  {
+    "id": "iq-230",
+    "title": "Database: Tranzaksiya izolyatsiya darajalari: Dirty Read, Non-Repeatable Read va Phantom Read nima?",
+    "level": "middle",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "database-transactions",
+    "subskillId": "17.2",
+    "answer": [
+      "Izolyatsiya darajalari parallel tranzaksiyalarning xavfsizligi va tezligi o'rtasidagi kelishuvdir (Trade-off):",
+      "",
+      "1. **Potensial muammolar:**",
+      "   - **Dirty Read:** Boshqa tranzaksiya o'zgartirgan, lekin hali `COMMIT` qilmagan ma'lumotni o'qib olish (agar u rollback qilsa, soxta ma'lumot o'qilgan bo'ladi).",
+      "   - **Non-Repeatable Read:** Bitta tranzaksiya ichida bir xil qatorni ikki marta o'qiganda boshqacha qiymat chiqishi (chunki orada boshqa tranzaksiya uni UPDATE qilib commit qildi).",
+      "   - **Phantom Read:** Diapazonli so'rovda (`WHERE age > 20`) ikkinchi marta o'qilganda yangi qatorlar paydo bo'lib qolishi (boshqa tranzaksiya INSERT qildi).",
+      "",
+      "2. **4 ta standart daraja:**",
+      "   - **Read Uncommitted:** Dirty Read ga ruxsat beradi (eng xavfli, kam ishlatiladi).",
+      "   - **Read Committed (PostgreSQL standarti):** Dirty Read yo'qoladi, faqat commit qilingan ma'lumot ko'rinadi.",
+      "   - **Repeatable Read (MySQL InnoDB standarti):** MVCC orqali Non-Repeatable Read va Phantom Read ning oldi olinadi.",
+      "   - **Serializable:** To'liq qat'iy ketma-ketlik. Barcha so'rovlar qulflanadi (eng sekin, lekin 100% xavfsiz)."
+    ],
+    "tip": "MySQL standart bo'yicha Repeatable Read, PostgreSQL esa Read Committed darajasida ishlashini bilish juda yuqori baholanadi."
+  },
+  {
+    "id": "iq-231",
+    "title": "Redis: Hashes vs Strings: Foydalanuvchi profilini saqlashda nima uchun HSET oddiy JSON SET ga qaraganda ancha kam xotira egallaydi?",
+    "level": "middle",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "redis",
+    "subskillId": "12.1",
+    "answer": [
+      "Foydalanuvchi ma'lumotlarini (masalan, `id, name, email, visits`) Redisda saqlashda ikki xil yo'l bor:",
+      "",
+      "1. **String (JSON) usuli: `SET user:1 '{\"name\":\"Ali\",\"email\":\"...\"}'`:**",
+      "   - Har safar bitta maydonni (masalan, `visits` sonini) oshirish uchun butun JSON ni PHP ga o'qib, parse qilib, qayta saqlash kerak bo'ladi (Race condition xavfi).",
+      "   - Har bir kalit Redisda metadata va xotira boshlig'iga (overhead) ega bo'ladi.",
+      "",
+      "2. **Redis Hashes usuli: `HSET user:1 name Ali email ... visits 0`:**",
+      "   - **Atomik yangilash:** Faqat bitta maydonni alohida o'qish (`HGET user:1 name`) yoki atomik oshirish (`HINCRBY user:1 visits 1`) mumkin.",
+      "   - **Xotirani 5 barobargacha tejash (ziplist / listpack):** Redisda maydonlar soni kichik bo'lsa (standart 512 tagacha), Redis uni xotirada o'ta siqilgan `listpack` strukturasi sifatida saqlaydi. Natijada millionlab foydalanuvchilar profilini saqlashda RAM sarfi keskin kamayadi."
+    ],
+    "tip": "Redis Hash'lar nafaqat xotirani tejaydi, balki Race Condition siz atomik HINCRBY amallarini bajarish imkonini beradi."
+  },
+
+  // --- Asinxron arxitektura (MIDDLE) ---
+  {
+    "id": "iq-232",
+    "title": "Laravel Queues: Job Retries, backoff, tries va maxExceptions parametrlari tarmoq xatolarini qanday yengadi?",
+    "level": "middle",
+    "category": "async",
+    "categoryLabel": "Asinxron arxitektura",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.2",
+    "answer": [
+      "Tashqi API larga (SMS, To'lov, Pochta) so'rov yuboruvchi navbatdagi vazifalar tarmoq uzilishlari tufayli xato berishi tabiiy:",
+      "",
+      "1. **`$tries = 3;`:**",
+      "   - Job necha marta qayta urinib ko'rishini belgilaydi. Agar 3 marta ham yiqilsa, `failed_jobs` jadvaliga tushadi.",
+      "",
+      "2. **`$backoff = [10, 60, 300];` (Eksponensial kechiktirish):**",
+      "   - Job xato berganda uni darhol qayta ishga tushirish tashqi serverni yanada yuklab qo'yadi.",
+      "   - Massiv ko'rinishida berilsa: 1-xatoda 10 soniyadan keyin, 2-xatoda 60 soniyadan keyin, 3-xatoda 5 daqiqadan keyin qayta urinadi.",
+      "",
+      "3. **`$maxExceptions = 2;`:**",
+      "   - Belgilangan sonli xatolardan so'ng jobni qayta urinishlardan to'xtatadi.",
+      "",
+      "4. **`retryUntil()`:**",
+      "   - Urinishlar soniga emas, aniq vaqtga bog'lash: masalan, 'navbatdagi vazifani 1 soat davomida har 2 daqiqada takrorlab ko'r'."
+    ],
+    "tip": "Backoff parametri tashqi servislarga ortiqcha yuklama bermaslik (Throttling) uchun eksponensial o'sib boruvchi sonlar ([5, 30, 120]) bilan berilishi eng to'g'ri amaliyotdir."
+  },
+
+  // --- DevOps va Linux (MIDDLE) ---
+  {
+    "id": "iq-233",
+    "title": "Linux Supervisor: Production muhitida Laravel queue workerlarni doimiy va barqaror tirik saqlash qanday ta'minlanadi?",
+    "level": "middle",
+    "category": "devops",
+    "categoryLabel": "DevOps va Linux",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.3",
+    "answer": [
+      "`php artisan queue:work` buyrug'i uzoq yashovchi (long-running) jarayon bo'lib, xotira to'lib ketishi, xatoliklar yoki server qayta yuklanganda to'xtab qolishi mumkin:",
+      "",
+      "1. **Supervisor ning vazifasi:**",
+      "   - Linux tizimida belgilangan jarayonlarni doimiy kuzatib boradi. Agar worker biron sabab bilan o'lib qolsa, mikrosekundlarda uni avtomatik qayta ishga tushiradi (`autostart=true`, `autorestart=true`).",
+      "",
+      "2. **Tipik konfiguratsiya (`/etc/supervisor/conf.d/laravel-worker.conf`):**",
+      "   ```ini\n   [program:laravel-worker]\n   process_name=%(program_name)s_%(process_num)02d\n   command=php /var/www/app/artisan queue:work redis --sleep=3 --tries=3 --max-time=3600\n   autostart=true\n   autorestart=true\n   user=www-data\n   numprocs=8\n   redirect_stderr=true\n   stdout_logfile=/var/www/app/storage/logs/worker.log\n   ```",
+      "",
+      "3. **`numprocs=8`:**",
+      "   - Bir vaqtning o'zida parallel ishlovchi 8 ta worker jarayonini ishga tushiradi, bu esa navbatlarning tezkor bo'shashini ta'minlaydi.",
+      "4. **Deploy paytidagi qoida:** Yangi kod yuklanganda albatta `php artisan queue:restart` chaqirilishi kerak, shunda workerlar navbatdagi vazifani tugatib, yangi kod bilan o'zini yangilaydi."
+    ],
+    "tip": "Deploy skriptida har doim 'queue:restart' bo'lishi shartligini, aks holda workerlar xotiradagi eski PHP kodini bajarishda davom etishini ayting."
+  },
+
+  // --- Xavfsizlik (MIDDLE) ---
+  {
+    "id": "iq-234",
+    "title": "API Rate Limiting: RateLimiter::for() orqali dinamik cheklovlar (masalan, Premium vs Bepul foydalanuvchilar) qanday qo'yiladi?",
+    "level": "middle",
+    "category": "security",
+    "categoryLabel": "Xavfsizlik",
+    "skillSlug": "api-design",
+    "subskillId": "19.3",
+    "answer": [
+      "Laravel 8+ da `RateLimiter` fasadi orqali nafaqat oddiy IP bo'yicha, balki har bir foydalanuvchi statusiga qarab moslashuvchan cheklovlar o'rnatish mumkin:",
+      "",
+      "1. **Sozlash (`AppServiceProvider`):**",
+      "   ```php\n   RateLimiter::for('api', function (Request $request) {\n       return $request->user()?->is_premium\n           ? Limit::none() // Cheklovsiz\n           : Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());\n   });\n   ```",
+      "",
+      "2. **Javob sarlavhalari (Headers):**",
+      "   - `X-RateLimit-Limit`: Daqiqasiga ruxsat etilgan so'rovlar soni.",
+      "   - `X-RateLimit-Remaining`: Qolgan so'rovlar soni.",
+      "   - `Retry-After`: Cheklov buzilganda (HTTP 429 Too Many Requests) necha soniya kutish kerakligi.",
+      "",
+      "3. **Kesh drayveri:** Productionda rate limit ma'lumotlari Redisda saqlanishi shart, aks holda ko'p serverli (multi-server) tizimlarda cheklov to'g'ri ishlamaydi."
+    ],
+    "tip": "Rate limiting faqat DDOS dan emas, balki bepul foydalanuvchilarning pullik resurslarni suiste'mol qilishidan biznesni himoya qilish vositasi ekanligini ayting."
+  },
+  {
+    "id": "iq-235",
+    "title": "OWASP: Broken Object Level Authorization (BOLA / IDOR) nima va Laravelda Route Model Binding orqali qanday oldi olinadi?",
+    "level": "middle",
+    "category": "security",
+    "categoryLabel": "Xavfsizlik",
+    "skillSlug": "web-application-security",
+    "subskillId": "51.1",
+    "answer": [
+      "BOLA (API Security Top 1 ro'yxatida) - foydalanuvchi URL dagi ID ni o'zgartirib, boshqa odamning ma'lumotlariga (shartnoma, chek, hisob) ruxsatsiz kirishi yoki o'chirishi:",
+      "",
+      "1. **Xavfli kod:**",
+      "   ```php\n   public function show($id) {\n       $invoice = Invoice::findOrFail($id); // Foydalanuvchiga tegishlimi yoki yo'q - tekshirilmagan!\n       return response()->json($invoice);\n   }\n   ```",
+      "",
+      "2. **Himoya usullari:**",
+      "   - **Laravel Policy / Gate:** `$this->authorize('view', $invoice);`",
+      "   - **Scoped Route Model Binding:**",
+      "   ```php\n   Route::get('/users/{user}/invoices/{invoice}', [InvoiceController::class, 'show'])\n        ->scopeBindings();\n   ```",
+      "   Laravel faqat ushbu `{user}` ga tegishli bo'lgan `{invoice}` nigina yuklaydi. Boshqa foydalanuvchining hisob-fakturasi ID si uzatilsa, avtomatik 404 beradi."
+    ],
+    "tip": "BOLA ning oldini olish uchun har doim Model Policy yoki scopeBindings() ishlatilishi kerakligini ta'kidlang."
+  },
+
+  // --- Testlash (MIDDLE) ---
+  {
+    "id": "iq-236",
+    "title": "Testing: RefreshDatabase traiti qanday ishlaydi va in-memory SQLite vs real MySQL testi o'rtasidagi farq?",
+    "level": "middle",
+    "category": "testing",
+    "categoryLabel": "Testlash",
+    "skillSlug": "unit-testing",
+    "subskillId": "27.2",
+    "answer": [
+      "Testlar bir-biriga ta'sir qilmasligi uchun har bir testdan so'ng ma'lumotlar bazasi dastlabki toza holatiga qaytarilishi kerak:",
+      "",
+      "1. **`RefreshDatabase` traiti:**",
+      "   - Birinchi marta barcha migratsiyalarni ishga tushiradi (`migrate`).",
+      "   - Har bir alohida test metodi boshlanishida tranzaksiya ochadi (`DB::beginTransaction()`) va test tugagach `ROLLBACK` qiladi.",
+      "   - Natijada jadvallarni qayta yaratish shart bo'lmaydi va testlar bir necha barobar tezlashadi.",
+      "",
+      "2. **In-Memory SQLite vs Real MySQL:**",
+      "   - **In-Memory SQLite (`:memory:`):** O'ta tez ishlaydi, lekin MySQL ga xos xususiyatlarni (masalan, JSON operatorlari, Virtual Columns, FullText Index, qat'iy Foreign Key cheklovlari) to'liq qo'llab-quvvatlamaydi. Natijada testda o'tgan kod productionda yiqilishi mumkin.",
+      "   - **Real MySQL (Docker yoki alohida test DB):** Biroz sekinroq, lekin production bilan 100% bir xil muhitni kafolatlaydi."
+    ],
+    "tip": "Kritik loyihalarda test muhitini ham real MySQL yoki PostgreSQL da ishlatish kutilmagan farqlardan asrashini aytib bering."
+  },
+  {
+    "id": "iq-237",
+    "title": "Laravel Testing: Mail::fake(), Queue::fake(), Event::fake() va Http::fake() fakes mexanizmi qanday ishlaydi?",
+    "level": "middle",
+    "category": "testing",
+    "categoryLabel": "Testlash",
+    "skillSlug": "feature-testing",
+    "subskillId": "29.1",
+    "answer": [
+      "Test yozayotganda real mijozlarga email ketib qolishi yoki to'lov shlyuziga haqiqiy pul so'rovi yuborilishining oldini olish uchun Laravel Fakes ishlatiladi:",
+      "",
+      "1. **Qanday ishlaydi?**",
+      "   - `Fake` chaqirilganda, Laravel Service Container dagi haqiqiy servisni xotirada saqlovchi soxta (in-memory test-double) instansiyaga almashtiradi:",
+      "   ```php\n   public function test_order_triggers_email_and_job(): void {\n       Queue::fake();\n       Mail::fake();\n       \n       $this->postJson('/api/orders', [...])->assertStatus(201);\n       \n       // Haqiqiy xat ketmaydi, lekin jo'natilgani tekshiriladi:\n       Mail::assertSent(OrderConfirmationMail::class, function ($mail) {\n           return $mail->hasTo('client@example.com');\n       });\n       \n       // Job navbatga tushganligi tekshiriladi:\n       Queue::assertPushed(GenerateReceiptJob::class);\n   }\n   ```",
+      "",
+      "2. **`Http::fake()`:**",
+      "   - Tashqi API (masalan, Telegram bot yoki Stripe) ga so'rov yubormasdan, oldindan soxta JSON javob qaytarish: `Http::fake(['api.stripe.com/*' => Http::response(['status' => 'success'], 200)]);`"
+    ],
+    "tip": "Fakes yordamida nafaqat amallar muvaffaqiyati, balki xatolik yuz bergandagi holatni ham (Http::response(null, 500)) bemalol tekshirish mumkinligini ayting."
+  },
+
+  // --- Arxitektura (MIDDLE) ---
+  {
+    "id": "iq-238",
+    "title": "Architecture: Repository Pattern vs Service Layer: Laravelda Eloquent mavjud bo'lsa ham Repository kerakmi?",
+    "level": "middle",
+    "category": "architecture",
+    "categoryLabel": "Arxitektura",
+    "skillSlug": "software-architecture",
+    "subskillId": "61.2",
+    "answer": [
+      "Ko'p dasturchilar Repository patternini Eloquent ustiga keraksiz qobiq (wrapper) sifatida yozib, 'Anti-pattern' hosil qilishadi:",
+      "",
+      "1. **Eloquent ning o'zi nima?**",
+      "   - Eloquent Active Record patterni bo'lib, uning Query Builder'i allaqachon mukammal Repository vazifasini bajaradi (`User::where(...)->get()`).",
+      "   - Eloquent ustidan oddiy `UserRepository::find($id)` yozish hech qanday foyda bermaydi, faqat kod hajmini oshiradi.",
+      "",
+      "2. **Qachon Service Layer kifoya?**",
+      "   - 90% Laravel loyihalarida **Service Layer + Eloquent** eng to'g'ri tanlovdir. Controller faqat HTTP ni boshqaradi, barcha biznes mantiq esa Service da joylashadi.",
+      "",
+      "3. **Repository qachon haqiqatan kerak?**",
+      "   - Faqatgina ma'lumotlar manbai doimiy o'zgarib tursa (masalan, foydalanuvchilar ba'zan MySQL dan, ba'zan tashqi REST API dan, ba'zan esa Elasticsearch dan olinishi kerak bo'lganda).",
+      "   - Murakkab Domain-Driven Design (DDD) loyihalarida domen modelini ORM ga qaram bo'lmasligi uchun."
+    ],
+    "tip": "Laravelda har bir model uchun ko'r-ko'rona Repository ochmaslik kerakligini, Service Layer va Query Scopes ko'p hollarda ancha samarali va toza yechim ekanligini bildiring."
+  },
+  {
+    "id": "iq-239",
+    "title": "Architecture: DTO (Data Transfer Object) nima va Controllerdan Servicega assotsiativ massiv o'rniga nima uchun DTO uzatish kerak?",
+    "level": "middle",
+    "category": "architecture",
+    "categoryLabel": "Arxitektura",
+    "skillSlug": "clean-code",
+    "subskillId": "6.2",
+    "answer": [
+      "Controllerdan Service ga `$request->all()` yoki massiv (`array $data`) uzatish katta loyihalarda boshboshdoqlik va xatolarga sabab bo'ladi:",
+      "",
+      "1. **Massivlarning kamchiligi:**",
+      "   - Tip nazorati (Type Safety) yo'q. `$data['emial']` deb bitta harf xato yozilsa ham, IDE yoki PHP buni sezmaydi (faqat runtime da `Undefined array key` xatosi chiqadi).",
+      "   - Qaysi kalitlar majburiy, qaysilari ixtiyoriy ekanligi noaniq bo'lib qoladi.",
+      "",
+      "2. **DTO ning afzalligi (PHP 8.2+ readonly class):**",
+      "   ```php\n   readonly class CreateUserData {\n       public function __construct(\n           public string $name,\n           public string $email,\n           public ?string $phone = null,\n           public UserRole $role = UserRole::CLIENT\n       ) {}\n       \n       public static function fromRequest(UserRegisterRequest $request): self {\n           return new self(\n               name: $request->validated('name'),\n               email: $request->validated('email'),\n               phone: $request->validated('phone')\n           );\n       }\n   }\n   ```",
+      "",
+      "3. **Foydasi:** IDE avtomatik to'ldirish (Auto-complete), qat'iy tiplashtirish, statik analiz (PHPStan) bilan 100% muvofiqlik va o'zgarmaslik (Immutability)."
+    ],
+    "tip": "PHP 8.2 dagi readonly class va named arguments DTO larni yozishni nihoyatda qulay va xavfsiz qilganini ayting."
+  },
+
+  // --- DevOps va Linux (MIDDLE) ---
+  {
+    "id": "iq-240",
+    "title": "DevOps: Linux systemd servisi yaratish: Laravel fon workerlarini yoki Websocket serverni qanday boshqaramiz?",
+    "level": "middle",
+    "category": "devops",
+    "categoryLabel": "DevOps va Linux",
+    "skillSlug": "linux",
+    "subskillId": "38.2",
+    "answer": [
+      "Zamonaviy Linux distributivlarida (Ubuntu/Debian) fon jarayonlarini boshqarish uchun `systemd` eng asosiy vositadir:",
+      "",
+      "1. **Servis fayli yaratish (`/etc/systemd/system/laravel-reverb.service`):**",
+      "   ```ini\n   [Unit]\n   Description=Laravel Reverb WebSocket Server\n   After=network.target\n   \n   [Service]\n   User=www-data\n   Group=www-data\n   Restart=always\n   RestartSec=3\n   ExecStart=/usr/bin/php /var/www/app/artisan reverb:start\n   \n   [Install]\n   WantedBy=multi-user.target\n   ```",
+      "",
+      "2. **Boshqarish buyruqlari:**",
+      "   - `systemctl daemon-reload` (yangi konfiguratsiyani yuklash)",
+      "   - `systemctl enable laravel-reverb` (server yonganda avtomatik ishga tushish)",
+      "   - `systemctl start laravel-reverb` (ishga tushirish)",
+      "   - `systemctl status laravel-reverb` (holatini ko'rish)",
+      "   - `journalctl -u laravel-reverb -f` (jonli loglarni o'qish)."
+    ],
+    "tip": "Restart=always va RestartSec parametrlarini tushuntirish orqali jarayon to'satdan qulaganda tizim uni qayta ko'tarishini ko'rsating."
+  },
+
+  // --- Arxitektura (SENIOR) ---
+  {
+    "id": "iq-241",
+    "title": "Architecture: CQRS da Read Model (Projections) va Write Model: Eventual Consistency kechikishini UI va foydalanuvchi darajasida qanday yashiramiz?",
+    "level": "senior",
+    "category": "architecture",
+    "categoryLabel": "Arxitektura",
+    "skillSlug": "software-architecture",
+    "subskillId": "61.3",
+    "answer": [
+      "CQRS da yozish (Write DB - masalan, PostgreSQL) va o'qish (Read DB - masalan, Elasticsearch yoki Redis) alohida bo'lgani sababli, ma'lumotlar o'qish bazasiga bir necha yuz millisekund kechikib (Eventual Consistency) yetib boradi:",
+      "",
+      "1. **Muammo:**",
+      "   - Foydalanuvchi yangi sharh yoki buyurtma yaratadi, lekin sahifa qayta yuklanganda o'zining yozgan sharhini ko'rmaydi (chunki Read model hali yangilanmagan).",
+      "",
+      "2. **Yechim strategiyalari:**",
+      "   - **Optimistic UI Updates:** Frontend mijoz tomonida server javobini kutmasdan darhol sharhni ekranga chizadi. Server xato qaytarsagina bekor qilinadi.",
+      "   - **Read-Your-Own-Writes Consistency:** Foydalanuvchi so'nggi 5-10 soniya ichida o'zgartirgan ob'ektlar uchun o'qish so'rovi istisno tariqasida to'g'ridan-to'g'ri Write (Primary) bazaga yoki foydalanuvchining shaxsiy Redis keshiga yo'naltiriladi.",
+      "   - **Version / Revision Tracking:** Frontend yozish so'rovi qaytargan yangi versiyani (`v=12`) oladi va Read API ga yuboradi. Read model agar hali `v=11` da bo'lsa, polling yoki websocket orqali `v=12` bo'lishini kutadi."
+    ],
+    "tip": "Taqsimlangan tizimlarda 'Read-Your-Own-Writes' usuli va Optimistic UI yondashuvi foydalanuvchi tajribasini (UX) buzilishidan saqlab qolishning amaliy standartidir."
+  },
+
+  // --- Database va SQL (SENIOR) ---
+  {
+    "id": "iq-242",
+    "title": "PostgreSQL: Table Bloat va HOT (Heap-Only Tuples) optimizatsiyasi: UPDATE amallari katta jadvallarda indekslarni nima uchun shishirib yuboradi?",
+    "level": "senior",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "postgresql",
+    "subskillId": "11.1",
+    "answer": [
+      "PostgreSQL MVCC (Multi-Version Concurrency Control) arxitekturasida `UPDATE` amali qatordagi qiymatni joyida (in-place) o'zgartirmaydi, balki yangi qator (Tuple) yaratadi va eskisini `Dead Tuple` deb belgilaydi:",
+      "",
+      "1. **Indekslarning shishishi (Index Bloat):**",
+      "   - Yangi qator jadvalning boshqa sahifasiga (Page) tushsa, jadvaldagi barcha indekslar yangi qatorning joylashuviga (TID) ko'rsatkich qo'shishi shart bo'ladi.",
+      "   - Natijada tez-tez UPDATE bo'ladigan jadvallarda indeks hajmi keskin shishib, disk va RAM ni to'ldirib tashlaydi.",
+      "",
+      "2. **HOT (Heap-Only Tuples) qutqaruvchisi:**",
+      "   - Agar jadval sahifasida bo'sh joy bo'lsa va UPDATE qilinayotgan ustun **hech qanday indeksga kirmagan bo'lsa**, PostgreSQL yangi qatorni o'sha sahifaning o'ziga joylashtiradi.",
+      "   - Indekslar yangilanmaydi, eski qatordan yangi qatorga ichki ko'rsatkich (Pointer) ulanadi.",
+      "",
+      "3. **Sozlash:**",
+      "   - Tez-tez yangilanadigan jadvallarda `fillfactor` parametrini pasaytirish kerak: `ALTER TABLE orders SET (fillfactor = 70);` (sahifada 30% bo'sh joy qoldirib, HOT yangilanishlarni 90%+ ga chiqaradi)."
+    ],
+    "tip": "fillfactor ni 70-80% qilib qo'yish HOT optimizatsiyasini ishga tushirishi va Auto-vacuum yuklamasini keskin kamaytirishini aytish orqali yuqori PostgreSQL bilimidan dalolat berasiz."
+  },
+
+  // --- Arxitektura (SENIOR) ---
+  {
+    "id": "iq-243",
+    "title": "Architecture: Distributed Transactions: Nega 2PC (Two-Phase Commit) zamonaviy mikroxizmatlarda deyarli ishlatilmaydi va Saga tanlanadi?",
+    "level": "senior",
+    "category": "architecture",
+    "categoryLabel": "Arxitektura",
+    "skillSlug": "software-architecture",
+    "subskillId": "61.3",
+    "answer": [
+      "Bir nechta mustaqil mikroxizmatlar bo'ylab tranzaksiyani boshqarishda 2PC va Saga ikki xil falsafadir:",
+      "",
+      "1. **2PC (Two-Phase Commit) ning muammolari:**",
+      "   - **Bloklovchi protokol (Blocking Protocol):** 1-bosqichda (Prepare) barcha servislar resurslarni (qatorlarni) qulflaydi. Koordinatordan tasdiq (Commit) kelguncha qulflar ochilmaydi.",
+      "   - **Single Point of Failure:** Agar koordinator qulasa, barcha qulflangan servislar osilib qoladi va butun tizim to'xtaydi.",
+      "   - **Masshtablash imkonsiz:** Tarmoq kechikishlari har bir tranzaksiya vaqtini keskin oshiradi. Shu sababli CAP teoremasiga ko'ra mavjudlik (Availability) yo'qoladi.",
+      "",
+      "2. **Saga Pattern ustunligi:**",
+      "   - Hech qanday global DB qulfi bo'lmaydi. Har bir servis o'zining mahalliy tranzaksiyasini darhol commit qiladi.",
+      "   - Xatolik yuz bersa, orqaga qarab **Kompensatsiya tranzaksiyalari (Compensating Transactions)** chaqiriladi (masalan, pul qaytariladi, bron bekor qilinadi).",
+      "   - Tizim yuqori o'tkazuvchanlik va nosozliklarga bardoshlilikka (High Availability) ega bo'ladi."
+    ],
+    "tip": "2PC qat'iy konsistentlik (ACID) beradi lekin tizimni sekinlashtiradi va osiltiradi, Saga esa Eventual Consistency beradi lekin cheksiz masshtablana oladi."
+  },
+
+  // --- Asinxron arxitektura (SENIOR) ---
+  {
+    "id": "iq-244",
+    "title": "Apache Kafka: Partition Key tanlash strategiyasi va Consumer Rebalance paytida yuzaga keladigan Stop-The-World muammosi?",
+    "level": "senior",
+    "category": "async",
+    "categoryLabel": "Asinxron arxitektura",
+    "skillSlug": "event-driven-architecture",
+    "subskillId": "48.2",
+    "answer": [
+      "Apache Kafka da parallelizm va xabarlar ketma-ketligi (Ordering Guarantee) aynan Partitionlar orqali boshqariladi:",
+      "",
+      "1. **Ordering Guarantee (Ketma-ketlik kafolati):**",
+      "   - Kafka xabarlar tartibini butun Topic bo'yicha EMAS, faqat **bitta Partition ichida** kafolatlaydi.",
+      "   - Agar bitta buyurtmaga tegishli xabarlar (Yaratildi -> To'landi -> Yuborildi) to'g'ri tartibda o'qilishi shart bo'lsa, **Partition Key** sifatida `order_id` tanlanishi shart: `hash(order_id) % num_partitions` formulasi orqali barcha bog'liq xabarlar doim bitta partitionga tushadi.",
+      "",
+      "2. **Consumer Rebalance muammosi:**",
+      "   - Consumer Groupga yangi pod qo'shilganda yoki bitta pod o'lib qolsa, Kafka partitionlarni qayta taqsimlaydi (Rebalance).",
+      "   - Eski `Eager Rebalance` barcha iste'molchilarni to'xtatib (Stop-the-world), navbatni bir necha soniyaga muzlatib qo'yar edi.",
+      "   - Zamonaviy Kafka da `Cooperative Sticky Assignor` ishlatiladi: faqat o'rni o'zgargan partitionlar to'xtatiladi, qolgan iste'molchilar o'qishda davom etadi."
+    ],
+    "tip": "Xabarlar tartibi Kafka da faqat bitta Partition ichida kafolatlanishi va Partition Key ning to'g'ri tanlanishi Hot Partition muammosining oldini olishini tushuntiring."
+  },
+
+  // --- Xavfsizlik (SENIOR) ---
+  {
+    "id": "iq-245",
+    "title": "Security: Zero Trust Architecture: Mikroxizmatlar aro mTLS (Mutual TLS) va qisqa umr ko'ruvchi tokenlar qanday ishlaydi?",
+    "level": "senior",
+    "category": "security",
+    "categoryLabel": "Xavfsizlik",
+    "skillSlug": "web-application-security",
+    "subskillId": "51.3",
+    "answer": [
+      "Zero Trust konsepsiyasining asosiy shiori: 'Hech qachon ishonma, har doim tekshir' (Never Trust, Always Verify). Ichki tarmoq (VPC) allaqachon buzilgan deb hisoblanadi:",
+      "",
+      "1. **mTLS (Mutual TLS):**",
+      "   - Standart HTTPS da faqat mijoz server sertifikatini tekshiradi.",
+      "   - mTLS da esa **har ikki tomon** (masalan, `OrderService` va `PaymentService`) bir-biriga o'zining kriptografik sertifikatini taqdim etadi.",
+      "   - Natijada oradagi trafik shifrlanadi (Man-in-the-Middle imkonsiz) va begona servis ichki tarmoqqa kirib olsa ham so'rov yubora olmaydi.",
+      "",
+      "2. **Short-Lived Service Tokens:**",
+      "   - Servislar bir-biri bilan statik `API_KEY` orqali emas, 5-15 daqiqa yashovchi kriptografik imzolangan JWT tokenlar orqali gaplashadi.",
+      "   - Token o'g'irlangan taqdirda ham uning muddati bir necha daqiqada tugaydi.",
+      "",
+      "3. **Amalda:** Kubernetes muhitida bu odatda Service Mesh (Istio yoki Linkerd) orqali dasturchi kodi o'zgartirilmasdan avtomatik yo'lga qo'yiladi."
+    ],
+    "tip": "Zero Trust da perimetr xavfsizligi (firewall) yetarli emasligi, har bir alohida RPC so'rovi kriptografik identifikatsiya qilinishi kerakligini ayting."
+  },
+
+  // --- Arxitektura (SENIOR) ---
+  {
+    "id": "iq-246",
+    "title": "Event Sourcing: Event Schema Evolution: Yillar davomida to'plangan millionlab eski hodisalarni yangi kod talablariga moslash (Upcasting) qanday yechiladi?",
+    "level": "senior",
+    "category": "architecture",
+    "categoryLabel": "Arxitektura",
+    "skillSlug": "event-driven-architecture",
+    "subskillId": "48.2",
+    "answer": [
+      "Event Sourcing tizimlarida hodisalar (Events) o'zgarmasdir (Append-Only). Bazadagi eski hodisalar hech qachon o'chirilmaydi yoki `UPDATE` qilinmaydi:",
+      "",
+      "1. **Muammo:**",
+      "   - 2024 yildagi `UserRegistered` hodisasida faqat `name` bor edi. 2026 yilda tizimga `first_name` va `last_name` majburiy qilindi. Yangi kod eski hodisalarni o'qiyotganda sinib qoladi.",
+      "",
+      "2. **Yechimlar:**",
+      "   - **Upcasting (Eng toza yechim):** Hodisalar bazadan o'qilganda, lekin domen modeliga uzatilishidan oldin oraliq konvertor (Upcaster) orqali o'tadi:",
+      "   ```php\n   class UserRegisteredV1ToV2Upcaster {\n       public function upcast(array $payload): array {\n           $parts = explode(' ', $payload['name'], 2);\n           $payload['first_name'] = $parts[0];\n           $payload['last_name'] = $parts[1] ?? '';\n           unset($payload['name']);\n           return $payload;\n       }\n   }\n   ```",
+      "   - **Versioned Events:** Yangi hodisa klassini yaratish (`UserRegisteredV2`), eski klass esa arxivda o'qish uchun qoldiriladi.",
+      "   - Bazadagi ma'lumotlar o'zgarmaydi, yangi versiya esa barcha o'tmishdagi hodisalarni muammosiz qabul qiladi."
+    ],
+    "tip": "Event Sourcing da bazani to'g'ridan-to'g'ri UPDATE qilish qat'iyan man etilishi va faqat in-memory Upcasting orqali versiyalash to'g'ri arxitektura ekanligini ta'kidlang."
+  },
+
+  // --- Database va SQL (SENIOR) ---
+  {
+    "id": "iq-247",
+    "title": "Database: Sharded muhitda Global Unique ID yaratish: Snowflake ID vs UUID v7 vs Auto-Increment va B-Tree indekslariga ta'siri?",
+    "level": "senior",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "database-design",
+    "subskillId": "14.3",
+    "answer": [
+      "Ma'lumotlar bir nechta mustaqil ma'lumotlar bazalariga (Sharding) bo'linganda an'anaviy `AUTO_INCREMENT` ishlamaydi (chunki har bir bazada ID 1 dan boshlanib to'qnashadi):",
+      "",
+      "1. **UUID v4 ning zarari (B-Tree Fragmentatsiyasi):**",
+      "   - UUID v4 to'liq tasodifiy satr bo'lgani uchun, yangi yozuvlar InnoDB B-Tree sahifalarining ixtiyoriy joyiga tushadi. Bu sahifalarning doimiy yorilishiga (Page Splits), disk I/O ning 10 barobar oshishiga va keshning samarasiz bo'lishiga olib keladi.",
+      "",
+      "2. **UUID v7 (Zamonaviy standart):**",
+      "   - Boshidagi 48 bit joriy Unix vaqt belgisini (Timestamp) saqlaydi, qolgan qismi tasodifiy bo'ladi.",
+      "   - Natijada UUID v7 **vaqt bo'yicha saralangan (time-ordered)** bo'ladi va B-Tree indekslarining faqat eng oxiriga ketma-ket yoziladi (Page split yo'qoladi).",
+      "",
+      "3. **Snowflake ID (Twitter):**",
+      "   - 64-bitli butun son (`BIGINT`): 41 bit vaqt, 10 bit mashina (Node ID), 12 bit ketma-ketlik hisoblagichi.",
+      "   - Afzalligi: String emas, 8 baytlik son bo'lgani uchun xotirani UUID dan 2 barobar kam egallaydi va saralash o'ta tez ishlaydi."
+    ],
+    "tip": "UUID v4 o'rniga UUID v7 yoki Snowflake tanlanishi B-Tree indekslarida Page Splitlarning oldini olib, yozish tezligini saqlab qolishini tushuntiring."
+  },
+
+  // --- DevOps va Linux (SENIOR) ---
+  {
+    "id": "iq-248",
+    "title": "DevOps: Kubernetes da PHP-FPM va Nginx Podlarini masshtablash: HPA (Horizontal Pod Autoscaler) ni Custom Metrics bo'yicha sozlash?",
+    "level": "senior",
+    "category": "devops",
+    "categoryLabel": "DevOps va Linux",
+    "skillSlug": "cloud-computing",
+    "subskillId": "69.2",
+    "answer": [
+      "Standart HPA faqat CPU va Memory bo'yicha masshtablaydi. Ammo PHP-FPM da so'rovlar I/O-bound (baza yoki keshni kutish) bo'lsa, CPU 20% bo'lgan holda ham barcha `pm.max_children` band bo'lib, yangi so'rovlar navbatda qotib qolishi mumkin:",
+      "",
+      "1. **PHP-FPM Custom Metrikalari:**",
+      "   - `php-fpm_status` dan `active processes` va `listen queue` ko'rsatkichlari Prometheus orqali yig'iladi.",
+      "   - Agar `active processes >= 80%` yoki `listen queue > 0` bo'lsa, darhol yangi Podlar qo'shilishi kerak.",
+      "",
+      "2. **Navbatlar (Queue Workers) uchun KEDA:**",
+      "   - Workerlarni CPU bo'yicha emas, Redis yoki RabbitMQ dagi kutilayotgan vazifalar soni bo'yicha masshtablash (masalan, navbatda har 500 ta job uchun bitta yangi worker pod yaratish).",
+      "",
+      "3. **Cool-down davri (Scale-down stabilization):**",
+      "   - Podlarni tezda kamaytirib yubormaslik uchun `stabilizationWindowSeconds: 300` qo'yiladi (Flapping/Thrashing ning oldini oladi)."
+    ],
+    "tip": "PHP da faqat CPU bo'yicha emas, balki FPM active processes va queue lag bo'yicha autoscaling qilish eng to'g'ri production yondashuv ekanligini ayting."
+  },
+
+  // --- Database va SQL (SENIOR) ---
+  {
+    "id": "iq-249",
+    "title": "Database: Tranzaksiyalarda Deadlocklarni kod darajasida oldini olish va DB::transaction retry mexanizmi?",
+    "level": "senior",
+    "category": "database",
+    "categoryLabel": "Database va SQL",
+    "skillSlug": "database-transactions",
+    "subskillId": "17.3",
+    "answer": [
+      "Deadlock - bu ikki yoki undan ortiq tranzaksiyalar bir-biri band qilib turgan resurslarni qulfdan chiqishini o'zaro kutib, cheksiz to'xtab qolish holatidir (MySQL bittasini xato bilan o'ldiradi):",
+      "",
+      "1. **Asosiy sabab: Turli xil qulflash tartibi:**",
+      "   - 1-Tranzaksiya: A foydalanuvchini qulfladi, keyin B ni so'radi.",
+      "   - 2-Tranzaksiya: B foydalanuvchini qulfladi, keyin A ni so'radi. Natija: Deadlock!",
+      "",
+      "2. **Kod darajasida oldini olish (Deterministic Lock Ordering):**",
+      "   - Qulflanadigan ID larni har doim oldindan **o'sish tartibida saralab olish** shart:",
+      "   ```php\n   $userIds = [$fromId, $toId];\n   sort($userIds); // Har doim bir xil tartibda qulflanadi!\n   $users = User::whereIn('id', $userIds)->orderBy('id')->lockForUpdate()->get();\n   ```",
+      "",
+      "3. **Avtomatik qayta urinish (Retry):**",
+      "   - Laravelda `DB::transaction()` metodi 2-argumentida Deadlock yuz berganda avtomatik necha marta qayta urinib ko'rishni qabul qiladi: `DB::transaction(function () { ... }, 5);` (5 marta urinadi)."
+    ],
+    "tip": "ID larni saralash (Lock Ordering) Deadlock larni 99% yo'qotishini va Laravelning DB::transaction($cb, 5) retry mexanizmini birgalikda ishlatish kerakligini ayting."
+  },
+
+  // --- Arxitektura (SENIOR) ---
+  {
+    "id": "iq-250",
+    "title": "Architecture: High-Load tizimlarda Dual-Write muammosi: Transactional Outbox + Debezium (CDC) orqali Kesh va Elasticsearch ni 100% kogerent saqlash?",
+    "level": "senior",
+    "category": "architecture",
+    "categoryLabel": "Arxitektura",
+    "skillSlug": "software-architecture",
+    "subskillId": "61.3",
+    "answer": [
+      "Kod ichida bir vaqtning o'zida DB ga yozish va ortidan darhol Redis yoki Elasticsearch ni yangilash (`Dual-Write`) muqarrar ma'lumotlar buzilishiga olib keladi:",
+      "",
+      "1. **Nega Dual-Write xato?**",
+      "   - DB ga yozildi, lekin keshga yozish paytida tarmoq uzildi -> Kesh eski qoldi.",
+      "   - Ikki parallel so'rov bir xil modelni yangilaganda: 1-so'rov DB ga yozdi, 2-so'rov DB ga yozdi, lekin keshga 1-so'rov keyinroq yetib bordi -> Keshda o'tmishdagi ma'lumot qotib qoldi.",
+      "",
+      "2. **Zamonaviy yechim: Transactional Outbox + CDC:**",
+      "   - Dastur kodi faqat bitta tranzaksiya ichida ma'lumotni va `outbox_events` jadvaliga hodisani yozadi (Atomik, 100% kafolat).",
+      "   - **Debezium (Change Data Capture - CDC):** Ma'lumotlar bazasining binlog (MySQL) yoki WAL (Postgres) jurnalini to'g'ridan-to'g'ri o'qiydi va har bir o'zgarishni Apache Kafka ga uzatadi.",
+      "   - Alohida iste'molchilar Kafka dan o'qib, Redis keshini tozalaydi va Elasticsearch ga indekslaydi.",
+      "",
+      "3. **Natija:** Ilova kodi kesh va qidiruv tizimlari nosozligidan to'liq xoli bo'ladi, ma'lumotlar hech qachon yo'qolmaydi va nomutanosiblik (Inconsistency) 0 ga tushadi."
+    ],
+    "tip": "Bu System Design intervyularida eng yuqori darajadagi arxitektura savolidir: Dual-Write ni rad etib, Transactional Outbox + CDC (Debezium) yechimini ko'rsatish Senior/Lead bilimini namoyish qiladi."
   }
 
 ];
