@@ -1709,6 +1709,7 @@ const searchInp = $("#iq-search-input");
     { id: "redis", label: "Redis & Kesh", icon: "⚡" },
     { id: "queue", label: "Navbatlar (Queue)", icon: "📬" },
     { id: "security", label: "Xavfsizlik", icon: "🛡️" },
+    { id: "testing", label: "Testlash (Pest/TDD)", icon: "🧪" },
     { id: "architecture", label: "Arxitektura", icon: "🏛️" },
     { id: "devops", label: "DevOps & Linux", icon: "🐳" }
   ];

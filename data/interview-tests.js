@@ -141,28 +141,28 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-6",
     "category": "php",
     "categoryLabel": "PHP tili",
-    "question": "PHP da 'final class' yoki 'final public function' yozish nimani kafolatlaydi?",
+    "level": "senior",
+    "question": "PHP 8.3 da kiritilgan `json_validate()` funksiyasining `json_decode()` dan foydalanib tekshirishga nisbatan asosiy xotira (memory) afzalligi nima?",
     "options": [
       {
         "key": "A",
-        "text": "Sinfning xususiyatlari faqat bir marta yoziladi va o'zgarmas bo'ladi"
+        "text": "Faqat fayllarni diskda shifrlash uchun ishlatiladi"
       },
       {
         "key": "B",
-        "text": "Sinfdan boshqa sinf meros ololmaydi (extends) yoki metodni voris sinfda qayta yozib bo'lmaydi (override)"
+        "text": "`json_validate()` satrni faqat sintaktik tahlil qiladi va xotirada hech qanday PHP massiv yoki obyekt daraxtini (zval) yaratmaydi, natijada katta JSON ma'lumotlarda O(1) minimal xotira sarflaydi"
       },
       {
         "key": "C",
-        "text": "Sinf faqat bitta instansiyaga ega bo'ladi (Singleton)"
+        "text": "`json_validate()` noto'g'ri JSON kelganda darhol fatal xatolik tashlaydi"
       },
       {
         "key": "D",
-        "text": "Metod faqat statik usulda chaqirilishi shart bo'ladi"
+        "text": "Ular o'rtasida farq yo'q, faqat funksiya nomi o'zgargan"
       }
     ],
     "correct": "B",
-    "explanation": "final kalit so'zi sinf oldiga qo'yilsa - unga merosxo'rlik qilish (extends) taqiqlanadi. Metod oldiga qo'yilsa - voris sinf uni qayta yozishi (override qilishi) man etiladi.",
-    "level": "junior"
+    "explanation": "Ilgari JSON validligini tekshirish uchun json_decode($string) qilinardi, bu esa gigabaytlab xotira yeb qo'yishi mumkin edi. PHP 8.3 da kiritilgan json_validate() hech qanday xotira ajratmasdan faqat C darajasida JSON sintaksisini juda tez tekshiradi."
   },
   {
     "id": "t-php-7",
@@ -1085,30 +1085,29 @@ window.INTERVIEW_TESTS = [
   {
     "id": "t-lar-1",
     "category": "laravel",
-    "categoryLabel": "Laravel asoslari",
-    "skillSlug": "laravel",
-    "question": "Production serverda 'php artisan config:cache' buyrug'i bajarilgandan so'ng, kod ichidagi 'env('APP_DEBUG')' chaqiruvi nima qaytaradi?",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel da tranzaksiya ichida Job yuborilganda (`DB::transaction(...)`), nega `DB::afterCommit()` ishlatilmasa yoki Job klassiga `public $afterCommit = true;` berilmasa poyga holati (Race Condition) yuzaga kelishi mumkin?",
     "options": [
       {
         "key": "A",
-        "text": ".env faylidagi haqiqiy qiymatni qaytaradi"
+        "text": "Faqat database seederlarida shunday xatolik yuz beradi"
       },
       {
         "key": "B",
-        "text": "Har doim null qaytaradi, chunki .env fayli endi o'qilmaydi"
+        "text": "Chunki Laravel tranzaksiya ichida navbatlarni butunlay bloklaydi"
       },
       {
         "key": "C",
-        "text": "Fatal Error beradi"
+        "text": "Tranzaksiya to'liq commit bo'lishidan oldinroq tezkor Queue Worker jobni navbatdan olib bajarishga tushsa, yangi yaratilgan yozuv hali bazada ko'rinmay ModelNotFoundException bilan yiqiladi"
       },
       {
         "key": "D",
-        "text": "Standart qiymat sifatida har doim true qaytaradi"
+        "text": "Job tranzaksiyani avtomatik rollback qilib yuboradi"
       }
     ],
-    "correct": "B",
-    "explanation": "config:cache bajarilgach, Laravel .env faylini o'qishni to'xtatadi va faqat keshdagi konfiguratsiyalarni yuklaydi. Shu sababli kod ichida env() null qaytaradi, har doim config('app.debug') ishlatish shart.",
-    "level": "junior"
+    "correct": "C",
+    "explanation": "Bu juda mashhur production xatosi! DB tranzaksiyasi hali yakunlanmasdan dispatch($job) qilinganda, tezkor worker jobni oladi, lekin baza darajasida tranzaksiya hali commit bo'lmagani uchun boshqa ulanish (worker) yozuvni ko'ra olmaydi. afterCommit xususiyati jobni faqat tranzaksiya muvaffaqiyatli yakunlangachgina jo'natishni kafolatlaydi."
   },
   {
     "id": "t-lar-2",
@@ -1870,29 +1869,28 @@ window.INTERVIEW_TESTS = [
     "id": "t-async-1",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
-    "skillSlug": "queues-and-background-jobs",
-    "question": "Navbatdagi vazifalarda (Queues) 'Idempotent Job' nima degani?",
+    "level": "middle",
+    "question": "Laravel da `php artisan queue:work --queue=high,default,low` buyrug'i berilganda navbatlar qaysi tartibda va ustuvorlikda ishlanadi?",
     "options": [
       {
         "key": "A",
-        "text": "Faqat bir marta bajarilib, qayta hech qachon ishlatib bo'lmaydigan job"
+        "text": "Barcha navbatlar teng huquqli bo'lib, tasodifiy tartibda ishlanadi"
       },
       {
         "key": "B",
-        "text": "Tarmoq xatosi yoki qayta urinish sababli bitta job necha marta (1 marta yoki 10 marta) bajarilishidan qat'i nazar, yakuniy natija bir xil bo'lishi va dublikat yaratmasligi"
+        "text": "Doimo 'high' navbatida biron vazifa bormi tekshiriladi; 'high' to'liq bo'shagandagina 'default', u ham bo'shagandagina 'low' navbatiga o'tiladi"
       },
       {
         "key": "C",
-        "text": "Faqat bitta worker tomonidan bajariladigan job"
+        "text": "Har bir navbatdan navbatma-navbat bittadan (Round-Robin) olinadi"
       },
       {
         "key": "D",
-        "text": "Hech qanday argument qabul qilmaydigan job"
+        "text": "Faqat oxirgi qo'shilgan joblar ustuvor bo'ladi (LIFO)"
       }
     ],
     "correct": "B",
-    "explanation": "Navbat tizimlarida 'At-Least-Once Delivery' kafolati bor, ya'ni job ikki marta kelib qolishi mumkin. Idempotent job - masalan, pul yechishda buyurtma holatini 'processed' ekanini tekshirib, ikkinchi marta pul yechishning oldini oluvchi xavfsiz koddir.",
-    "level": "junior"
+    "explanation": "Laravel Queue workerlari ro'yxatdagi birinchi navbatga qat'iy ustuvorlik beradi. Modomiki 'high' navbatida vazifa bor ekan, 'default' va 'low' navbatlari kutib turadi. Agar barcha navbatlarni teng taqsimlash kerak bo'lsa, alohida worker jarayonlarini ishga tushirish lozim."
   },
   {
     "id": "t-async-2",
@@ -2094,57 +2092,55 @@ window.INTERVIEW_TESTS = [
     "id": "t-sec-3",
     "category": "security",
     "categoryLabel": "Xavfsizlik",
-    "skillSlug": "web-application-security",
-    "question": "CORS (Cross-Origin Resource Sharing) da Preflight so'rovi qaysi HTTP metodi orqali yuboriladi?",
+    "level": "middle",
+    "question": "Veb-xavfsizlikda 'Session Fixation' hujumining oldini olish uchun foydalanuvchi tizimga muvaffaqiyatli kirganida (Login) nima uchun `request()->session()->regenerate()` chaqirilishi shart?",
     "options": [
       {
         "key": "A",
-        "text": "GET"
+        "text": "Foydalanuvchi parolini qayta shifrlash uchun"
       },
       {
         "key": "B",
-        "text": "HEAD"
+        "text": "Faqat foydalanuvchining IP manzilini tekshirish uchun"
       },
       {
         "key": "C",
-        "text": "OPTIONS"
+        "text": "Kesh xotirasini tozalash uchun"
       },
       {
         "key": "D",
-        "text": "POST"
+        "text": "Hujumchi oldindan bilgan yoki qurbonga o'tkazgan eski Sessiya ID raqami o'rniga butunlay yangi tasodifiy Session ID berish va eski sessiya ma'lumotlarini unga ko'chirish orqali hisob o'g'irlanishini bartaraf qilish uchun"
       }
     ],
-    "correct": "C",
-    "explanation": "Brauzer begona domenga noan'anaviy (masalan, JSON body yoki Authorization sarlavhali) so'rov yuborishdan oldin avtomatik tarzda HTTP OPTIONS metodi bilan Preflight so'rovini yuboradi va serverning ruxsatini tekshiradi.",
-    "level": "middle"
+    "correct": "D",
+    "explanation": "Session Fixation hujumida buzg'unchi qurbon brauzeriga o'zining sessiya ID sini kiritib qo'yadi. Agar foydalanuvchi tizimga kirganda sessiya ID yangilanmasa (regenerate), buzg'unchi ham o'sha sessiya ID bilan uning hisobiga kirib oladi. Laravel Auth tizimi bu xavfni regenerate() orqali avtomatik bartaraf etadi."
   },
   {
     "id": "t-sec-4",
     "category": "security",
     "categoryLabel": "Xavfsizlik",
-    "skillSlug": "web-application-security",
-    "question": "JWT (JSON Web Token) autentifikatsiyasida foydalanuvchi parolini o'zgartirganda eski tokenni qanday bekor qilish (Invalidate) mumkin?",
+    "level": "junior",
+    "question": "Laravel Blade shablonlarida `{!! $userInput !!}` va `{{ $userInput }}` sintaksislari o'rtasidagi asosiy xavfsizlik farqi nima?",
     "options": [
       {
         "key": "A",
-        "text": "JWT o'z-o'zidan darhol o'chib ketadi"
+        "text": "`{!! ... !!}` xavfsizroq, chunki u avtomatik SQL Injection ni tekshiradi"
       },
       {
         "key": "B",
-        "text": "JWT stateless bo'lgani uchun uni serverdan bekor qilib bo'lmaydi; buning uchun Redisda qora ro'yxat (Blacklist) yuritish yoki foydalanuvchi modelidagi 'token_version' ni oshirish kerak"
+        "text": "`{{ ... }}` barcha maxsus belgilarni `htmlspecialchars()` orqali xavfsiz ekranlaydi (XSS dan himoya); `{!! ... !!}` esa xom HTML ni hech qanday tekshiruvsiz chiqaradi va XSS ga olib kelishi mumkin"
       },
       {
         "key": "C",
-        "text": "Brauzer keshini tozalash kifoya"
+        "text": "Ular mutlaqo bir xil ishlaydi, faqat sintaktik uslub farqi bor"
       },
       {
         "key": "D",
-        "text": "Laravel config faylini o'zgartirish kerak"
+        "text": "`{{ ... }}` faqat sonlarni, `{!! ... !!}` esa matnlarni chiqaradi"
       }
     ],
     "correct": "B",
-    "explanation": "JWT ning asosiy kamchiligi - uning muddati tugamaguncha server uni to'xtata olmasligidir. Shuning uchun paroli o'zgargan foydalanuvchilarning tokenlarini Redis Blacklist ga kiritish yoki qisqa umrli Access Token (15 min) + Refresh Token ishlatiladi.",
-    "level": "senior"
+    "explanation": "{{ ... }} avtomatik tarzda htmlspecialchars() funksiyasini chaqiradi va <script>alert(1)</script> kabi xavfli teglarni zararsizlantiradi. {!! ... !!} esa xom kontentni to'g'ridan-to'g'ri render qiladi; unga faqat to'liq ishonchli (masalan HTMLPurifier dan o'tgan) matnlar berilishi kerak."
   },
   {
     "id": "t-sec-5",
@@ -2234,29 +2230,28 @@ window.INTERVIEW_TESTS = [
     "id": "t-sec-8",
     "category": "security",
     "categoryLabel": "Xavfsizlik",
-    "skillSlug": "web-application-security",
-    "question": "OAuth 2.0 da Single Page Application (SPA) lar uchun nega PKCE (Proof Key for Code Exchange) majburiy qilingan?",
+    "level": "senior",
+    "question": "Laravel da Mass Assignment zaifligini bartaraf etish va noxush xatolarni developmentdayoq aniqlash uchun `Model::shouldBeStrict()` metodi qaysi qat'iy tekshiruvlarni yoqadi?",
     "options": [
       {
         "key": "A",
-        "text": "Brauzerda Client Secret ni xavfsiz yashirib bo'lmaydi (har qanday foydalanuvchi kodni ko'ra oladi)"
+        "text": "Faqat parollarni majburiy 16 belgidan uzun qilish"
       },
       {
         "key": "B",
-        "text": "PKCE parollarni bazaga yozmaydi"
+        "text": "Barcha SQL so'rovlarini avtomatik keshga olish"
       },
       {
         "key": "C",
-        "text": "Faqat mobil ilovalarda ishlashi uchun"
+        "text": "`preventLazyLoading()`, `preventSilentlyDiscardingAttributes()` (fillable da bo'lmagan maydonlar tashlab yuborilganda exception tashlash) va `preventAccessingMissingAttributes()`"
       },
       {
         "key": "D",
-        "text": "OAuth 2.0 eskirgani uchun"
+        "text": "Faqat soft deletes funksiyasini majburiy qilish"
       }
     ],
-    "correct": "A",
-    "explanation": "Brauzer (Vue/React) ochiq mijozdir, unda Client Secret saqlansa hamma uni ko'ra oladi. PKCE dinamik ravishda bitta so'rov uchun maxfiy verifier va uning heshini (Code Challenge) yasab, tokenni o'g'irlanishdan himoya qiladi.",
-    "level": "senior"
+    "correct": "C",
+    "explanation": "Model::shouldBeStrict(!app()->isProduction()) eng zamonaviy Laravel tavsiyasidir. U fillable ga qo'shilmagan maydon yozilganda jim tashlab yuborish o'rniga darhol MassAssignmentException tashlaydi, N+1 muammosini darhol ko'rsatadi va xatolarni ishlab chiqish bosqichida ushlashga yordam beradi."
   },
   {
     "id": "t-test-1",
@@ -2626,29 +2621,28 @@ window.INTERVIEW_TESTS = [
     "id": "t-arch-8",
     "category": "architecture",
     "categoryLabel": "Arxitektura",
-    "skillSlug": "system-design",
-    "question": "To'lov tizimlari API integratsiyasida 'Idempotency-Key' sarlavhasi (Header) qanday xatoni oldini oladi?",
+    "level": "senior",
+    "question": "Dasturiy arxitekturada 'Event Sourcing' yondashuvining an'anaviy CRUD (State-based) saqlashdan asosiy farqi nima?",
     "options": [
       {
         "key": "A",
-        "text": "Tarmoq uzilishi yoki foydalanuvchining tugmani bir necha marta bosishi tufayli bitta buyurtma uchun hisobdan takroran (ikki marta) pul yechilishini"
+        "text": "Faqat frontend hodisalarini (click, hover) log faylga yozish"
       },
       {
         "key": "B",
-        "text": "Foydalanuvchi parolini tekshiradi"
+        "text": "Ma'lumotlar bazasi o'rniga faqat Redis keshini ishlatish"
       },
       {
         "key": "C",
-        "text": "Pul valyutasini almashtiradi"
+        "text": "Barcha jadvallarni bitta umumiy jadvalga birlashtirish"
       },
       {
         "key": "D",
-        "text": "Bank foizini hisoblaydi"
+        "text": "Obyektning faqat joriy yakuniy holatini saqlash o'rniga, tizimda sodir bo'lgan har bir hodisani (Events) o'zgarmas (immutable) ketma-ketlik tariqasida saqlash va joriy holatni ularni qayta o'ynatish (replay) orqali tiklash"
       }
     ],
-    "correct": "A",
-    "explanation": "Mijoz so'rov bilan birga UUID yuboradi. Agar server so'rovni bajarib, javob mijozga yetib bormasdan tarmoq uzilsa va mijoz qayta so'rov yuborsa, server Idempotency-Key bo'yicha pulni qayta yechmasdan, avvalgi muvaffaqiyatli natijani qaytaradi.",
-    "level": "senior"
+    "correct": "D",
+    "explanation": "Event Sourcing da (masalan moliyaviy bank tizimlarida) faqat hisobdagi qoldiq saqlanmaydi, balki har bir depozit, pul o'tkazmasi alohida hodisa sifatida append-only jadvalga yoziladi. Bu orqali 100% audit tarixi va tizimni vaqt bo'yicha orqaga qaytarish (Time-travel debugging) imkoni vujudga keladi."
   },
   {
     "id": "t-dev-1",
@@ -3357,5 +3351,599 @@ window.INTERVIEW_TESTS = [
     ],
     "correct": "B",
     "explanation": "Agar biror xabarda sintaktik xato yoki noadekvat parametr bo'lsa (Poison Pill), u workerlarni ketma-ket yiqitaveradi va asosiy navbat tiqilib qoladi (head-of-line blocking). DLQ bunday xabarlarni alohida 'qabriston' navbatiga ko'chirib, dasturchiga alert beradi va asosiy tizim faoliyatini davom ettiradi."
+  },
+  {
+    "id": "t-lar-9",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel Service Container da 'Contextual Binding' nima uchun ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat ma'lumotlar bazasi ulanishini sessiyaga bog'lash uchun"
+      },
+      {
+        "key": "B",
+        "text": "Bitta interfeysga turli klasslar (controller/service) murojaat qilganda, har biriga alohida boshqa-boshqa implementatsiyalarni inyekt qilish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Barcha dependency larni avtomatik global Singleton qilish uchun"
+      },
+      {
+        "key": "D",
+        "text": "Controller metodlarida avtomatik tranzaksiya ochish uchun"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Contextual Binding `$this->app->when(PhotoController::class)->needs(Filesystem::class)->give(fn() => Storage::disk('local'));` ko'rinishida yoziladi. Bu orqali bitta Filesystem interfeysini PhotoController ga 'local' disk, VideoController ga esa 's3' disk shaklida moslashuvchan berish mumkin."
+  },
+  {
+    "id": "t-lar-10",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel da `Facade` larning ichki ishlash mexanizmi bo'yicha qaysi ta'rif to'liq to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Fasadlar klassning oddiy statik metodlar to'plami bo'lib, Service Container bilan bog'lanmagan"
+      },
+      {
+        "key": "B",
+        "text": "Fasadlar faqat Eloquent modellari uchun mo'ljallangan maxsus xususiyatdir"
+      },
+      {
+        "key": "C",
+        "text": "Fasadlar `__callStatic()` sehrli metodi orqali `getFacadeAccessor()` qaytargan kalit bo'yicha Service Container dan obyektni resolve qiladi va unga dinamik metod chaqiruvini yo'naltiradi"
+      },
+      {
+        "key": "D",
+        "text": "Fasadlar har chaqirilganda yangi PHP jarayonini ishga tushiradi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Laravel Facade lari statik interfeys orqali Service Container dagi dinamik xizmatlarga ulanish beradi (Static Proxy). Asosiy klass getFacadeAccessor() yordamida container kalitini (masalan 'cache') qaytaradi va Facade::__callStatic() uni container orqali chaqiradi. Shu sababli Cache::shouldReceive() orqali fasadlarni oson mock qilish mumkin."
+  },
+  {
+    "id": "t-lar-11",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "middle",
+    "question": "Laravel da `Macroable` trait qanday imkoniyat beradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat ma'lumotlar bazasi jadvallariga indeks qo'shish uchun"
+      },
+      {
+        "key": "B",
+        "text": "HTML sahifalarni avtomatik siqish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Fayllarni serverga yuklash tezligini oshiradi"
+      },
+      {
+        "key": "D",
+        "text": "Laravelning ichki klasslariga (masalan `Response`, `Collection`, `Str`, `Request`) o'z xususiy metodlarimizni runtime paytida qo'shish (kengaytirish) imkonini beradi"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Macroable trait orqali Response::macro('caps', fn($str) => Response::make(strtoupper($str))) kabi o'z metodlaringizni freymvork yadrosini o'zgartirmasdan turib ServiceProvider ichida kiritishingiz mumkin."
+  },
+  {
+    "id": "t-lar-12",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel da `Terminable Middleware` ning `terminate($request, $response)` metodi qachon va qanday sharoitda bajariladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "HTTP javob brauzerga (mijozga) to'liq yetkazib berilib, ulanish yopilgandan so'ng, fon rejimida og'ir loglash yoki statistikani saqlash uchun bajariladi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat so'rov paytida fatal xatolik yuz bergandagina"
+      },
+      {
+        "key": "C",
+        "text": "Controller metodiga kirmasdan oldin"
+      },
+      {
+        "key": "D",
+        "text": "Faqat foydalanuvchi tizimdan chiqqan paytda"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Agar Middleware ichida public function terminate($request, $response) e'lon qilinsa, FastCGI finish_request() orqali brauzerga javob yetkazilgach, foydalanuvchini kuttirmasdan og'ir amallar (audit log, analytics) xavfsiz bajariladi."
+  },
+  {
+    "id": "t-lar-13",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "junior",
+    "question": "Production serverda `php artisan config:cache` bajarilgach, kod ichida `env('SOME_KEY')` funksiyasini to'g'ridan-to'g'ri chaqirish nima uchun `null` qaytaradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat server xotirasi to'lib qolganda shunday bo'ladi"
+      },
+      {
+        "key": "B",
+        "text": "Chunki .env fayli faqat testing muhitida o'qiladi"
+      },
+      {
+        "key": "C",
+        "text": "`config:cache` bajarilgach, performance uchun .env fayli o'qilmaydi va barcha qiymatlar faqat `config('app.some_key')` orqali olinishi shart"
+      },
+      {
+        "key": "D",
+        "text": "Bu Laravelning xatosi (bug) hisoblanadi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Bu eng keng tarqalgan junior/middle xatolaridan biridir! config:cache buyrug'i barcha konfiguratsiyalarni bitta yagona PHP faylga to'playdi va .env faylini yuklashni to'xtatadi. Natijada config/ papkasidan tashqarida chaqirilgan barcha env() funksiyalari null qaytaradi."
+  },
+  {
+    "id": "t-lar-14",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "middle",
+    "question": "Laravel da `Cache::tags(['users', 'reports'])->flush()` metodining asosiy afzalligi va cheklovi nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat fayl keshida ishlaydi, Redisda ishlamaydi"
+      },
+      {
+        "key": "B",
+        "text": "Kesh hajmini avtomatik 10 baravar qisqartiradi"
+      },
+      {
+        "key": "C",
+        "text": "Faqat bitta tag berish mumkin, massiv berib bo'lmaydi"
+      },
+      {
+        "key": "D",
+        "text": "Teglar orqali bir-biriga bog'liq kesh yozuvlarini guruhlab tozalash mumkin, ammo bu xususiyat `file` va `database` drayverlarida ishlamaydi (faqat Redis, Memcached va h.k. da ishlaydi)"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Cache Tags yordamida ma'lum mavzuga oid yozuvlarni birgalikda boshqarish mumkin. Ammo kalitlar iyerarxiyasini qo'llab-quvvatlamaydigan oddiy faylli yoki relyatsion bazali kesh drayverlarida (file, database) Cache::tags() xato (BadMethodCallException) beradi."
+  },
+  {
+    "id": "t-lar-15",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel da `Pipeline` dizayn patterni qaysi asosiy tizimlarning asosi hisoblanadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat database seederlarida"
+      },
+      {
+        "key": "B",
+        "text": "HTTP Middleware zanjiri va ko'p bosqichli buyurtma/to'lov qayta ishlash logikasida"
+      },
+      {
+        "key": "C",
+        "text": "Faqat Blade shablonlarini kompilyatsiya qilishda"
+      },
+      {
+        "key": "D",
+        "text": "Fayllarni zip arxiv qilishda"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Laravel HTTP so'rovlarini Middleware orqali o'tkazishda aynan illuminate/pipeline komponentidan foydalanadi: app(Pipeline::class)->send($request)->through($middleware)->then($destination). Ushbu pattern murakkab biznes-jarayonlarni bosqichma-bosqich ajratish uchun eng yaxshi amaliyotdir."
+  },
+  {
+    "id": "t-lar-16",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "middle",
+    "question": "Laravel Authorization tizimida `Policy` va `Gate` o'rtasidagi asosiy me'moriy farq nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Gate faqat API uchun, Policy esa faqat Web formalar uchun ishlatiladi"
+      },
+      {
+        "key": "B",
+        "text": "Gate avtomatik barcha ruxsatlarni beradi, Policy esa taqiqlaydi"
+      },
+      {
+        "key": "C",
+        "text": "Policy muayyan Model atrofida (User, Post) CRUD huquqlarini guruhlaydi; Gate esa odatda modelga bog'liq bo'lmagan umumiy harakatlar (masalan admin-panelga kirish) uchun ishlatiladi"
+      },
+      {
+        "key": "D",
+        "text": "Policy eskirgan bo'lib, o'rniga faqat Gate ishlatiladi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Gate odatda Closure asosidagi ruxsatlar bo'lib (Gate::define('view-pulse', fn($user) => $user->is_admin)), modelga bog'lanmagan. Policy esa aniq Eloquent modeli atrofida (PostPolicy -> view, create, update, delete) tuzilgan klassdir."
+  },
+  {
+    "id": "t-lar-17",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "junior",
+    "question": "Laravel da `Route::fallback(...)` yo'nalishi nima vazifa bajaradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "So'ralgan URL boshqa hech qanday mavjud route ga mos kelmaganda (404 o'rniga yoki SPA bosh sahifasini ko'rsatishda) ishga tushadi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat server o'chib qolganda zaxira serverga yo'naltiradi"
+      },
+      {
+        "key": "C",
+        "text": "Barcha POST so'rovlarini avtomatik GET ga o'giradi"
+      },
+      {
+        "key": "D",
+        "text": "Baza tranzaksiyasini orqaga qaytaradi (rollback)"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Route::fallback(fn() => view('errors.404')) yoki SPA (Vue/React) ilovalarida barcha noma'lum URL larni bitta index.blade.php ga yo'naltirish uchun eng oxirgi route sifatida ishlatiladi."
+  },
+  {
+    "id": "t-lar-18",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel Service Provider larda 'Deferred Provider' (Kechiktirilgan provayder) qanday ishlaydi va qanday afzallik beradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat internet tezligi past bo'lganda yuklanadi"
+      },
+      {
+        "key": "B",
+        "text": "Provayderni ertasi kuni ertalab soat 9:00 gacha kechiktiradi"
+      },
+      {
+        "key": "C",
+        "text": "Ma'lumotlar bazasini asinxron yuklash uchun ishlatiladi"
+      },
+      {
+        "key": "D",
+        "text": "`DeferrableProvider` interfeysi va `provides()` metodi orqali: ushbu provayder har bir so'rovda yuklanmasdan, faqat uning xizmatiga haqiqiy ehtiyoj paydo bo'lgandagina (on-demand) xotiraga yuklanadi"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Agar provayder faqat kamdan-kam ishlatiladigan og'ir servisni (masalan Riak, AWS SES client) ro'yxatdan o'tkazsa, uni DeferrableProvider qilish orqali har bir oddiy HTTP so'rovda keraksiz yuklanishining oldi olinadi va ilova tezligi oshadi."
+  },
+  {
+    "id": "t-lar-19",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "middle",
+    "question": "Laravel Form Request ichida `prepareForValidation()` metodi nima uchun ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat ma'lumotlar bazasi migratsiyalarini tekshirish uchun"
+      },
+      {
+        "key": "B",
+        "text": "Validatsiya qoidalari (rules) bajarilishidan oldin mijozdan kelgan ma'lumotlarni tozalash, formatlash (masalan telefon raqamidan bo'shliqlarni olib tashlash) yoki yangi maydon qo'shish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Faqat fayllarni virusga qarshi tekshirish uchun"
+      },
+      {
+        "key": "D",
+        "text": "Validatsiyadan o'tgan ma'lumotlarni darhol JSON ga o'girish uchun"
+      }
+    ],
+    "correct": "B",
+    "explanation": "prepareForValidation() validatsiyadan oldin $this->merge(['phone' => preg_replace('/\\D/', '', $this->phone)]) kabi ma'lumotlarni normalizatsiya qilish uchun eng qulay joydir. Bu controller ichida ortiqcha tozalash kodlari yozilishining oldini oladi."
+  },
+  {
+    "id": "t-lar-20",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "junior",
+    "question": "Laravel da `php artisan route:cache` bajarilganda qaysi turdagi yo'nalishlar xatolik keltirib chiqarishi mumkin?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Closure (anonim funksiya) asosidagi routelar (masalan `Route::get('/test', fn() => 'ok')`), chunki PHP closure larni xavfsiz serializatsiya qila olmaydi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat POST metodidagi routelar"
+      },
+      {
+        "key": "C",
+        "text": "Faqat kontrollerga ulangan routelar"
+      },
+      {
+        "key": "D",
+        "text": "Hech qanday route xatolik bermaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Laravel 8 gacha bo'lgan versiyalarda Closure routelar route:cache ni to'liq qulatgan. Zamonaviy versiyalarda maxsus wrapperlar bo'lsa-da, barcha routelarni aniq Controller klasslariga bog'lash productionda tavsiya etilgan eng toza amaliyotdir."
+  },
+  {
+    "id": "t-lar-21",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel da `Event Discovery` (Hodisalarni avtomatik aniqlash) qanday ishlaydi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Barcha eventlarni ma'lumotlar bazasiga yozib boradi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat Redis pub/sub orqali ishlaydi"
+      },
+      {
+        "key": "C",
+        "text": "`EventServiceProvider` da qo'lda `$listen` massivini to'ldirmasdan, `app/Listeners` papkasidagi klasslarning `handle(SomeEvent $event)` metodining type-hintiga qarab avtomatik bog'laydi"
+      },
+      {
+        "key": "D",
+        "text": "Faqat frontend WebSocketlar uchun ishlaydi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Event Discovery (shouldDiscoverEvents() -> true) dasturchini har bir event va listernerni EventServiceProvider ichida qo'lda ro'yxatdan o'tkazish majburiyatidan qutqaradi. Reflection orqali listener qaysi eventni qabul qilishi avtomatik aniqlanadi."
+  },
+  {
+    "id": "t-lar-22",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "middle",
+    "question": "Laravel Notifications tizimida bildirishnomani bir vaqtning o'zida ham Email, ham SMS, ham Database ga yuborish qanday sozlanadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Har bir kanal uchun alohida 3 ta klass ochish shart"
+      },
+      {
+        "key": "B",
+        "text": "Notification klassidagi `via($notifiable)` metodi ichida `return ['mail', 'database', 'vonage'];` massivini qaytarish orqali"
+      },
+      {
+        "key": "C",
+        "text": "Faqat queue worker orqali 3 ta alohida komanda yuboriladi"
+      },
+      {
+        "key": "D",
+        "text": "Laravel bir vaqtda faqat bitta kanalga yuborishni qo'llab-quvvatlaydi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Laravel Notification tizimining eng kuchli jihati uning ko'p kanalliligidir (multi-channel). via() metodi ichida kerakli kanallar ko'rsatiladi va tegishli toMail(), toDatabase(), toBroadcast() metodlari o'z kanali bo'yicha formatlab yetkazadi."
+  },
+  {
+    "id": "t-lar-23",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel da `RateLimiter` fasadi orqali dinamik cheklov qo'yishda 'Token Bucket' algoritmi qanday qo'llaniladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat IP manzil bo'yicha cheksiz qulflash"
+      },
+      {
+        "key": "B",
+        "text": "Faqat fayllar hajmini tekshirish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Database jadvalidagi qatorlar sonini cheklash uchun"
+      },
+      {
+        "key": "D",
+        "text": "`RateLimiter::for('api', fn($req) => $req->user()?->isVip() ? Limit::none() : Limit::perMinute(60)->by($req->user()?->id ?: $req->ip()))`"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Laravel RateLimiter juda moslashuvchan: Limit::perMinute(), Limit::perHour() orqali foydalanuvchi maqomiga qarab (VIP foydalanuvchilar uchun bepul, oddiy foydalanuvchilar uchun daqiqasiga 60 ta) dinamik limitlar belgilash imkonini beradi."
+  },
+  {
+    "id": "t-lar-24",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "middle",
+    "question": "Laravel da `Storage::temporaryUrl($path, $expiration)` metodi nima uchun ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Amazon S3 kabi bulutli xotiralarda yopiq (private) fayllarni vaqtincha xavfsiz yuklab olish uchun imzolangan maxsus URL (Pre-signed URL) generatsiya qilish uchun"
+      },
+      {
+        "key": "B",
+        "text": "Faqat lokal diskdagi fayllarni 1 daqiqaga keshga olish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Faylni serverdan o'chirish uchun taymer qo'yish"
+      },
+      {
+        "key": "D",
+        "text": "Faqat rasm fayllarining hajmini kichraytirish"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Hujjatlar yoki xususiy fayllar S3 da ochiq (public) turmasligi kerak. temporaryUrl() Amazon S3 imzoli URL yaratadi va u masalan 15 daqiqadan so'ng avtomatik yaroqsiz holga keladi."
+  },
+  {
+    "id": "t-lar-25",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "junior",
+    "question": "Laravel Artisan buyruqlarida argument va optsiyalarni (options) ajratish sintaksisi qaysi to'g'ri ko'rsatilgan?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Ikkalasi ham bir xil qavslarsiz yoziladi"
+      },
+      {
+        "key": "B",
+        "text": "Argumentlar faqat raqam, optsiyalar faqat matn bo'lishi shart"
+      },
+      {
+        "key": "C",
+        "text": "Argumentlar: `{user}`, `{user?}`; Optsiyalar (flags): `{--queue=}`, `{--silent}`"
+      },
+      {
+        "key": "D",
+        "text": "Faqat fayl nomlari orqali belgilanadi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Artisan $signature xususiyatida argumentlar to'g'ridan-to'g'ri {param} ko'rinishida (majburiy yoki {param?} ixtiyoriy), kalitli optsiyalar esa ikkita tire bilan {--option=} ko'rinishida e'lon qilinadi."
+  },
+  {
+    "id": "t-lar-26",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "middle",
+    "question": "Laravel da `Gate::before(fn($user, $ability) => ...)` filtri nima maqsadda qo'llaniladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat login sahifasiga yo'naltirish uchun"
+      },
+      {
+        "key": "B",
+        "text": "Har qanday boshqa tekshiruvdan oldin ishga tushib, masalan 'Super Admin' foydalanuvchilarga barcha huquqlarni to'g'ridan-to'g'ri tasdiqlash (grant all) uchun"
+      },
+      {
+        "key": "C",
+        "text": "Faqat parollarni tekshirish uchun"
+      },
+      {
+        "key": "D",
+        "text": "Barcha foydalanuvchilarning sessiyasini o'chirish uchun"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Gate::before har qanday Policy yoki Gate metodidan oldin ishga tushadi. Agar u true qaytarsa, qolgan tekshiruvlar ko'rilmasdan darhol ruxsat beriladi. Bu Super Admin rolini realizatsiya qilishning eng toza usulidir."
+  },
+  {
+    "id": "t-lar-27",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel 11 da ilovani sozlash (`bootstrap/app.php`) qanday o'zgardi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Eski versiyalardagi `Http/Kernel.php`, `Console/Kernel.php` va bir qancha provayderlar olib tashlanib, routing, middleware va exception handling to'g'ridan-to'g'ri `bootstrap/app.php` ichida zanjirli (chained fluent methods) orqali sozlanadi"
+      },
+      {
+        "key": "B",
+        "text": "Barcha sozlamalar faqat .env faylida qilinadi"
+      },
+      {
+        "key": "C",
+        "text": "Faqat XML formatiga o'tkazildi"
+      },
+      {
+        "key": "D",
+        "text": "Hech narsa o'zgarmagan, Laravel 10 bilan bir xil"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Laravel 11 ilova arxitekturasini minimal va ixcham ko'rinishga keltirdi. Ko'p faylli Kernel klasslari o'rniga Application::configure(basePath: dirname(__DIR__))->withRouting()->withMiddleware()->withExceptions()->create() fluet sintaksisi kiritildi."
+  },
+  {
+    "id": "t-lar-28",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "middle",
+    "question": "Laravel da `Custom Cast` (CastsAttributes interfeysi) klassi orqali qanday vazifa bajariladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat videolarni translatsiya qilish"
+      },
+      {
+        "key": "B",
+        "text": "HTML sahifalarni PDF ga aylantirish"
+      },
+      {
+        "key": "C",
+        "text": "Ma'lumotlar bazasidagi xom qiymatni o'qiyotganda (`get`) maxsus Value Object ga aylantirish va saqlayotganda (`set`) uni yana bazaga mos formatga o'girish"
+      },
+      {
+        "key": "D",
+        "text": "Baza jadvallarini o'chirish"
+      }
+    ],
+    "correct": "C",
+    "explanation": "CastsAttributes interfeysi orqali masalan JSON saqlangan koordinatalarni Coordinates($lat, $lng) obyektiga yoki pul maydonini Money($amount, $currency) Value Object ga xavfsiz va qulay konvertatsiya qilish mumkin."
+  },
+  {
+    "id": "t-lar-29",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "senior",
+    "question": "Laravel da Real-time Broadcasting (Reverb/Pusher) da `PresenceChannel` va `PrivateChannel` o'rtasidagi asosiy farq nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "PresenceChannel shifrlanmagan ochiq kanal hisoblanadi"
+      },
+      {
+        "key": "B",
+        "text": "PrivateChannel faqat HTTP orqali, PresenceChannel esa faqat SMS orqali ishlaydi"
+      },
+      {
+        "key": "C",
+        "text": "Ikkalasi mutlaqo bir xil"
+      },
+      {
+        "key": "D",
+        "text": "PrivateChannel faqat ruxsati bor foydalanuvchilar uchun; PresenceChannel esa nafaqat ruxsat beradi, balki kanalda ayni damda kimlar onlayn turganini (who is present) va kim kirib-chiqqanini bilish imkonini beradi"
+      }
+    ],
+    "correct": "D",
+    "explanation": "PresenceChannel xuddi chat xonalarida kimlar onlayn turganini ko'rsatish (here, joining, leaving) uchun mo'ljallangan. U PrivateChannel ning barcha xavfsizlik imkoniyatlarini o'z ichiga oladi va qo'shimcha tarzda a'zolar ro'yxatini real vaqtda sinxronlaydi."
+  },
+  {
+    "id": "t-lar-30",
+    "category": "laravel",
+    "categoryLabel": "Laravel Core",
+    "level": "junior",
+    "question": "Laravel da `route:list` buyrug'i berilganda middleware larni ham ko'rish uchun qaysi parametr qo'shiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`php artisan route:list --clean`"
+      },
+      {
+        "key": "B",
+        "text": "`php artisan route:list -v` (yoki `--verbose`)"
+      },
+      {
+        "key": "C",
+        "text": "`php artisan route:list --no-middleware`"
+      },
+      {
+        "key": "D",
+        "text": "`php artisan route:list --sql`"
+      }
+    ],
+    "correct": "B",
+    "explanation": "php artisan route:list buyrug'iga -v yoki -vv qo'shilsa, har bir yo'nalishga qaysi middleware lar (auth, throttle, custom middleware) biriktirilgani aniq ro'yxatda ko'rsatiladi."
   }
 ];
