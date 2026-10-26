@@ -1701,33 +1701,35 @@ const searchInp = $("#iq-search-input");
    * Interactive Quiz & Assessment Engine (A, B, C, D Tests)
    * ------------------------------------------------------------------ */
   const QUIZ_CATEGORIES = [
-    { id: "all", label: "🌟 Barchasi" },
-    { id: "php", label: "🐘 PHP & OOP" },
-    { id: "laravel", label: "⚡ Laravel Core" },
-    { id: "eloquent", label: "🗄️ Eloquent & DB" },
-    { id: "api", label: "🌐 REST API & Auth" },
-    { id: "redis", label: "⚡ Redis & Kesh" },
-    { id: "queue", label: "📬 Navbatlar (Queue)" },
-    { id: "security", label: "🛡️ Xavfsizlik" },
-    { id: "architecture", label: "🏛️ Arxitektura" },
-    { id: "devops", label: "🐳 DevOps & Linux" }
+    { id: "all", label: "Barchasi", icon: "🌟" },
+    { id: "php", label: "PHP & OOP", icon: "🐘" },
+    { id: "laravel", label: "Laravel Core", icon: "⚡" },
+    { id: "eloquent", label: "Eloquent & DB", icon: "🗄️" },
+    { id: "api", label: "REST API & Auth", icon: "🌐" },
+    { id: "redis", label: "Redis & Kesh", icon: "⚡" },
+    { id: "queue", label: "Navbatlar (Queue)", icon: "📬" },
+    { id: "security", label: "Xavfsizlik", icon: "🛡️" },
+    { id: "architecture", label: "Arxitektura", icon: "🏛️" },
+    { id: "devops", label: "DevOps & Linux", icon: "🐳" }
   ];
 
   const QUIZ_LEVELS = [
-    { id: "all", label: "⚡ Barcha darajalar" },
-    { id: "junior", label: "🌱 Junior" },
-    { id: "middle", label: "🔷 Middle" },
-    { id: "senior", label: "🔥 Senior" }
+    { id: "all", label: "Barcha darajalar", icon: "⚡" },
+    { id: "junior", label: "Junior", icon: "🌱" },
+    { id: "middle", label: "Middle", icon: "🔷" },
+    { id: "senior", label: "Senior", icon: "🔥" }
   ];
 
   let quizActiveCat = "all";
   let quizActiveLevel = "all";
-  let quizSelectedCount = 10; // 5, 10, 15, or 0 (all)
+  let quizSelectedCount = 10;
   let quizState = "lobby"; // "lobby" | "running" | "finished"
   let quizIdx = 0;
   let quizQuestions = [];
   let quizAnswers = {};
   let quizScores = {};
+  let quizCurrentStreak = 0;
+  let quizMaxStreak = 0;
 
   try {
     const raw = localStorage.getItem("lsm:quiz_scores");
@@ -1777,6 +1779,14 @@ const searchInp = $("#iq-search-input");
         gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
         osc.start(now);
         osc.stop(now + 0.18);
+      } else if (type === "streak") {
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.08);
+        osc.frequency.setValueAtTime(1046.50, now + 0.16);
+        gain.gain.setValueAtTime(0.09, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc.start(now);
+        osc.stop(now + 0.28);
       } else if (type === "celebrate") {
         osc.frequency.setValueAtTime(523.25, now);
         osc.frequency.setValueAtTime(659.25, now + 0.1);
@@ -1804,6 +1814,8 @@ const searchInp = $("#iq-search-input");
     quizQuestions = shuffled.slice(0, count);
     quizIdx = 0;
     quizAnswers = {};
+    quizCurrentStreak = 0;
+    quizMaxStreak = 0;
     quizState = "running";
     playSfx("toggle");
     updateQuizView();
@@ -1812,14 +1824,21 @@ const searchInp = $("#iq-search-input");
   function handleQuizSelect(optKey) {
     if (quizState !== "running" || !quizQuestions.length) return;
     const q = quizQuestions[quizIdx];
-    if (quizAnswers[q.id]) return; // already answered
+    if (quizAnswers[q.id]) return;
 
     const isRight = (optKey === q.correct);
     quizAnswers[q.id] = { selected: optKey, correct: q.correct, isRight };
 
     if (isRight) {
-      playSfx("check");
+      quizCurrentStreak++;
+      if (quizCurrentStreak > quizMaxStreak) quizMaxStreak = quizCurrentStreak;
+      if (quizCurrentStreak >= 3) {
+        playSfx("streak");
+      } else {
+        playSfx("check");
+      }
     } else {
+      quizCurrentStreak = 0;
       playSfx("toggle");
     }
 
@@ -1854,6 +1873,7 @@ const searchInp = $("#iq-search-input");
     quizQuestions = wrongQs.slice().sort(() => 0.5 - Math.random());
     quizIdx = 0;
     quizAnswers = {};
+    quizCurrentStreak = 0;
     quizState = "running";
     playSfx("toggle");
     updateQuizView();
@@ -1865,21 +1885,18 @@ const searchInp = $("#iq-search-input");
       box.innerHTML = renderQuizInnerHtml();
     }
 
-    // Update active category buttons
     document.querySelectorAll("[data-quiz-cat]").forEach(b => {
       const isActive = b.dataset.quizCat === quizActiveCat;
       b.classList.toggle("active", isActive);
       b.setAttribute("aria-pressed", String(isActive));
     });
 
-    // Update active level buttons
     document.querySelectorAll("[data-quiz-level]").forEach(b => {
       const isActive = b.dataset.quizLevel === quizActiveLevel;
       b.classList.toggle("active", isActive);
       b.setAttribute("aria-pressed", String(isActive));
     });
 
-    // Update count buttons if in lobby
     document.querySelectorAll("[data-quiz-count]").forEach(b => {
       const countVal = Number(b.dataset.quizCount);
       const isActive = (countVal === quizSelectedCount);
@@ -1905,48 +1922,51 @@ const searchInp = $("#iq-search-input");
       <nav class="crumbs" aria-label="Breadcrumb">
         <a href="#/">Bosh sahifa</a>
         <span class="sep">/</span>
-        <span aria-current="page">Texnik Testlar (Quiz)</span>
+        <span aria-current="page">Texnik Testlar (Quiz Arena)</span>
       </nav>
 
       <header class="iq-hero reveal">
         <div class="iq-hero-main">
-          <div class="idx">SELF-ASSESSMENT & BENCHMARK</div>
-          <h1>Texnik Testlar (Quiz)</h1>
+          <div class="qz-hero-badge">${icon("sparkles", "ic ic-sm")} INTERACTIVE DEVELOPER BENCHMARK</div>
+          <h1>Texnik Testlar (Quiz Arena)</h1>
           <p class="lead">
-            PHP, Laravel, Eloquent, SQL, Redis, Navbatlar, Xavfsizlik va Arxitektura bo'yicha amaliy intervyu testlari. Mavzu va darajani tanlang, tayyorgarlik zali orqali testni boshlang va har bir savolda Senior tushuntirishini darhol o'rganing.
+            PHP, Laravel, Eloquent, SQL, Redis, Navbatlar, Xavfsizlik va Arxitektura bo'yicha 102+ ta real intervyu testlari. Mavzu va darajani tanlang, professional arena orqali o'z bilimlaringizni sinang va Senior dasturchi tushuntirishlarini o'rganing.
           </p>
         </div>
       </header>
 
-      <!-- Filtrlar guruhi: Har doim yuqorida turadi -->
+      <!-- Filtrlar guruhi: Creative Grid Layout -->
       <div class="iq-quiz-filter-group reveal">
         <div class="iq-quiz-filter-label">
           ${icon("layers", "ic ic-sm")} 1. Yo'nalish va Mavzuni tanlang
         </div>
-        <div class="iq-quiz-cats">
+        <div class="qz-topics-grid">
           ${QUIZ_CATEGORIES.map(c => `
-            <button type="button" class="iq-quiz-cat-btn ${quizActiveCat === c.id ? "active" : ""}" data-quiz-cat="${c.id}" aria-pressed="${quizActiveCat === c.id}">
-              <span>${c.label}</span>
-              <span class="iq-quiz-cat-count">${catCounts[c.id] || 0}</span>
-              ${quizScores[c.id] ? `<span title="Eng yaxshi natija" style="color:#eab308;font-size:11px">★ ${quizScores[c.id]}%</span>` : ""}
+            <button type="button" class="qz-topic-card ${quizActiveCat === c.id ? "active" : ""}" data-quiz-cat="${c.id}" aria-pressed="${quizActiveCat === c.id}">
+              ${quizScores[c.id] ? `<span class="qz-topic-score-badge">★ ${quizScores[c.id]}%</span>` : ""}
+              <div class="qz-topic-head">
+                <span class="qz-topic-icon">${c.icon}</span>
+                <span class="qz-topic-count">${catCounts[c.id] || 0}</span>
+              </div>
+              <div class="qz-topic-name">${esc(c.label)}</div>
             </button>
           `).join("")}
         </div>
 
-        <div class="iq-quiz-filter-label" style="margin-top:14px">
+        <div class="iq-quiz-filter-label" style="margin-top:16px">
           ${icon("target", "ic ic-sm")} 2. Qiyinlik darajasini tanlang
         </div>
-        <div class="iq-quiz-levels">
+        <div class="qz-levels-grid">
           ${QUIZ_LEVELS.map(lvl => `
-            <button type="button" class="iq-quiz-level-btn ${quizActiveLevel === lvl.id ? "active" : ""}" data-quiz-level="${lvl.id}" aria-pressed="${quizActiveLevel === lvl.id}">
-              <span>${lvl.label}</span>
+            <button type="button" class="qz-tier-btn ${quizActiveLevel === lvl.id ? "active" : ""}" data-quiz-level="${lvl.id}" aria-pressed="${quizActiveLevel === lvl.id}">
+              <span>${lvl.icon} ${esc(lvl.label)}</span>
               <span class="iq-quiz-cat-count">${levelCounts[lvl.id] || 0}</span>
             </button>
           `).join("")}
         </div>
       </div>
 
-      <div class="iq-quiz-box reveal" id="iq-quiz-box">
+      <div class="reveal" id="iq-quiz-box">
         ${renderQuizInnerHtml()}
       </div>
     `;
@@ -1971,73 +1991,81 @@ const searchInp = $("#iq-search-input");
 
     if (totalAvailable === 0) {
       return `
-        <div class="iq-quiz-lobby">
-          <div class="iq-quiz-lobby-icon">🔍</div>
-          <h2 class="iq-quiz-lobby-title">Mos testlar topilmadi</h2>
-          <p class="iq-quiz-lobby-desc">
-            Tanlangan <b>${esc(catObj ? catObj.label : quizActiveCat)}</b> mavzusi va <b>${esc(lvlObj ? lvlObj.label : quizActiveLevel)}</b> darajasi bo'yicha savollar topilmadi.
-          </p>
-          <button class="btn btn-primary" data-quiz-cat="all" data-quiz-level="all">
-            Barcha testlarni ko'rish
-          </button>
+        <div class="qz-arena-card">
+          <div class="qz-lobby-container">
+            <div style="font-size:48px;margin-bottom:12px">🔍</div>
+            <h2 class="qz-lobby-title">Mos testlar topilmadi</h2>
+            <p class="qz-lobby-desc">
+              Tanlangan <b>${esc(catObj ? catObj.label : quizActiveCat)}</b> mavzusi va <b>${esc(lvlObj ? lvlObj.label : quizActiveLevel)}</b> darajasi bo'yicha savollar topilmadi.
+            </p>
+            <button class="btn btn-primary" data-quiz-cat="all" data-quiz-level="all">
+              Barcha testlarni ko'rish
+            </button>
+          </div>
         </div>
       `;
     }
 
-    // Determine counts buttons
     const countOptions = [];
     if (totalAvailable >= 5) countOptions.push(5);
     if (totalAvailable >= 10) countOptions.push(10);
     if (totalAvailable >= 15) countOptions.push(15);
-    countOptions.push(0); // 0 = all
+    countOptions.push(0);
 
-    // Ensure current selected count makes sense
     if (quizSelectedCount !== 0 && quizSelectedCount > totalAvailable) {
       quizSelectedCount = totalAvailable >= 10 ? 10 : (totalAvailable >= 5 ? 5 : 0);
     }
 
     return `
-      <div class="iq-quiz-lobby">
-        <div class="iq-quiz-lobby-icon">🚀</div>
-        <h2 class="iq-quiz-lobby-title">Tayyormisiz? Bilimingizni sinang!</h2>
-        <p class="iq-quiz-lobby-desc">
-          Har bir savol real intervyu savollari asosida tuzilgan. Javob tanlaganingizdan so'ng darhol Senior darajadagi batafsil tushuntirish va to'g'ri kod yondashuvi ko'rsatiladi.
-        </p>
+      <div class="qz-arena-card">
+        <div class="qz-lobby-container">
+          <div class="qz-lobby-stage-badge">
+            ${icon("zap", "ic ic-sm")} ARENA TAYYORGARLIK ZALI
+          </div>
+          <h2 class="qz-lobby-title">Bilim darajangizni sinovdan o'tkazing!</h2>
+          <p class="qz-lobby-desc">
+            Har bir savol real intervyu talablari asosida tuzilgan. Javob tanlaganingizdan so'ng darhol Senior darajadagi amaliy tushuntirish va to'g'ri kod arxitekturasi ko'rsatiladi.
+          </p>
 
-        <div class="iq-quiz-lobby-meta">
-          <div class="iq-quiz-meta-item">
-            <span>📌</span>
-            <span>Mavzu: <b>${esc(catObj ? catObj.label : "Barchasi")}</b></span>
+          <div class="qz-params-bar">
+            <div class="qz-param-chip">
+              <span>📂</span>
+              <span>Mavzu: <b>${esc(catObj ? (catObj.icon + " " + catObj.label) : "Barchasi")}</b></span>
+            </div>
+            <span class="qz-param-sep">•</span>
+            <div class="qz-param-chip">
+              <span>🎯</span>
+              <span>Daraja: <b>${esc(lvlObj ? (lvlObj.icon + " " + lvlObj.label) : "Barcha darajalar")}</b></span>
+            </div>
+            <span class="qz-param-sep">•</span>
+            <div class="qz-param-chip">
+              <span>📚</span>
+              <span>Hovuzda: <b>${totalAvailable} ta</b> savol</span>
+            </div>
           </div>
-          <div class="iq-quiz-meta-item">
-            <span>⚡</span>
-            <span>Daraja: <b>${esc(lvlObj ? lvlObj.label : "Barcha darajalar")}</b></span>
-          </div>
-          <div class="iq-quiz-meta-item">
-            <span>📚</span>
-            <span>Hovuzda: <b>${totalAvailable} ta</b> savol</span>
-          </div>
-        </div>
 
-        <div class="iq-quiz-count-picker">
-          <span class="iq-quiz-count-label">Savollar soni:</span>
-          ${countOptions.map(c => `
-            <button type="button" class="iq-quiz-count-btn ${quizSelectedCount === c ? "active" : ""}" data-quiz-count="${c}">
-              ${c === 0 ? `Barchasi (${totalAvailable})` : `${c} ta`}
+          <div style="font-size:13px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;font-family:var(--mono)">
+            Savollar miqdorini tanlang:
+          </div>
+          <div class="qz-count-selector">
+            ${countOptions.map(c => `
+              <button type="button" class="qz-count-pill ${quizSelectedCount === c ? "active" : ""}" data-quiz-count="${c}">
+                ${c === 0 ? `Barchasi (${totalAvailable})` : `${c} ta`}
+              </button>
+            `).join("")}
+          </div>
+
+          <div>
+            <button type="button" class="qz-start-cta" data-quiz-start>
+              <span>⚡ Testni boshlash</span>
+              <kbd class="qz-kbd-chip">Enter</kbd>
             </button>
-          `).join("")}
-        </div>
+          </div>
 
-        <div>
-          <button type="button" class="iq-quiz-start-btn" data-quiz-start>
-            <span>🚀 Testni boshlash</span>
-            <kbd class="iq-kbd-badge" style="background:rgba(255,255,255,0.22);color:#fff;border-color:rgba(255,255,255,0.3)">Enter</kbd>
-          </button>
-        </div>
-
-        <div class="iq-quiz-hints">
-          <span>⌨️ Javob berish: <kbd class="iq-kbd-badge">A</kbd> <kbd class="iq-kbd-badge">B</kbd> <kbd class="iq-kbd-badge">C</kbd> <kbd class="iq-kbd-badge">D</kbd></span>
-          <span>Keyingi savol: <kbd class="iq-kbd-badge">Enter</kbd></span>
+          <div class="iq-quiz-hints" style="margin-top:28px">
+            <span>⌨️ Javob berish: <kbd class="iq-kbd-badge">A</kbd> <kbd class="iq-kbd-badge">B</kbd> <kbd class="iq-kbd-badge">C</kbd> <kbd class="iq-kbd-badge">D</kbd></span>
+            <span>Keyingi savol: <kbd class="iq-kbd-badge">Enter</kbd></span>
+          </div>
         </div>
       </div>
     `;
@@ -2064,88 +2092,95 @@ const searchInp = $("#iq-search-input");
     const qLevel = currentQ.level || "middle";
 
     return `
-      <div class="iq-quiz-topbar">
-        <div class="iq-quiz-step-info">
-          <span class="iq-quiz-step-badge">SAVOL ${quizIdx + 1} / ${totalQ}</span>
-          <span class="iq-quiz-level-badge-inline level-badge-${qLevel}">${qLevel.toUpperCase()}</span>
-          <span style="font-weight:600;color:var(--text)">${esc(currentQ.categoryLabel || "")}</span>
+      <div class="qz-arena-card">
+        <div class="qz-hud-header">
+          <div class="qz-hud-left">
+            <span class="qz-badge-step">SAVOL ${quizIdx + 1} / ${totalQ}</span>
+            <span class="qz-badge-level level-badge-${qLevel}">${qLevel.toUpperCase()}</span>
+            <span class="qz-badge-topic">${esc(currentQ.categoryLabel || "")}</span>
+          </div>
+          <div class="qz-hud-right">
+            ${quizCurrentStreak >= 2 ? `
+              <div class="qz-streak-pill" title="Ketma-ket to'g'ri javoblar!">
+                🔥 ${quizCurrentStreak}x Streak
+              </div>
+            ` : ""}
+            <div class="qz-score-live-pill">
+              <span class="qz-live-correct">✓ ${rightCount}</span>
+              <span class="qz-live-wrong">✕ ${wrongCount}</span>
+            </div>
+          </div>
         </div>
-        <div class="iq-quiz-stats-live">
-          <span class="iq-quiz-live-correct">✓ ${rightCount} to'g'ri</span>
-          <span class="iq-quiz-live-wrong">✕ ${wrongCount} xato</span>
+
+        <div class="qz-progress-rail">
+          <div class="qz-progress-bar" style="width: ${progressPct}%"></div>
         </div>
-      </div>
 
-      <div class="iq-quiz-progress-track">
-        <div class="iq-quiz-progress-fill" style="width: ${progressPct}%"></div>
-      </div>
+        <div class="qz-question-card">
+          <div class="qz-question-text">${esc(currentQ.question)}</div>
+          <div class="qz-question-sub">ID: ${currentQ.id} · Variantlardan birini tanlang (A, B, C, D)</div>
+        </div>
 
-      <div class="iq-quiz-q-wrap">
-        <div class="iq-quiz-q-title">${esc(currentQ.question)}</div>
-        <div class="iq-quiz-q-sub">ID: ${currentQ.id} · Variantlardan birini tanlang (A, B, C, D)</div>
-      </div>
+        <div class="qz-options-list">
+          ${currentQ.options.map(opt => {
+            let extraClass = "";
+            let badgeText = opt.key;
 
-      <div class="iq-quiz-options">
-        ${currentQ.options.map(opt => {
-          let extraClass = "";
-          let badgeText = opt.key;
-
-          if (isCurrentAnswered) {
-            if (opt.key === currentQ.correct) {
-              extraClass = "opt-correct";
-              badgeText = "✓";
-            } else if (opt.key === currentAnswerObj.selected) {
-              extraClass = "opt-wrong";
-              badgeText = "✕";
-            } else {
-              extraClass = "opt-dimmed";
+            if (isCurrentAnswered) {
+              if (opt.key === currentQ.correct) {
+                extraClass = "opt-correct";
+                badgeText = "✓";
+              } else if (opt.key === currentAnswerObj.selected) {
+                extraClass = "opt-wrong";
+                badgeText = "✕";
+              } else {
+                extraClass = "opt-dimmed";
+              }
             }
-          }
 
-          return `
-            <button type="button" class="iq-quiz-opt ${extraClass}" 
-                    data-quiz-opt="${opt.key}" 
-                    ${isCurrentAnswered ? "disabled" : ""}>
-              <span class="iq-quiz-opt-letter">
-                <kbd class="iq-kbd-key">${badgeText}</kbd>
-              </span>
-              <span class="iq-quiz-opt-text">${esc(opt.text)}</span>
-            </button>
-          `;
-        }).join("")}
-      </div>
-
-      ${isCurrentAnswered ? `
-        <div class="iq-quiz-explanation">
-          <div class="iq-quiz-exp-head">
-            ${icon("sparkles", "ic ic-sm")} Senior Dasturchi Tushuntirishi
-          </div>
-          <div class="iq-quiz-exp-body">
-            ${esc(currentQ.explanation)}
-          </div>
+            return `
+              <button type="button" class="qz-option-row ${extraClass}" 
+                      data-quiz-opt="${opt.key}" 
+                      ${isCurrentAnswered ? "disabled" : ""}>
+                <span class="qz-opt-key">${badgeText}</span>
+                <span class="qz-opt-content">${esc(opt.text)}</span>
+              </button>
+            `;
+          }).join("")}
         </div>
-      ` : ""}
 
-      <div class="iq-quiz-foot">
-        <div style="font-size:13px;color:var(--text-3);display:flex;align-items:center;gap:12px">
-          ${isCurrentAnswered 
-            ? (currentAnswerObj.isRight ? "<span style='color:#16a34a;font-weight:600'>✓ Barakalla, to'g'ri javob!</span>" : "<span style='color:#dc2626;font-weight:600'>✕ Noto'g'ri. Tushuntirishni diqqat bilan o'rganing.</span>")
-            : '<span>Variantni bosing yoki <kbd class="iq-kbd-badge">A</kbd> <kbd class="iq-kbd-badge">B</kbd> <kbd class="iq-kbd-badge">C</kbd> <kbd class="iq-kbd-badge">D</kbd> ni bosing</span>'}
-          <button type="button" class="btn btn-sm" data-quiz-to-lobby style="padding:3px 8px;font-size:11.5px">
-            Chiqqan holda Lobby ga qaytish
-          </button>
-        </div>
-        <div>
-          ${isCurrentAnswered ? `
-            <button class="btn btn-primary" data-quiz-next>
-              <span>${quizIdx + 1 < totalQ ? "Keyingi savol" : "Natijani ko'rish"}</span>
-              <kbd class="iq-kbd-badge" style="background:rgba(255,255,255,0.22);color:#fff;margin-left:4px">Enter</kbd>
+        ${isCurrentAnswered ? `
+          <div class="qz-explanation-box">
+            <div class="qz-exp-head">
+              ${icon("sparkles", "ic ic-sm")} Senior Dasturchi Tushuntirishi
+            </div>
+            <div class="qz-exp-body">
+              ${esc(currentQ.explanation)}
+            </div>
+          </div>
+        ` : ""}
+
+        <div class="qz-foot-bar">
+          <div style="font-size:13.5px;color:var(--text-3);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            ${isCurrentAnswered 
+              ? (currentAnswerObj.isRight ? "<span style='color:#16a34a;font-weight:700'>✓ Barakalla, to'g'ri javob!</span>" : "<span style='color:#dc2626;font-weight:700'>✕ Noto'g'ri. Tushuntirishni diqqat bilan o'rganing.</span>")
+              : '<span>Variantni bosing yoki <kbd class="iq-kbd-badge">A</kbd> <kbd class="iq-kbd-badge">B</kbd> <kbd class="iq-kbd-badge">C</kbd> <kbd class="iq-kbd-badge">D</kbd> ni bosing</span>'}
+            <button type="button" class="btn btn-sm" data-quiz-to-lobby style="padding:4px 10px;font-size:12px">
+              Lobby ga qaytish
             </button>
-          ` : `
-            <button class="btn btn-sm" disabled style="opacity:.45">
-              <span>Variant tanlang</span>
-            </button>
-          `}
+          </div>
+          <div>
+            ${isCurrentAnswered ? `
+              <button class="btn btn-primary" data-quiz-next>
+                <span>${quizIdx + 1 < totalQ ? "Keyingi savol" : "Natijani ko'rish"}</span>
+                <kbd class="qz-kbd-chip" style="margin-left:6px">Enter</kbd>
+              </button>
+            ` : `
+              <button class="btn btn-sm" disabled style="opacity:.45">
+                <span>Variant tanlang</span>
+              </button>
+            `}
+          </div>
         </div>
       </div>
     `;
@@ -2169,52 +2204,87 @@ const searchInp = $("#iq-search-input");
 
     let emoji = "🎯";
     let badge = "Yaxshi natija";
-    let badgeStyle = "background:rgba(59,130,246,0.15);color:#3b82f6";
+    let badgeStyle = "background:rgba(59,130,246,0.15);color:#3b82f6;border:1px solid rgba(59,130,246,0.3)";
     let desc = "Siz asosiy amaliy bilimlarni yaxshi bilasiz. Ba'zi murakkab savollarda xatolar bo'ldi, Senior tushuntirishlarini o'qib chiqishni tavsiya qilamiz.";
 
     if (pctScore >= 90) {
       emoji = "🏆";
-      badge = "Senior / Lead darajasi!";
-      badgeStyle = "background:rgba(34,197,94,0.15);color:#22c55e";
-      desc = "Ajoyib va mukammal natija! Ushbu mavzudagi chuqur va nozik jihatlarni to'liq o'zlashtirgansiz.";
+      badge = "LEAD / SENIOR DARAJASI!";
+      badgeStyle = "background:linear-gradient(135deg, rgba(245,158,11,0.2), rgba(217,119,6,0.2));color:#f59e0b;border:1px solid rgba(245,158,11,0.4)";
+      desc = "Mukammal va yuksak natija! Ushbu mavzudagi chuqur va nozik arxitektura jihatlarini to'liq o'zlashtirgansiz.";
     } else if (pctScore >= 70) {
       emoji = "⭐";
-      badge = "Strong Middle darajasi";
-      badgeStyle = "background:rgba(16,185,129,0.15);color:#10b981";
-      desc = "Mustahkam bilim! Bir nechta kam uchraydigan holatlarni qayta takrorlab olsangiz, har qanday intervyudan oson o'ta olasiz.";
+      badge = "STRONG MIDDLE DARAJASI";
+      badgeStyle = "background:linear-gradient(135deg, rgba(34,197,94,0.18), rgba(16,185,129,0.18));color:#22c55e;border:1px solid rgba(34,197,94,0.35)";
+      desc = "Mustahkam amaliy bilim! Bir nechta kam uchraydigan holatlarni qayta ko'rib chiqsangiz, har qanday texnik intervyudan muammosiz o'tasiz.";
     } else if (pctScore >= 50) {
       emoji = "📚";
-      badge = "Junior / Pre-Middle darajasi";
-      badgeStyle = "background:rgba(234,179,8,0.15);color:#eab308";
-      desc = "Qoniqarli natija. Ushbu mavzudagi savol-javoblarni qayta o'qib chiqishni maslahat beramiz.";
+      badge = "JUNIOR / PRE-MIDDLE";
+      badgeStyle = "background:rgba(59,130,246,0.15);color:#3b82f6;border:1px solid rgba(59,130,246,0.3)";
+      desc = "Qoniqarli natija. Ushbu mavzudagi tavsiya etilgan resurslar va savol-javoblarni qayta o'qib chiqishni maslahat beramiz.";
     } else {
       emoji = "💡";
-      badge = "Boshlang'ich daraja";
-      badgeStyle = "background:rgba(239,68,68,0.15);color:#ef4444";
-      desc = "Ushbu yo'nalish bo'yicha nazariy va amaliy bilimlarni kuchaytirish zarur. Yo'l xaritasi va intervyu javoblarini batafsil o'rganing.";
+      badge = "BOSHLANG'ICH DARAJA";
+      badgeStyle = "background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)";
+      desc = "Ushbu yo'nalish bo'yicha nazariy va amaliy bilimlarni kuchaytirish zarur. Yo'l xaritasi bo'yicha ketma-ket o'rganing.";
     }
 
-    return `
-      <div class="iq-quiz-result-box">
-        <div class="iq-quiz-result-emoji">${emoji}</div>
-        <div class="iq-quiz-result-score">${rightCount} / ${totalQ} (${pctScore}%)</div>
-        <div>
-          <span class="iq-quiz-result-badge" style="${badgeStyle}">${badge}</span>
-        </div>
-        <p class="iq-quiz-result-desc">${desc}</p>
+    // SVG Gauge calculation
+    const radius = 64;
+    const circumference = 2 * Math.PI * radius; // ~402.12
+    const strokeDashoffset = circumference - (pctScore / 100) * circumference;
+    const strokeColor = pctScore >= 90 ? "#f59e0b" : (pctScore >= 70 ? "#22c55e" : (pctScore >= 50 ? "#3b82f6" : "#ef4444"));
 
-        <div class="iq-quiz-result-actions" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
-          ${wrongCount > 0 ? `
-            <button class="btn btn-primary" data-quiz-review-wrongs style="background:#ea580c;border-color:#ea580c">
-              ${icon("refresh-cw", "ic ic-sm")} Faqat xato qilingan savollarni qayta ishlash (${wrongCount} ta)
+    return `
+      <div class="qz-arena-card">
+        <div class="qz-results-wrap">
+          <div class="qz-gauge-container">
+            <svg class="qz-gauge-svg" viewBox="0 0 160 160">
+              <circle class="qz-gauge-bg" cx="80" cy="80" r="${radius}"></circle>
+              <circle class="qz-gauge-progress" cx="80" cy="80" r="${radius}" 
+                      style="stroke:${strokeColor};stroke-dasharray:${circumference};stroke-dashoffset:${strokeDashoffset}"></circle>
+            </svg>
+            <div class="qz-gauge-center">
+              <span class="qz-gauge-pct">${pctScore}%</span>
+              <span class="qz-gauge-ratio">${rightCount} / ${totalQ}</span>
+            </div>
+          </div>
+
+          <div>
+            <span class="qz-rank-badge" style="${badgeStyle}">
+              ${emoji} ${badge}
+            </span>
+          </div>
+          <p class="qz-results-desc">${desc}</p>
+
+          <div class="qz-stats-grid">
+            <div class="qz-stat-card">
+              <div class="qz-stat-val" style="color:#22c55e">✓ ${rightCount}</div>
+              <div class="qz-stat-lbl">To'g'ri javoblar</div>
+            </div>
+            <div class="qz-stat-card">
+              <div class="qz-stat-val" style="color:#ef4444">✕ ${wrongCount}</div>
+              <div class="qz-stat-lbl">Xatolar</div>
+            </div>
+            <div class="qz-stat-card">
+              <div class="qz-stat-val" style="color:#f97316">🔥 ${quizMaxStreak}x</div>
+              <div class="qz-stat-lbl">Maksimal Streak</div>
+            </div>
+          </div>
+
+          <div class="qz-results-actions">
+            ${wrongCount > 0 ? `
+              <button class="btn btn-primary" data-quiz-review-wrongs style="background:linear-gradient(135deg,#ea580c,#c2410c);border-color:#ea580c;box-shadow:0 4px 14px rgba(234,88,12,0.35)">
+                ${icon("refresh-cw", "ic ic-sm")} Faqat xato qilingan savollarni qayta ishlash (${wrongCount} ta)
+              </button>
+            ` : ""}
+            <button class="btn btn-primary" data-quiz-restart>
+              ${icon("reset", "ic ic-sm")} Barchasini qaytadan topshirish
             </button>
-          ` : ""}
-          <button class="btn btn-primary" data-quiz-restart>
-            ${icon("reset", "ic ic-sm")} Barchasini qaytadan topshirish
-          </button>
-          <button class="btn" data-quiz-to-lobby>
-            ${icon("target", "ic ic-sm")} Yangi test / Filtrlarni o'zgartirish
-          </button>
+            <button class="btn" data-quiz-to-lobby>
+              ${icon("target", "ic ic-sm")} Yangi test / Filtrlarni o'zgartirish
+            </button>
+          </div>
         </div>
       </div>
     `;

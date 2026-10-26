@@ -1476,8 +1476,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-db-1",
-    "category": "database",
-    "categoryLabel": "Database va SQL",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-indexing",
     "question": "MySQL da 'Covering Index' (Index-Only Scan) nima va nega u so'rovlarni 10-50 barobargacha tezlashtiradi?",
     "options": [
@@ -1504,8 +1504,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-db-2",
-    "category": "database",
-    "categoryLabel": "Database va SQL",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-indexing",
     "question": "Nima uchun 'SELECT * FROM users WHERE email LIKE '%@gmail.com';' so'rovida 'email' ustunidagi B-Tree indeksi ishlamaydi?",
     "options": [
@@ -1532,8 +1532,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-db-3",
-    "category": "database",
-    "categoryLabel": "Database va SQL",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-transactions",
     "question": "Pessimistic Locking da 'SELECT ... FOR UPDATE' qanday ishlaydi?",
     "options": [
@@ -1560,8 +1560,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-db-4",
-    "category": "database",
-    "categoryLabel": "Database va SQL",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-transactions",
     "question": "SQL tranzaksiyalarida 'Dirty Read' anomaliyasi nimani anglatadi?",
     "options": [
@@ -1588,8 +1588,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-db-5",
-    "category": "database",
-    "categoryLabel": "Database va SQL",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-optimization",
     "question": "Index Cardinality nima va past kardinallikka ega ustunlarga (masalan, gender, status) indeks qo'yish nega ko'pincha samarasiz?",
     "options": [
@@ -1616,8 +1616,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-db-6",
-    "category": "database",
-    "categoryLabel": "Database va SQL",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent & DB",
     "skillSlug": "sql",
     "question": "SQL da 'WITH RECURSIVE' (Recursive CTE) qanday vazifa uchun eng qulay yechim hisoblanadi?",
     "options": [
@@ -1644,8 +1644,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-db-7",
-    "category": "database",
-    "categoryLabel": "Database va SQL",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-design",
     "question": "Database Sharding va Database Partitioning o'rtasidagi asosiy farq nima?",
     "options": [
@@ -1672,8 +1672,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-db-8",
-    "category": "database",
-    "categoryLabel": "Database va SQL",
+    "category": "eloquent",
+    "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-optimization",
     "question": "MySQL Read/Write Splitting arxitekturasida 'sticky' ulanish sozlamasi nega kerak?",
     "options": [
@@ -1868,8 +1868,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-async-1",
-    "category": "async",
-    "categoryLabel": "Asinxron arxitektura",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
     "skillSlug": "queues-and-background-jobs",
     "question": "Navbatdagi vazifalarda (Queues) 'Idempotent Job' nima degani?",
     "options": [
@@ -1896,8 +1896,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-async-2",
-    "category": "async",
-    "categoryLabel": "Asinxron arxitektura",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
     "skillSlug": "queues-and-background-jobs",
     "question": "RabbitMQ va Apache Kafka o'rtasidagi fundamental me'moriy farq nima?",
     "options": [
@@ -1924,8 +1924,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-async-3",
-    "category": "async",
-    "categoryLabel": "Asinxron arxitektura",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
     "skillSlug": "queues-and-background-jobs",
     "question": "Navbat tizimlarida 'Poison Pill' (Zaharli xabar) nima va undan qanday himoyalanamiz?",
     "options": [
@@ -1952,8 +1952,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-async-4",
-    "category": "async",
-    "categoryLabel": "Asinxron arxitektura",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
     "skillSlug": "queues-and-background-jobs",
     "question": "Laravelda 'ShouldBeUnique' va 'ShouldBeUniqueUntilProcessing' interfeyslarining nozik farqi nima?",
     "options": [
@@ -1980,8 +1980,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-async-5",
-    "category": "async",
-    "categoryLabel": "Asinxron arxitektura",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
     "skillSlug": "queues-and-background-jobs",
     "question": "RabbitMQ da 'Fanout Exchange' xabarni qanday qilib bir nechta navbatlarga yetkazadi?",
     "options": [
@@ -2008,8 +2008,8 @@ window.INTERVIEW_TESTS = [
   },
   {
     "id": "t-async-6",
-    "category": "async",
-    "categoryLabel": "Asinxron arxitektura",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
     "skillSlug": "queues-and-background-jobs",
     "question": "Laravel Horizon nima va u faqat qaysi navbat drayveri bilan ishlaydi?",
     "options": [
@@ -2817,5 +2817,545 @@ window.INTERVIEW_TESTS = [
     "correct": "B",
     "explanation": "Blue-Green da ikkita bir xil production muhiti bo'ladi: biri jonli trafikni qabul qiladi, ikkinchisiga yangi kod deploy qilinadi va test qilinadi. Router/Load Balancer orqali trafik darhol o'tkaziladi (Zero-downtime) va nosozlikda zumda qaytariladi.",
     "level": "senior"
+  },
+  {
+    "id": "t-api-1",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "junior",
+    "question": "REST API arxitekturasida qaysi HTTP metodlari 'Idempotent' hisoblanadi (ya'ni bir necha bor bir xil chaqirilganda ham server holati birinchi chaqiruvdagi kabi qoladi)?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat POST va PATCH"
+      },
+      {
+        "key": "B",
+        "text": "GET, PUT, DELETE, HEAD va OPTIONS"
+      },
+      {
+        "key": "C",
+        "text": "Faqat GET va POST"
+      },
+      {
+        "key": "D",
+        "text": "Barcha HTTP metodlari doimo idempotent bo'ladi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "RFC 7231 standartiga binoan GET, PUT, DELETE, HEAD va OPTIONS idempotent hisoblanadi: masalan, PUT /users/1 bilan resursni 10 marta yangilasangiz ham yakuniy holat bir xil bo'ladi. POST esa idempotent emas, chunki har chaqirilganda yangi resurs yaratadi."
+  },
+  {
+    "id": "t-api-2",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "junior",
+    "question": "REST API da `401 Unauthorized` va `403 Forbidden` HTTP status kodlari o'rtasidagi asosiy farq nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "401 server xatosi, 403 esa mijoz xatosi hisoblanadi"
+      },
+      {
+        "key": "B",
+        "text": "401 faqat POST so'rovlarida, 403 esa faqat GET so'rovlarida beriladi"
+      },
+      {
+        "key": "C",
+        "text": "401 — mijoz kimligi noma'lum (autentifikatsiyadan o'tmagan); 403 — mijoz autentifikatsiyadan o'tgan, ammo ushbu resursga ruxsati (huquqi) yo'q"
+      },
+      {
+        "key": "D",
+        "text": "Ular orasida farq yo'q, ikkalasi ham xuddi bir xil ma'noni bildiradi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "401 Unauthorized aslida 'Unauthenticated' (kimligi tasdiqlanmagan yoki token yo'q/yaroqsiz) deganidir. 403 Forbidden esa server foydalanuvchini tanidi, lekin uning rollari yoki huquqlari (Policy/Gate) bu resursga kirishga ruxsat bermaydi."
+  },
+  {
+    "id": "t-api-3",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "middle",
+    "question": "Stateless JWT (JSON Web Token) autentifikatsiyasida foydalanuvchi tizimdan chiqqanda (Logout) yoki parolini o'zgartirganda eski tokenni zudlik bilan bekor qilishning (Invalidate) eng to'g'ri amaliyoti qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat mijoz tomondan (localStorage) tokenni o'chirib tashlash kifoya, serverda hech narsa qilish shart emas"
+      },
+      {
+        "key": "B",
+        "text": "JWT stateless bo'lgani sababli tokenni amal qilish muddati tugaguncha bekor qilish mutlaqo imkonsiz"
+      },
+      {
+        "key": "C",
+        "text": "Barcha foydalanuvchilarning parolini majburiy o'zgartirish"
+      },
+      {
+        "key": "D",
+        "text": "Tokenning 'jti' (JWT ID) identifikatorini qora ro'yxatga (Redis Blacklist) qolgan amal qilish muddatiga saqlash yoki foydalanuvchi jadvalida `token_version` ustunini oshirish"
+      }
+    ],
+    "correct": "D",
+    "explanation": "JWT o'zida ma'lumot saqlagani uchun server uning holatini bilmaydi. Haqiqiy xavfsiz logout uchun Redisda qisqa muddatli qora ro'yxat (jti blacklist with TTL) yuritiladi yoki foydalanuvchining token_version raqami oshiriladi; token ichidagi versiya mos kelmasa rad etiladi."
+  },
+  {
+    "id": "t-api-4",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "senior",
+    "question": "OAuth 2.0 da SPA (Single Page Application, masalan Vue/React) yoki Mobil ilovalar uchun nima sababdan 'Authorization Code with PKCE' (Proof Key for Code Exchange) oqimi talab etiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mijoz ilovalari 'client_secret' ni xavfsiz saqlay olmaydi (Public Client), PKCE esa dinamik `code_verifier` va `code_challenge` orqali kod o'g'irlanishining oldini oladi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat serverlar o'rtasida API chaqiruvlarini tezlashtirish uchun"
+      },
+      {
+        "key": "C",
+        "text": "PKCE orqali barcha ma'lumotlar bazasiz to'g'ridan-to'g'ri shifrlanadi"
+      },
+      {
+        "key": "D",
+        "text": "Implicit Grant oqimi xavfsizroq bo'lgani sababli PKCE faqat zaxira sifatida ishlatiladi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "SPA va Mobile ilovalar ochiq kodli hisoblanadi va ularda client_secret saqlab bo'lmaydi. Ilgari ishlatilgan Implicit grant xavfli hisoblanib bekor qilingan (RFC 8252). PKCE mexanizmida har bir so'rovda bir martalik tasodifiy kalit yaratilib, authorization_code o'g'irlansa ham token olishga yo'l qo'ymaydi."
+  },
+  {
+    "id": "t-api-5",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "middle",
+    "question": "Laravel da `Sanctum` va `Passport` paketlari o'rtasidagi asosiy me'moriy farq nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Sanctum faqat MySQL bilan ishlaydi, Passport esa faqat PostgreSQL bilan ishlaydi"
+      },
+      {
+        "key": "B",
+        "text": "Passport bepul, Sanctum esa faqat pullik Laravel Forge obunachilari uchun"
+      },
+      {
+        "key": "C",
+        "text": "Sanctum — yengil shaxsiy tokenlar (PAT) va SPA uchun cookie-based session auth beradi; Passport esa to'liq OAuth2 server (grantlar, scopes, client credentials) hisoblanadi"
+      },
+      {
+        "key": "D",
+        "text": "Sanctum eskirgan bo'lib, uning o'rniga faqat Passport tavsiya etiladi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Laravel Sanctum ko'p hollarda (mobil ilovalar va birinchi tomon SPA lari uchun) yetarli bo'lgan yengil yechimdir (Personal Access Token va CSRF himoyalangan Cookie auth). Passport esa uchinchi tomon dasturchilariga to'liq OAuth2 API taqdim etish zarur bo'lganda qo'llaniladi."
+  },
+  {
+    "id": "t-api-6",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "middle",
+    "question": "REST API da `Idempotency-Key` (Idempotentlik kaliti) sarlavhasi (header) qanday muammoni hal qiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat foydalanuvchining login/parolini bazaga shifrlash uchun"
+      },
+      {
+        "key": "B",
+        "text": "Tarmoq uzilishlari tufayli takroriy (retry) yuborilgan to'lov yoki buyurtma so'rovlarida mablag' ikki marta yechilishi yoki dublikat yozuvlar yaratilishining oldini oladi"
+      },
+      {
+        "key": "C",
+        "text": "API tezligini oshirish maqsadida Gzip siqishni yoqadi"
+      },
+      {
+        "key": "D",
+        "text": "Foydalanuvchining IP manzilini bloklaydi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Stripe va boshqa to'lov tizimlarida keng qo'llaniladigan Idempotency-Key mijoz tomonidan UUID tarzida yuboriladi. Server ushbu kalit bo'yicha birinchi natijani keshga saqlaydi va agar tarmoq uzilib so'rov qayta yuborilsa, operatsiyani qayta bajarmasdan keshdagi natijani qaytaradi."
+  },
+  {
+    "id": "t-api-7",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "senior",
+    "question": "Brauzerda CORS (Cross-Origin Resource Sharing) bo'yicha 'Preflight' (OPTIONS) so'rovi qachon avtomatik yuboriladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat bir xil domen ichidagi oddiy GET so'rovlarida"
+      },
+      {
+        "key": "B",
+        "text": "Faqat veb-saytda HTTPS o'rnatilmagan bo'lsa"
+      },
+      {
+        "key": "C",
+        "text": "Faqat mijoz interneti uzilib qolganda"
+      },
+      {
+        "key": "D",
+        "text": "So'rov 'Simple Request' talablariga mos kelmasa (masalan, `Content-Type: application/json`, maxsus Authorization headeri yoki PUT/DELETE/PATCH metodlari ishlatilganda)"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Brauzer xavfsizlik maqsadida notanish cross-origin manzilga nooddiy so'rov (JSON body, Authorization header yoki PUT/DELETE) yuborishdan oldin OPTIONS metodi bilan preflight so'rovi yuboradi va serverning Access-Control-Allow-* sarlavhalarini tekshiradi."
+  },
+  {
+    "id": "t-api-8",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "middle",
+    "question": "API Rate Limiting da `429 Too Many Requests` javobida qaysi HTTP sarlavhalari (headers) mijozga qachon qayta urinish mumkinligini ma'lum qiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`Retry-After`, `X-RateLimit-Limit` va `X-RateLimit-Remaining`"
+      },
+      {
+        "key": "B",
+        "text": "`Cache-Control` va `ETag`"
+      },
+      {
+        "key": "C",
+        "text": "`Content-Security-Policy` va `X-Frame-Options`"
+      },
+      {
+        "key": "D",
+        "text": "`Location` va `Set-Cookie`"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Rate limiting qoidasi buzilganda server 429 status kodi bilan birga Retry-After (soniyalarda qancha kutish kerakligi), X-RateLimit-Limit (jami ruxsat etilgan limit) va X-RateLimit-Remaining (qolgan urinishlar soni) sarlavhalarini qaytarishi standart hisoblanadi."
+  },
+  {
+    "id": "t-api-9",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "senior",
+    "question": "REST API versiyalashda (API Versioning) 'Header-based (Accept header) versioning' ning 'URI versioning (/api/v1)' ga nisbatan asosiy me'moriy afzalligi nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Brauzer manzil satriga yozish osonroq bo'ladi"
+      },
+      {
+        "key": "B",
+        "text": "Resurs identifikatori (URI) o'zgarmas qoladi va haqiqiy REST tamoyiliga (Content Negotiation) mos keladi"
+      },
+      {
+        "key": "C",
+        "text": "Hech qanday routing sozlamalari talab qilinmaydi"
+      },
+      {
+        "key": "D",
+        "text": "Baza so'rovlarini avtomatik 2 baravar tezlashtiradi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Sof REST nazariyasiga ko'ra URI resursning yagona manzilidir (/users/1). Versiya esa resursning taqdimot shaklidir (representation). Header versiyalashda (Accept: application/vnd.company.v2+json) URI ifloslanmaydi, ammo amaliyotda URI versioning (/api/v1/) keshlar va tushunarlilik uchun ko'proq ommalashgan."
+  },
+  {
+    "id": "t-api-10",
+    "category": "api",
+    "categoryLabel": "REST API & Auth",
+    "level": "junior",
+    "question": "REST API da `PUT` va `PATCH` metodlari o'rtasidagi asosiy farq nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`PUT` faqat yangi ma'lumot kiritadi, `PATCH` faqat o'chiradi"
+      },
+      {
+        "key": "B",
+        "text": "`PUT` xavfsiz (safe) metod, `PATCH` esa xavfli metod hisoblanadi"
+      },
+      {
+        "key": "C",
+        "text": "`PUT` resursni butunlay to'liq almashtirish (full replacement) uchun; `PATCH` esa resursning faqat ma'lum maydonlarini qisman yangilash (partial update) uchun ishlatiladi"
+      },
+      {
+        "key": "D",
+        "text": "Ikkalasi mutlaqo bir xil va xohlaganini almashtirib ishlataverish mumkin"
+      }
+    ],
+    "correct": "C",
+    "explanation": "RFC 5789 ga binoan: PUT chaqirilganda resursning barcha maydonlari yuborilishi kerak (yuborilmagan maydonlar odatda null bo'ladi). PATCH esa faqat o'zgargan maydonlarni (masalan faqat { 'status': 'active' }) yuborish orqali qisman yangilash uchun mo'ljallangan."
+  },
+  {
+    "id": "t-queue-1",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "junior",
+    "question": "Laravel da Job klassi asinxron tarzda navbatga (Queue) tushishi uchun qaysi interfeysni implement qilishi shart?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`Queueable`"
+      },
+      {
+        "key": "B",
+        "text": "`AsyncJobInterface`"
+      },
+      {
+        "key": "C",
+        "text": "`Dispatchable`"
+      },
+      {
+        "key": "D",
+        "text": "`ShouldQueue`"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Laravel da agar Job klassi ShouldQueue interfeysini implement qilsa, dispatch() chaqirilganda u darhol sinxron bajarilmasdan, sozlangan navbat drayveriga (Redis, Database va h.k.) asinxron bajarilish uchun yuboriladi."
+  },
+  {
+    "id": "t-queue-2",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "middle",
+    "question": "Laravel da `php artisan queue:work` va `php artisan queue:listen` buyruqlari o'rtasidagi asosiy farq nimada?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`queue:listen` faqat Redis bilan ishlaydi, `queue:work` esa faqat Database bilan ishlaydi"
+      },
+      {
+        "key": "B",
+        "text": "`queue:work` butun freymvorkni xotiraga 1 marta yuklaydi (daemon) va yuqori unumdorlik beradi; `queue:listen` esa har bir job uchun freymvorkni qaytadan yuklaydi (local dev uchun qulay)"
+      },
+      {
+        "key": "C",
+        "text": "`queue:work` faqat bitta job bajarib to'xtaydi, `queue:listen` esa to'xtovsiz ishlaydi"
+      },
+      {
+        "key": "D",
+        "text": "Production da doimo `queue:listen` ishlatilishi shart"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Production muhitda faqat queue:work (Supervisor nazorati ostida) ishlatiladi, chunki u freymvorkni doimiy xotirada saqlab juda tez ishlaydi (deploy paytida queue:restart kerak). queue:listen esa har bir jobda freymvorkni qaytadan yuklagani uchun sekinroq, lekin kod o'zgarishlarini darhol ko'radi."
+  },
+  {
+    "id": "t-queue-3",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "senior",
+    "question": "Laravel Queue da `timeout` (vazifaning maksimal bajarilish vaqti) va `retry_after` (qayta urinish oralig'i) konfiguratsiyasida qaysi nozik xato jobning ikki marta bajarilishiga (duplicate execution) olib keladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat database drayverida timeout ishlatilganda"
+      },
+      {
+        "key": "B",
+        "text": "Faqat job ichida sleep() funksiyasi ishlatilganda"
+      },
+      {
+        "key": "C",
+        "text": "Agar `retry_after` vaqti `timeout` dan kichik yoki unga teng bo'lsa (masalan timeout=90, retry_after=60), birinchi worker hali jobni tugatmasdan, ikkinchi worker uni qayta olib bajarishga tushadi"
+      },
+      {
+        "key": "D",
+        "text": "Agar tries soni 1 dan katta bo'lsa"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Bu juda xavfli production xatosi! retry_after queue drayveri (masalan Redis) jobni boshqa workerga bermay turish vaqtidir. Agar job 80 soniya davom etsa, ammo retry_after=60 bo'lsa, navbat tizimi jobni 'tashlab ketilgan' deb hisoblab ikkinchi workerga beradi va natijada pul ikki marta yechilishi yoki xat ikki marta ketishi mumkin. retry_after doimo timeoutdan sezilarli katta bo'lishi shart!"
+  },
+  {
+    "id": "t-queue-4",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "middle",
+    "question": "Navbatdagi vazifalarda (Queues) 'Idempotent Job' tushunchasi nimani anglatadi va nega u muhim?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Tarmoq yoki server uzilishlari sababli bir xil job bir necha marta qayta bajarilsa ham, yakuniy tizim holati faqat bir marta bajarilgandek to'g'ri qolishi"
+      },
+      {
+        "key": "B",
+        "text": "Job faqat tunda soat 00:00 da bajarilishi"
+      },
+      {
+        "key": "C",
+        "text": "Job hech qachon xatolik (Exception) tashlamasligi"
+      },
+      {
+        "key": "D",
+        "text": "Job faqat bitta CPU yadrosida ishlashi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Taqsimlangan tizimlarda 'At-least-once delivery' (kamida bir marta yetkazish) kafolati bo'ladi. Agar worker vazifani bajarib, natijani bazaga yozgach Redisga 'ACK' yuborishdan oldin o'chib qolsa, job qayta ishga tushadi. Idempotentlik (masalan order_id bo'yicha tekshirib keyin to'lov qilish) orqali ikki marta yozilishning oldi olinadi."
+  },
+  {
+    "id": "t-queue-5",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "senior",
+    "question": "Laravel da `ShouldBeUnique` interfeysi ishlatilganda bir vaqtning o'zida bir xil jobning bir nechta nusxasi navbatga tushishining oldi qanday olinadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "PHP ning global massivida tekshiriladi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat fayllar tizimida .lock fayl yaratiladi"
+      },
+      {
+        "key": "C",
+        "text": "Baza jadvalida auto_increment ustun orqali"
+      },
+      {
+        "key": "D",
+        "text": "Kesh drayveri (odatda Redis Lock) orqali `uniqueId()` bo'yicha lock olinadi va job muvaffaqiyatli tugaguncha (yoki timeoutgacha) dublikatlar bloklanadi"
+      }
+    ],
+    "correct": "D",
+    "explanation": "ShouldBeUnique interfeysi klassning uniqueId() metodi qaytargan kalit bo'yicha keshdan atomik qulf (atomic lock) oladi. Job navbatda turganida yoki bajarilayotgan paytda xuddi shu parametrlar bilan boshqa dispatch() chaqirilsa, u shunchaki e'tiborga olinmaydi."
+  },
+  {
+    "id": "t-queue-6",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "middle",
+    "question": "Laravel da bir nechta mustaqil Job larni parallel yuborib, ularning barchasi tugagach umumiy natijani kutish uchun qaysi mexanizm ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`Bus::chain([...])` (Job Chaining)"
+      },
+      {
+        "key": "B",
+        "text": "`Artisan::call('queue:work')`"
+      },
+      {
+        "key": "C",
+        "text": "`Bus::batch([...])` (Job Batching)"
+      },
+      {
+        "key": "D",
+        "text": "`Event::dispatch()`"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Bus::batch() yordamida yuzlab joblar parallel ishga tushiriladi va ->then(callback), ->catch(callback), ->finally(callback) orqali barchasi tugagandagi hodisalar nazorat qilinadi. Bus::chain() esa teskarisi — joblarni qat'iy ketma-ket (biri tugasa keyingisi) bajarish uchundir."
+  },
+  {
+    "id": "t-queue-7",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "junior",
+    "question": "Laravel da `dispatchAfterResponse($job)` metodi oddiy `dispatch($job)` dan nimasi bilan farq qiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Jobni faqat ertasi kuni ertalab soat 9:00 da bajaradi"
+      },
+      {
+        "key": "B",
+        "text": "Vazifani navbat drayveriga (Redis/DB) jo'natmasdan, HTTP javob mijozga (brauzerga) yuborilib ulanish uzilgach, shu jarayonning o'zida darhol bajaradi"
+      },
+      {
+        "key": "C",
+        "text": "Faqat xatolik yuz bergandagina javob qaytaradi"
+      },
+      {
+        "key": "D",
+        "text": "Faqat AJAX so'rovlarida ishlaydi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "dispatchAfterResponse() fastcgi_finish_request() imkoniyatidan foydalanadi: foydalanuvchi HTTP javobni darhol oladi va sahifa yuklanishi kutmaydi, ammo job alohida queue worker talab qilmasdan joriy PHP-FPM jarayoni yopilishidan oldin darhol bajariladi."
+  },
+  {
+    "id": "t-queue-8",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "senior",
+    "question": "Queue workerlar xotira sizishi (Memory Leak) sababli vaqt o'tishi bilan server RAM xotirasini to'ldirib qo'ymasligi uchun qaysi parametrlar ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`--max-jobs=1000` yoki `--max-time=3600` yoki `--memory=128` (worker ma'lum hajmga yoki vaqtga yetgach o'zini o'zi to'xtatadi va Supervisor uni toza xotira bilan qayta ko'taradi)"
+      },
+      {
+        "key": "B",
+        "text": "Faqat serverdagi php.ini faylida memory_limit=-1 qilinishi kerak"
+      },
+      {
+        "key": "C",
+        "text": "Worker ichida har bir siklda unset($GLOBALS) chaqirilishi shart"
+      },
+      {
+        "key": "D",
+        "text": "Buning chorasi yo'q, faqat har kecha serverni o'chirib yoqish kerak"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP uzoq vaqt yashovchi daemon jarayonlar uchun yaratilmagan, static xususiyatlar yoki xotira to'planishi tabiiy. Shuning uchun php artisan queue:work --max-jobs=1000 --memory=128 beriladi. Worker belgilangan chegaraga yetgach xavfsiz tugaydi va Supervisor darhol yangi, toza xotirali worker ishga tushiradi."
+  },
+  {
+    "id": "t-queue-9",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "middle",
+    "question": "Laravel da Job klassi ichida `public $backoff = [30, 60, 120];` ko'rsatilishi nimani anglatadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Job bajarilishi uchun ajratilgan maksimal vaqt chegarasi"
+      },
+      {
+        "key": "B",
+        "text": "Navbatda 30, 60 va 120 ta worker bir vaqtda ishlashi"
+      },
+      {
+        "key": "C",
+        "text": "Ushbu job faqat 30 foiz ehtimollik bilan bajarilishi"
+      },
+      {
+        "key": "D",
+        "text": "Agar job xatolik bilan yiqilsa, 1-qayta urinish 30 soniyadan so'ng, 2-qayta urinish 60 soniyadan so'ng, 3-qayta urinish 120 soniyadan so'ng amalga oshiriladi (Exponential Backoff)"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Exponential Backoff strategiyasi tashqi servislar (masalan to'lov gateway yoki SMS provayder) vaqtincha ishlamay qolganda serverni ketma-ket so'rovlar bilan qiynamaslik uchun tobora uzoqroq oraliq bilan qayta urinish imkonini beradi."
+  },
+  {
+    "id": "t-queue-10",
+    "category": "queue",
+    "categoryLabel": "Navbatlar (Queue)",
+    "level": "senior",
+    "question": "Taqsimlangan navbat tizimlarida 'Dead Letter Queue' (DLQ) nima uchun zarur?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Muvaffaqiyatli bajarilgan barcha vazifalarni doimiy arxivlash uchun"
+      },
+      {
+        "key": "B",
+        "text": "Barcha qayta urinishlardan (max retries) keyin ham yiqilgan yoki 'zaharli' (poison pill) xabarlarni asosiy navbatdan ajratib olib, tizimni to'xtatib qo'ymaslik va muammoni alohida tahlil qilish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Elektron pochtalarni (Email) o'chirish uchun maxsus pochta qutisi"
+      },
+      {
+        "key": "D",
+        "text": "Baza jadvallarini tozalash uchun triggerlar to'plami"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Agar biror xabarda sintaktik xato yoki noadekvat parametr bo'lsa (Poison Pill), u workerlarni ketma-ket yiqitaveradi va asosiy navbat tiqilib qoladi (head-of-line blocking). DLQ bunday xabarlarni alohida 'qabriston' navbatiga ko'chirib, dasturchiga alert beradi va asosiy tizim faoliyatini davom ettiradi."
   }
 ];
