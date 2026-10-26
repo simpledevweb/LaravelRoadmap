@@ -1002,14 +1002,14 @@
       openMockModal("setup");
       return;
     }
-    const mockSelectLvl = t.closest("[data-mock-select-lvl]");
-    if (mockSelectLvl) {
-      mockSelectedLvl = mockSelectLvl.dataset.mockSelectLvl;
-      $$("[data-mock-select-lvl]").forEach(b => b.setAttribute("aria-pressed", String(b === mockSelectLvl)));
+    const mockCountBtn = t.closest("[data-mock-count]");
+    if (mockCountBtn) {
+      mockSelectedCount = Number(mockCountBtn.dataset.mockCount);
+      $$("[data-mock-count]").forEach(b => b.setAttribute("aria-pressed", String(b === mockCountBtn)));
       return;
     }
     if (t.closest("[data-mock-start]")) {
-      startMockTest(mockSelectedLvl);
+      startMockTest(mockSelectedCount);
       return;
     }
     if (t.closest("[data-mock-close]")) {
@@ -1637,7 +1637,7 @@
   let mockIdx = 0;
   let mockScores = [];
   let mockSecondsLeft = 120;
-  let mockSelectedLvl = "all";
+  let mockSelectedCount = 10;
 
   function openMockModal(step = "setup") {
     let overlay = $("#mock-overlay");
@@ -1648,23 +1648,87 @@
       document.body.appendChild(overlay);
     }
     if (step === "setup") {
+      const pool = getIqFilteredList();
+      if (!pool.length) {
+        overlay.innerHTML = `
+          <div class="mock-modal">
+            <div class="mock-head">
+              <h2>${icon("rocket", "ic")} Mock Imtihon</h2>
+              <button class="mock-close-btn" data-mock-close aria-label="Yopish">✕</button>
+            </div>
+            <p style="color:var(--text-2);font-size:14px;line-height:1.5;margin-bottom:18px">
+              Hozirgi tanlangan filtrlar bo'yicha savol mavjud emas. Avval filtrlarni o'zgartiring yoki qidiruvni tozalang.
+            </p>
+            <div style="display:flex;justify-content:flex-end">
+              <button class="btn" data-mock-close>Yopish</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Filtr nomini aniqlash
+      let filterDesc = [];
+      if (iqFilterStatus === "bookmarked") filterDesc.push("⭐ Saqlanganlar");
+      else if (iqFilterStatus === "mastered") filterDesc.push("O'zlashtirilgan");
+      else if (iqFilterStatus === "unmastered") filterDesc.push("O'rganish kerak");
+
+      if (iqFilterLevel !== "all") filterDesc.push(iqFilterLevel.toUpperCase());
+      if (iqFilterCat !== "all") {
+        const catObj = IQ_CATEGORIES.find(c => c.id === iqFilterCat);
+        if (catObj) filterDesc.push(catObj.label);
+      }
+      if (iqSearchQuery) filterDesc.push(`“${iqSearchQuery}”`);
+
+      const filterSummary = filterDesc.length ? filterDesc.join(" · ") : "Barcha savollar bazasi";
+
+      // Savollar soni variantlari
+      const countOptions = [];
+      if (pool.length <= 5) {
+        countOptions.push({ count: pool.length, label: `Barchasi (${pool.length} ta)` });
+      } else {
+        countOptions.push({ count: 5, label: "⚡ 5 ta (Tezkor)" });
+        if (pool.length >= 10) countOptions.push({ count: 10, label: "🎯 10 ta (Standart)" });
+        if (pool.length >= 20) countOptions.push({ count: 20, label: "🏆 20 ta (Katta)" });
+        countOptions.push({ count: pool.length, label: `♾️ Barchasi (${pool.length} ta)` });
+      }
+
+      mockSelectedCount = countOptions.some(o => o.count === 10) ? 10 : countOptions[0].count;
+
       overlay.innerHTML = `
         <div class="mock-modal">
           <div class="mock-head">
             <h2>${icon("rocket", "ic")} Texnik Intervyu Simulyatori (Mock)</h2>
             <button class="mock-close-btn" data-mock-close aria-label="Yopish">✕</button>
           </div>
-          <p style="color:var(--text-2);font-size:14px;line-height:1.5;margin-bottom:18px">
-            Ushbu rejim real kompaniya intervyusini modellashtiradi: Sizga tasodifiy <strong>10 ta savol</strong> beriladi va har bir savolga <strong>2 daqiqa</strong> vaqt ajratiladi. Javobingizni tekshirib, yakunda tayyorgarlik darajangiz (balingiz) hisoblanadi.
-          </p>
-          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:20px">
-            <label style="font:600 12px var(--mono);text-transform:uppercase;color:var(--text-3);display:block;margin-bottom:8px">Qiyinlik darajasini tanlang:</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button type="button" class="iq-pill" data-mock-select-lvl="all" aria-pressed="${mockSelectedLvl === "all"}">Aralash (Junior – Lead)</button>
-              <button type="button" class="iq-pill" data-mock-select-lvl="middle" aria-pressed="${mockSelectedLvl === "middle"}">Faqat Middle</button>
-              <button type="button" class="iq-pill" data-mock-select-lvl="senior" aria-pressed="${mockSelectedLvl === "senior"}">Faqat Senior / Lead</button>
+
+          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:18px">
+            <div style="font:600 11px var(--mono);text-transform:uppercase;color:var(--text-3);margin-bottom:4px">Joriy tanlangan filtr:</div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+              <span>${esc(filterSummary)}</span>
+              <span class="iq-pill" style="min-height:26px;padding:2px 10px;font-size:12px;background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent)">
+                Filtrda: ${pool.length} ta savol
+              </span>
             </div>
           </div>
+
+          <p style="color:var(--text-2);font-size:13.5px;line-height:1.55;margin-bottom:18px">
+            Simulyator aynan <strong>ushbu tanlangan filtrdagi savollardan</strong> tasodifiy oladi. Har bir savolga <strong>2 daqiqa</strong> vaqt beriladi. Yakunda tayyorgarlik darajangiz va tavsiyalar hisoblanadi.
+          </p>
+
+          <div style="margin-bottom:22px">
+            <label style="font:600 12px var(--mono);text-transform:uppercase;color:var(--text-3);display:block;margin-bottom:10px">
+              Imtihon uchun savollar sonini tanlang:
+            </label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap" id="mock-count-options">
+              ${countOptions.map(opt => `
+                <button type="button" class="iq-pill" data-mock-count="${opt.count}" aria-pressed="${opt.count === mockSelectedCount}">
+                  ${esc(opt.label)}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+
           <div style="display:flex;justify-content:flex-end;gap:10px">
             <button class="btn" data-mock-close>Bekor qilish</button>
             <button class="btn btn-primary" data-mock-start>Imtihonni boshlash 🚀</button>
@@ -1674,14 +1738,15 @@
     }
   }
 
-  function startMockTest(chosenLvl = "all") {
-    const all = window.INTERVIEW_QUESTIONS || [];
-    let pool = all;
-    if (chosenLvl === "middle") pool = all.filter(q => q.level === "middle");
-    if (chosenLvl === "senior") pool = all.filter(q => q.level === "senior" || q.level === "lead");
-    
+  function startMockTest(count = 10) {
+    const pool = getIqFilteredList();
+    if (!pool.length) {
+      toast("Filtr bo'yicha savollar topilmadi");
+      return;
+    }
+    const realCount = Math.min(count, pool.length);
     const shuffled = pool.slice().sort(() => 0.5 - Math.random());
-    mockQuestions = shuffled.slice(0, 10);
+    mockQuestions = shuffled.slice(0, realCount);
     mockIdx = 0;
     mockScores = [];
     renderMockQuestion();
