@@ -14,7 +14,7 @@
   ];
   const WEIGHT = [0, 0.25, 0.5, 0.75, 1];
   const PRIORITY = { core: "Core", important: "Important", optional: "Optional" };
-  const KEYS = { progress: "lsm:progress", theme: "lsm:theme", collapsed: "lsm:collapsed", last: "lsm:last", questions: "lsm:questions" };
+  const KEYS = { progress: "lsm:progress", theme: "lsm:theme", collapsed: "lsm:collapsed", last: "lsm:last", questions: "lsm:questions", bookmarks: "lsm:bookmarks" };
 
   const CAREER_LEVELS = [
     { id: "junior", label: "Junior", name: "Junior Developer", subLevels: ["foundation", "junior"], badge: "Junior", color: "var(--accent-text)", bg: "var(--accent-soft)", icon: "code", desc: "PHP sintaksisi, OOP asoslari, MVC, sodda CRUD va bazaviy vositalar" },
@@ -145,6 +145,7 @@
   let progress = store.get(KEYS.progress, {});
   if (typeof progress !== "object" || progress === null) progress = {};
   let masteredIq = new Set(store.get(KEYS.questions, []));
+  let bookmarkedIq = new Set(store.get(KEYS.bookmarks, []));
 
   const idb = {
     open() {
@@ -213,7 +214,8 @@
         version: 1,
         exportedAt: new Date().toISOString(),
         progress: progress,
-        questions: Array.from(masteredIq)
+        questions: Array.from(masteredIq),
+        bookmarks: Array.from(bookmarkedIq)
       };
       await writable.write(JSON.stringify(payload, null, 2));
       await writable.close();
@@ -990,6 +992,51 @@
       toggleMasteredIq(iqCheck.dataset.iqCheck);
       return;
     }
+    const iqBookmark = t.closest("[data-iq-bookmark]");
+    if (iqBookmark) {
+      toggleBookmarkIq(iqBookmark.dataset.iqBookmark);
+      return;
+    }
+    const iqCheatsheet = t.closest("[data-iq-cheatsheet]");
+    if (iqCheatsheet) {
+      iqCheatsheetMode = !iqCheatsheetMode;
+      document.body.classList.toggle("iq-cheatsheet-active", iqCheatsheetMode);
+      renderInterview();
+      toast(iqCheatsheetMode ? "📄 Cheatsheet rejimi yoqildi (Chop etish mumkin)" : "Cheatsheet rejimi o'chirildi");
+      return;
+    }
+    const iqStartMock = t.closest("[data-iq-start-mock]");
+    if (iqStartMock) {
+      openMockModal("setup");
+      return;
+    }
+    const mockSelectLvl = t.closest("[data-mock-select-lvl]");
+    if (mockSelectLvl) {
+      mockSelectedLvl = mockSelectLvl.dataset.mockSelectLvl;
+      $$("[data-mock-select-lvl]").forEach(b => b.setAttribute("aria-pressed", String(b === mockSelectLvl)));
+      return;
+    }
+    if (t.closest("[data-mock-start]")) {
+      startMockTest(mockSelectedLvl);
+      return;
+    }
+    if (t.closest("[data-mock-close]")) {
+      closeMockModal();
+      return;
+    }
+    if (t.closest("[data-mock-reveal]")) {
+      revealMockAnswer();
+      return;
+    }
+    const mockEvalBtn = t.closest("[data-mock-eval]");
+    if (mockEvalBtn) {
+      recordMockEval(mockEvalBtn.dataset.mockEval);
+      return;
+    }
+    if (t.closest("[data-mock-restart]")) {
+      openMockModal("setup");
+      return;
+    }
     const iqCopy = t.closest("[data-iq-copy]");
     if (iqCopy) {
       const qId = iqCopy.dataset.iqCopy;
@@ -1248,15 +1295,41 @@
     updateIqStats();
   }
 
+  let iqCheatsheetMode = false;
+
+  function toggleBookmarkIq(id) {
+    if (bookmarkedIq.has(id)) {
+      bookmarkedIq.delete(id);
+      toast("Sevimlilardan olib tashlandi");
+    } else {
+      bookmarkedIq.add(id);
+      toast("Sevimlilarga saqlashga qo'shildi ⭐");
+    }
+    store.set(KEYS.bookmarks, Array.from(bookmarkedIq));
+    saveToLinkedFile();
+    const btn = $(`[data-iq-bookmark="${id}"]`);
+    if (btn) {
+      const isSaved = bookmarkedIq.has(id);
+      btn.classList.toggle("active", isSaved);
+      btn.title = isSaved ? "Sevimlilardan o'chirish" : "Sevimlilarga saqlash";
+    }
+    updateIqStats();
+    if (iqFilterStatus === "bookmarked") {
+      filterInterviewList();
+    }
+  }
+
   function getIqFilteredList() {
     const questions = window.INTERVIEW_QUESTIONS || [];
     return questions.filter((q) => {
       const matchLvl = iqFilterLevel === "all" || q.level === iqFilterLevel;
       const matchCat = iqFilterCat === "all" || q.category === iqFilterCat;
       const isMastered = masteredIq.has(q.id);
+      const isBookmarked = bookmarkedIq.has(q.id);
       const matchStatus = iqFilterStatus === "all" ||
         (iqFilterStatus === "mastered" && isMastered) ||
-        (iqFilterStatus === "unmastered" && !isMastered);
+        (iqFilterStatus === "unmastered" && !isMastered) ||
+        (iqFilterStatus === "bookmarked" && isBookmarked);
       const matchSearch = !iqSearchQuery ||
         q.title.toLowerCase().includes(iqSearchQuery) ||
         (Array.isArray(q.answer) ? q.answer.join(" ") : q.answer).toLowerCase().includes(iqSearchQuery) ||
@@ -1301,9 +1374,11 @@
 
     // Holat pilla tugmalari ichidagi sonlarni yangilash
     const allBtn = $('[data-iq-status="all"] .count-chip');
+    const bBtn = $('[data-iq-status="bookmarked"] .count-chip');
     const mBtn = $('[data-iq-status="mastered"] .count-chip');
     const uBtn = $('[data-iq-status="unmastered"] .count-chip');
     if (allBtn) allBtn.textContent = String(questions.length);
+    if (bBtn) bBtn.textContent = String(bookmarkedIq.size);
     if (mBtn) mBtn.textContent = String(doneCount);
     if (uBtn) uBtn.textContent = String(remainingCount);
   }
@@ -1324,7 +1399,8 @@
 
     return filtered.map((q) => {
       const isMastered = masteredIq.has(q.id);
-      const isOpen = iqAllExpanded;
+      const isBookmarked = bookmarkedIq.has(q.id);
+      const isOpen = iqAllExpanded || iqCheatsheetMode;
       const cleanNum = q.id.replace("iq-", "");
 
       return `
@@ -1338,13 +1414,14 @@
                 <span>·</span>
                 <span>ID: <code class="inline-code">#${cleanNum}</code></span>
                 ${q.subskillId ? `<span>· Mavzu: <code class="inline-code">${esc(q.subskillId)}</code></span>` : ""}
+                ${isBookmarked ? `<span style="color:#F59E0B;font-weight:600;display:inline-flex;align-items:center;gap:3px">★ Saqlangan</span>` : ""}
                 ${isMastered ? `<span class="tag-done" style="color:var(--accent-text);font-weight:600;display:inline-flex;align-items:center;gap:3px">${icon("check", "ic ic-sm")} O'zlashtirildi</span>` : ""}
               </div>
             </div>
             <span class="iq-chev">${icon("chev-down", "ic")}</span>
           </button>
           <div class="iq-card-body">
-            ${iqPracticeMode ? `
+            ${(iqPracticeMode && !iqCheatsheetMode) ? `
               <div class="iq-practice-prompt" id="prompt-${q.id}">
                 <p><strong>${icon("target", "ic ic-sm")} Sinov rejimi:</strong> Savolga avval o'zingiz mustaqil javob berishga urinib ko'ring, so'ngra model javob bilan tekshiring.</p>
                 <button class="iq-reveal-btn" data-iq-reveal="${q.id}">Javobni ko'rish →</button>
@@ -1375,6 +1452,9 @@
               <div class="iq-card-actions-left">
                 <button class="iq-check-btn ${isMastered ? "done" : ""}" data-iq-check="${q.id}">
                   ${icon(isMastered ? "check" : "target", "ic ic-sm")} ${isMastered ? "O'zlashtirildi" : "O'zlashtirish"}
+                </button>
+                <button class="iq-bookmark-btn ${isBookmarked ? "active" : ""}" data-iq-bookmark="${q.id}" title="${isBookmarked ? "Sevimlilardan o'chirish" : "Sevimlilarga saqlash"}">
+                  ${icon("sparkles", "ic ic-sm")}
                 </button>
                 <button class="iq-copy-btn" data-iq-copy="${q.id}" title="Savol va javobni nusxalash">
                   ${icon("copy", "ic ic-sm")} Nusxalash
@@ -1496,6 +1576,14 @@
             ${iqSearchQuery ? `<button class="iq-search-clear" data-iq-clear-search aria-label="Qidiruvni tozalash">${icon("close", "ic ic-sm")}</button>` : ""}
           </div>
           <div class="iq-tools">
+            <button class="iq-tool-btn primary" data-iq-start-mock title="Jonli intervyu simulyatori (10 ta savol)">
+              ${icon("rocket", "ic ic-sm")}
+              <span>Mock Imtihon</span>
+            </button>
+            <button class="iq-tool-btn ${iqCheatsheetMode ? "active" : ""}" data-iq-cheatsheet aria-pressed="${iqCheatsheetMode}" title="Tezkor xulosalar va chop etish">
+              ${icon("file", "ic ic-sm")}
+              <span>Cheatsheet</span>
+            </button>
             <button class="iq-tool-btn ${iqPracticeMode ? "active" : ""}" data-iq-practice aria-pressed="${iqPracticeMode}" title="Model javoblarni yashirib, o'zingizni sinash">
               ${icon("target", "ic ic-sm")}
               <span>Sinov rejimi</span>
@@ -1511,12 +1599,26 @@
           </div>
         </div>
 
+        ${iqCheatsheetMode ? `
+          <div class="iq-cheatsheet-banner">
+            <div>
+              <strong>📄 Cheatsheet rejimi:</strong> Barcha savollar va xulosalar ochiq holatda.
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="window.print()">
+              ${icon("download", "ic ic-sm")} PDF / Chop etish
+            </button>
+          </div>
+        ` : ""}
+
         <div class="iq-pills-wrap">
           <div class="iq-pills-row">
             <span class="iq-pills-label">Holat:</span>
             <div class="iq-pills" id="iq-status-pills">
               <button type="button" class="iq-pill" data-iq-status="all" aria-pressed="${iqFilterStatus === "all"}">
                 Barchasi <span class="count-chip">${questions.length}</span>
+              </button>
+              <button type="button" class="iq-pill" data-iq-status="bookmarked" aria-pressed="${iqFilterStatus === "bookmarked"}">
+                ⭐ Saqlanganlar <span class="count-chip">${bookmarkedIq.size}</span>
               </button>
               <button type="button" class="iq-pill" data-iq-status="mastered" aria-pressed="${iqFilterStatus === "mastered"}">
                 O'zlashtirilgan <span class="count-chip">${doneCount}</span>
@@ -1583,6 +1685,227 @@
         }
       });
     }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Mock Interview Simulator
+   * ------------------------------------------------------------------ */
+  let mockTimer = null;
+  let mockQuestions = [];
+  let mockIdx = 0;
+  let mockScores = [];
+  let mockSecondsLeft = 120;
+  let mockSelectedLvl = "all";
+
+  function openMockModal(step = "setup") {
+    let overlay = $("#mock-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "mock-overlay";
+      overlay.className = "mock-overlay";
+      document.body.appendChild(overlay);
+    }
+    if (step === "setup") {
+      overlay.innerHTML = `
+        <div class="mock-modal">
+          <div class="mock-head">
+            <h2>${icon("rocket", "ic")} Texnik Intervyu Simulyatori (Mock)</h2>
+            <button class="mock-close-btn" data-mock-close aria-label="Yopish">✕</button>
+          </div>
+          <p style="color:var(--text-2);font-size:14px;line-height:1.5;margin-bottom:18px">
+            Ushbu rejim real kompaniya intervyusini modellashtiradi: Sizga tasodifiy <strong>10 ta savol</strong> beriladi va har bir savolga <strong>2 daqiqa</strong> vaqt ajratiladi. Javobingizni tekshirib, yakunda tayyorgarlik darajangiz (balingiz) hisoblanadi.
+          </p>
+          <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:20px">
+            <label style="font:600 12px var(--mono);text-transform:uppercase;color:var(--text-3);display:block;margin-bottom:8px">Qiyinlik darajasini tanlang:</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button type="button" class="iq-pill" data-mock-select-lvl="all" aria-pressed="${mockSelectedLvl === "all"}">Aralash (Junior – Lead)</button>
+              <button type="button" class="iq-pill" data-mock-select-lvl="middle" aria-pressed="${mockSelectedLvl === "middle"}">Faqat Middle</button>
+              <button type="button" class="iq-pill" data-mock-select-lvl="senior" aria-pressed="${mockSelectedLvl === "senior"}">Faqat Senior / Lead</button>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;gap:10px">
+            <button class="btn" data-mock-close>Bekor qilish</button>
+            <button class="btn btn-primary" data-mock-start>Imtihonni boshlash 🚀</button>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function startMockTest(chosenLvl = "all") {
+    const all = window.INTERVIEW_QUESTIONS || [];
+    let pool = all;
+    if (chosenLvl === "middle") pool = all.filter(q => q.level === "middle");
+    if (chosenLvl === "senior") pool = all.filter(q => q.level === "senior" || q.level === "lead");
+    
+    const shuffled = pool.slice().sort(() => 0.5 - Math.random());
+    mockQuestions = shuffled.slice(0, 10);
+    mockIdx = 0;
+    mockScores = [];
+    renderMockQuestion();
+  }
+
+  function renderMockQuestion() {
+    const overlay = $("#mock-overlay");
+    if (!overlay || mockIdx >= mockQuestions.length) {
+      finishMockTest();
+      return;
+    }
+    const q = mockQuestions[mockIdx];
+    mockSecondsLeft = 120;
+    clearInterval(mockTimer);
+
+    overlay.innerHTML = `
+      <div class="mock-modal">
+        <div class="mock-head">
+          <h2>${icon("rocket", "ic")} Savol ${mockIdx + 1} / ${mockQuestions.length}</h2>
+          <button class="mock-close-btn" data-mock-close aria-label="Yopish">✕</button>
+        </div>
+
+        <div class="mock-timer-wrap">
+          <div class="mock-timer-head">
+            <span>Ajratilgan vaqt</span>
+            <span id="mock-timer-text">02:00</span>
+          </div>
+          <div class="mock-timer-track">
+            <div class="mock-timer-fill" id="mock-timer-bar" style="width:100%"></div>
+          </div>
+        </div>
+
+        <div class="mock-q-box">
+          <div class="mock-q-meta">
+            <span class="iq-badge ${q.level}">${q.level}</span>
+            <span class="tag-cat">${esc(q.categoryLabel)}</span>
+          </div>
+          <h3 class="mock-q-title">${esc(q.title)}</h3>
+        </div>
+
+        <div id="mock-interaction-area">
+          <div class="mock-self-test-prompt">
+            <p>Javobni o'zingizcha ovoz chiqarib tushuntirib bering. Tayyor bo'lgach, model javobni oching.</p>
+            <button class="btn btn-primary" data-mock-reveal>Model javobni ko'rish →</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    mockTimer = setInterval(() => {
+      mockSecondsLeft--;
+      const textEl = $("#mock-timer-text");
+      const barEl = $("#mock-timer-bar");
+      if (textEl && barEl) {
+        const mins = Math.floor(mockSecondsLeft / 60);
+        const secs = mockSecondsLeft % 60;
+        textEl.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+        const pct = (mockSecondsLeft / 120) * 100;
+        barEl.style.width = `${pct}%`;
+        if (mockSecondsLeft < 30) barEl.className = "mock-timer-fill danger";
+        else if (mockSecondsLeft < 60) barEl.className = "mock-timer-fill warn";
+      }
+      if (mockSecondsLeft <= 0) {
+        clearInterval(mockTimer);
+        toast("Vaqt tugadi! O'zingizni baholang.");
+        const revBtn = $("[data-mock-reveal]");
+        if (revBtn) revBtn.click();
+      }
+    }, 1000);
+  }
+
+  function revealMockAnswer() {
+    const q = mockQuestions[mockIdx];
+    const area = $("#mock-interaction-area");
+    if (!area) return;
+    area.innerHTML = `
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;max-height:260px;overflow-y:auto">
+        <div class="iq-answer-label">${icon("target", "ic ic-sm")} Kutiladigan model javob:</div>
+        <div style="font-size:13.5px;line-height:1.6">${markdown(q.answer)}</div>
+        ${q.tip ? `<div class="iq-tip-box" style="margin-top:12px"><h4>${icon("sparkles", "ic ic-sm")} Senior siri</h4><p>${esc(q.tip)}</p></div>` : ""}
+      </div>
+
+      <div style="text-align:center;font:600 12px var(--mono);color:var(--text-3);text-transform:uppercase">O'z javobingizni xolisona baholang:</div>
+      <div class="mock-eval-grid">
+        <button class="mock-eval-btn good" data-mock-eval="10">
+          <span>🟢 To'liq bildim</span>
+          <small>+10 ball</small>
+        </button>
+        <button class="mock-eval-btn mid" data-mock-eval="5">
+          <span>🟡 Qisman bildim</span>
+          <small>+5 ball</small>
+        </button>
+        <button class="mock-eval-btn bad" data-mock-eval="0">
+          <span>🔴 Bilmadim</span>
+          <small>0 ball</small>
+        </button>
+      </div>
+    `;
+  }
+
+  function recordMockEval(points) {
+    clearInterval(mockTimer);
+    const q = mockQuestions[mockIdx];
+    mockScores.push({ q, score: Number(points) });
+    mockIdx++;
+    renderMockQuestion();
+  }
+
+  function finishMockTest() {
+    clearInterval(mockTimer);
+    const overlay = $("#mock-overlay");
+    if (!overlay) return;
+    const totalScore = mockScores.reduce((acc, x) => acc + x.score, 0);
+    const maxScore = mockScores.length * 10 || 1;
+    const pctScore = Math.round((totalScore / maxScore) * 100);
+
+    let verdict = "Ajoyib natija! Texnik intervyulardan muvaffaqiyatli o'tish imkoniyatingiz juda yuqori.";
+    if (pctScore < 50) verdict = "Asosiy mavzularni ko'proq takrorlash va bilmagan savollarni yodda saqlash tavsiya etiladi.";
+    else if (pctScore < 80) verdict = "Yaxshi natija! Ayrim arxitektura va baza savollarini takrorlab oling.";
+
+    const weakQuestions = mockScores.filter(x => x.score < 10).map(x => x.q);
+
+    overlay.innerHTML = `
+      <div class="mock-modal">
+        <div class="mock-head">
+          <h2>${icon("target", "ic")} Imtihon Natijalari (Scorecard)</h2>
+          <button class="mock-close-btn" data-mock-close aria-label="Yopish">✕</button>
+        </div>
+
+        <div class="mock-scorecard">
+          <div class="mock-score-ring">${pctScore}%</div>
+          <h3>${totalScore} / ${maxScore} ball</h3>
+          <p>${verdict}</p>
+
+          ${weakQuestions.length ? `
+            <div style="font:600 12px var(--mono);text-transform:uppercase;color:var(--text-3);text-align:left;margin-bottom:8px">
+              Takrorlash tavsiya etiladigan savollar (${weakQuestions.length} ta):
+            </div>
+            <div class="mock-review-list">
+              ${weakQuestions.map(wq => {
+                const isBookmarked = bookmarkedIq.has(wq.id);
+                return `
+                  <div class="mock-review-item">
+                    <span style="flex:1;min-width:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">${esc(wq.title)}</span>
+                    <button class="iq-bookmark-btn ${isBookmarked ? "active" : ""}" data-iq-bookmark="${wq.id}" title="Sevimlilarga saqlash">
+                      ${icon("sparkles", "ic ic-sm")}
+                    </button>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          ` : `<p style="color:var(--accent-text);font-weight:600">Barcha savollarga a'lo darajada javob berdingiz! 🏆</p>`}
+
+          <div style="display:flex;justify-content:center;gap:12px;margin-top:20px">
+            <button class="btn btn-primary" data-mock-restart>Qayta topshirish 🔄</button>
+            <button class="btn" data-mock-close>Yopish</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function closeMockModal() {
+    clearInterval(mockTimer);
+    const overlay = $("#mock-overlay");
+    if (overlay) overlay.remove();
   }
 
   /* ------------------------------------------------------------------ *
@@ -1824,7 +2147,8 @@
           version: 1,
           exportedAt: new Date().toISOString(),
           progress,
-          questions: Array.from(masteredIq)
+          questions: Array.from(masteredIq),
+          bookmarks: Array.from(bookmarkedIq)
         };
         const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -1837,6 +2161,7 @@
         if (!confirm("Barcha progress o'chiriladi. Davom etasizmi?")) return;
         progress = {}; store.set(KEYS.progress, progress);
         masteredIq.clear(); store.set(KEYS.questions, []);
+        bookmarkedIq.clear(); store.set(KEYS.bookmarks, []);
         saveToLinkedFile();
         route(); updateSidebarProgress(); toast("Progress tozalandi");
       }
@@ -1857,6 +2182,10 @@
           masteredIq = new Set(data.questions);
           store.set(KEYS.questions, data.questions);
         }
+        if (Array.isArray(data.bookmarks)) {
+          bookmarkedIq = new Set(data.bookmarks);
+          store.set(KEYS.bookmarks, data.bookmarks);
+        }
         saveToLinkedFile();
         route(); updateSidebarProgress();
         toast(`${Object.keys(clean).length} ta mavzu holati import qilindi`);
@@ -1868,6 +2197,7 @@
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal().classList.contains("open") ? closePalette() : openPalette(); return; }
       if (e.key === "/" && !typing) { e.preventDefault(); openPalette(); return; }
       if (e.key === "Escape") {
+        if ($("#mock-overlay")) { closeMockModal(); return; }
         if (pal().classList.contains("open")) closePalette();
         else if ($("#more-menu").classList.contains("open")) { setMenu(false); $("#more-btn").focus(); }
         else if (document.body.classList.contains("nav-open")) { document.body.classList.remove("nav-open"); $("#menu-btn").setAttribute("aria-expanded", "false"); }

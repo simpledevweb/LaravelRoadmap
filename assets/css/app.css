@@ -1375,5 +1375,149 @@ code, kbd, pre { font-variant-ligatures: none; }
   text-decoration: underline; gap: 6px;
 }
 
+/* ==========================================================================
+   Bookmarks, Cheatsheet & Mock Interview Simulator
+   ========================================================================== */
+
+/* Bookmark Button */
+.iq-bookmark-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 99px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-3); cursor: pointer; transition: all var(--t-fast);
+  padding: 0;
+}
+.iq-bookmark-btn:hover {
+  color: #F59E0B; border-color: #F59E0B; background: color-mix(in srgb, #F59E0B 12%, transparent);
+}
+.iq-bookmark-btn.active {
+  color: #F59E0B; border-color: #F59E0B; background: color-mix(in srgb, #F59E0B 18%, transparent);
+}
+.iq-bookmark-btn.active svg { fill: #F59E0B; }
+
+/* Mock Interview Banner & Tool Buttons */
+.iq-tool-btn.primary {
+  background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 600;
+}
+.iq-tool-btn.primary:hover {
+  opacity: 0.92; transform: translateY(-1px); box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* Cheatsheet Mode */
+.iq-cheatsheet-active .iq-card {
+  padding: 14px 18px; border-radius: var(--r);
+}
+.iq-cheatsheet-active .iq-card-body {
+  padding: 12px 0 0; background: transparent; border-top: 1px dashed var(--border);
+}
+.iq-cheatsheet-active .iq-title { font-size: 14.5px; }
+.iq-cheatsheet-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 18px; border-radius: var(--r); margin-bottom: var(--sp-4);
+  background: var(--surface-2); border: 1px solid var(--border); font-size: 13px;
+}
+
+/* Mock Interview Simulator Modal */
+.mock-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--sp-4); animation: reveal 200ms ease;
+}
+.mock-modal {
+  width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-xl); padding: var(--sp-6);
+  box-shadow: 0 24px 60px -12px rgba(0,0,0,.6); position: relative;
+}
+.mock-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding-bottom: var(--sp-4); border-bottom: 1px solid var(--border);
+  margin-bottom: var(--sp-5);
+}
+.mock-head h2 { font-size: 18px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 8px; }
+.mock-close-btn {
+  background: transparent; border: none; color: var(--text-3);
+  cursor: pointer; padding: 6px; border-radius: 99px; font-size: 18px;
+}
+.mock-close-btn:hover { color: var(--text); background: var(--surface-2); }
+
+.mock-timer-wrap {
+  margin-bottom: var(--sp-4);
+}
+.mock-timer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  font: 600 12px var(--mono); color: var(--text-2); margin-bottom: 6px;
+}
+.mock-timer-track {
+  height: 6px; border-radius: 99px; background: var(--surface-2); overflow: hidden;
+}
+.mock-timer-fill {
+  height: 100%; width: 100%; background: var(--accent); transition: width 1s linear;
+}
+.mock-timer-fill.warn { background: #F59E0B; }
+.mock-timer-fill.danger { background: #EF4444; }
+
+.mock-q-box {
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 20px; margin-bottom: var(--sp-5);
+}
+.mock-q-meta {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px;
+}
+.mock-q-title {
+  font-size: 17px; font-weight: 600; line-height: 1.45; color: var(--text); margin: 0;
+}
+
+.mock-self-test-prompt {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border: 1px dashed var(--accent); border-radius: var(--r);
+  padding: 16px; text-align: center; margin-bottom: var(--sp-4);
+}
+.mock-self-test-prompt p { margin: 0 0 12px; font-size: 13.5px; color: var(--text-2); }
+
+.mock-eval-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: var(--sp-4);
+}
+.mock-eval-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  padding: 12px; border-radius: var(--r); border: 1px solid var(--border);
+  background: var(--surface-2); cursor: pointer; transition: all var(--t-fast);
+  font: 600 12.5px var(--font); color: var(--text);
+}
+.mock-eval-btn.good:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); }
+.mock-eval-btn.mid:hover { background: color-mix(in srgb, #F59E0B 15%, transparent); border-color: #F59E0B; color: #F59E0B; }
+.mock-eval-btn.bad:hover { background: color-mix(in srgb, #EF4444 15%, transparent); border-color: #EF4444; color: #EF4444; }
+
+/* Mock Result Scorecard */
+.mock-scorecard {
+  text-align: center; padding: var(--sp-4) 0;
+}
+.mock-score-ring {
+  width: 120px; height: 120px; margin: 0 auto 16px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--surface-2);
+  border: 4px solid var(--accent); font: 700 32px var(--mono); color: var(--accent-text);
+}
+.mock-scorecard h3 { font-size: 22px; margin: 0 0 8px; color: var(--text); }
+.mock-scorecard p { font-size: 14px; color: var(--text-2); max-width: 440px; margin: 0 auto 20px; }
+.mock-review-list {
+  text-align: left; margin: 20px 0; max-height: 220px; overflow-y: auto;
+  border-top: 1px solid var(--border); padding-top: 12px;
+}
+.mock-review-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 8px 10px; border-radius: var(--r-sm); font-size: 13px;
+}
+.mock-review-item:nth-child(even) { background: var(--surface-2); }
+
+/* Print mode (Cheatsheet export) */
+@media print {
+  .topbar, .sidebar, .iq-hero, .iq-stats-grid, .iq-controls, .iq-card-foot, .iq-chev { display: none !important; }
+  .main, .view, .shell { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+  .iq-card { page-break-inside: avoid; border: 1px solid #ccc !important; color: #000 !important; margin-bottom: 12px !important; }
+  .iq-card-body { display: block !important; color: #111 !important; }
+}
+
+
 
 
