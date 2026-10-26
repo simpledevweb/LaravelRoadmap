@@ -445,6 +445,7 @@
       <a class="side-home" href="#/">${icon("home")}Umumiy ko'rinish</a>
       <a class="side-levels" href="#/levels">${icon("target")}Darajalar xaritasi</a>
       <a class="side-interview" href="#/interview">${icon("help")}Intervyu savollari</a>
+      <a class="side-quiz" href="#/quiz">${icon("sparkles")}Texnik Testlar (Quiz)</a>
       ${GROUPS.map((g) => `
         <div class="side-group" data-group="${g.id}" data-collapsed="${!!collapsed[g.id]}">
           <button class="side-group-btn" aria-expanded="${!collapsed[g.id]}" aria-controls="sg-${g.id}">
@@ -480,21 +481,25 @@
     });
   }
 
-  function markActive(slug, isLevels = false, isInterview = false) {
+  function markActive(slug, isLevels = false, isInterview = false, isQuiz = false) {
     $$(".side-link").forEach((a) => {
       if (a.dataset.slug === slug) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
     const home = $(".side-home");
     const levels = $(".side-levels");
     const interview = $(".side-interview");
+    const quiz = $(".side-quiz");
     if (home) {
-      if (!slug && !isLevels && !isInterview) home.setAttribute("aria-current", "page"); else home.removeAttribute("aria-current");
+      if (!slug && !isLevels && !isInterview && !isQuiz) home.setAttribute("aria-current", "page"); else home.removeAttribute("aria-current");
     }
     if (levels) {
       if (isLevels) levels.setAttribute("aria-current", "page"); else levels.removeAttribute("aria-current");
     }
     if (interview) {
       if (isInterview) interview.setAttribute("aria-current", "page"); else interview.removeAttribute("aria-current");
+    }
+    if (quiz) {
+      if (isQuiz) quiz.setAttribute("aria-current", "page"); else quiz.removeAttribute("aria-current");
     }
     if (slug) {
       const link = $(`.side-link[data-slug="${slug}"]`);
@@ -995,6 +1000,70 @@
     const iqBookmark = t.closest("[data-iq-bookmark]");
     if (iqBookmark) {
       toggleBookmarkIq(iqBookmark.dataset.iqBookmark);
+      return;
+    }
+    const iqScrollQuiz = t.closest("[data-iq-scroll-quiz]");
+    if (iqScrollQuiz) {
+      const qSection = document.getElementById("iq-quiz-section");
+      if (qSection) qSection.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    const quizCatBtn = t.closest("[data-quiz-cat]");
+    if (quizCatBtn) {
+      handleQuizChangeCat(quizCatBtn.dataset.quizCat);
+      return;
+    }
+    const quizLevelBtn = t.closest("[data-quiz-level]");
+    if (quizLevelBtn) {
+      handleQuizChangeLevel(quizLevelBtn.dataset.quizLevel);
+      return;
+    }
+    const quizCountBtn = t.closest("[data-quiz-count]");
+    if (quizCountBtn) {
+      handleQuizSetCount(quizCountBtn.dataset.quizCount);
+      return;
+    }
+    const quizStartBtn = t.closest("[data-quiz-start]");
+    if (quizStartBtn) {
+      handleQuizStart();
+      return;
+    }
+    const quizOptBtn = t.closest("[data-quiz-opt]");
+    if (quizOptBtn && !quizOptBtn.disabled) {
+      handleQuizSelect(quizOptBtn.dataset.quizOpt);
+      return;
+    }
+    const quizNextBtn = t.closest("[data-quiz-next]");
+    if (quizNextBtn) {
+      handleQuizNext();
+      return;
+    }
+    const quizRestartBtn = t.closest("[data-quiz-restart]");
+    if (quizRestartBtn) {
+      handleQuizRestart();
+      return;
+    }
+    const quizToLobbyBtn = t.closest("[data-quiz-to-lobby]");
+    if (quizToLobbyBtn) {
+      handleQuizBackToLobby();
+      return;
+    }
+    const quizReviewWrongsBtn = t.closest("[data-quiz-review-wrongs]");
+    if (quizReviewWrongsBtn) {
+      handleQuizReviewWrongs();
+      return;
+    }
+    const quizChooseCatBtn = t.closest("[data-quiz-choose-cat]");
+    if (quizChooseCatBtn) {
+      const catsEl = document.querySelector(".iq-quiz-cats");
+      if (catsEl) catsEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      handleQuizChangeCat("all");
+      return;
+    }
+    const quizScrollTopBtn = t.closest("[data-quiz-scroll-top]");
+    if (quizScrollTopBtn) {
+      const topEl = document.querySelector(".iq-hero");
+      if (topEl) topEl.scrollIntoView({ behavior: "smooth" });
       return;
     }
     const iqStartMock = t.closest("[data-iq-start-mock]");
@@ -1541,12 +1610,12 @@
             ${iqSearchQuery ? `<button class="iq-search-clear" data-iq-clear-search aria-label="Qidiruvni tozalash">${icon("close", "ic ic-sm")}</button>` : ""}
           </div>
           <div class="iq-tools">
-            <button class="iq-tool-btn primary" data-iq-start-mock title="Jonli intervyu simulyatori (10 ta savol)">
+            <button class="iq-tool-btn primary" data-iq-start-mock title="Jonli intervyu simulyatori (Mock test)">
               ${icon("rocket", "ic ic-sm")}
               <span>Mock Imtihon</span>
             </button>
             <button class="iq-tool-btn ${iqPracticeMode ? "active" : ""}" data-iq-practice aria-pressed="${iqPracticeMode}" title="Model javoblarni yashirib, o'zingizni sinash">
-              ${icon("target", "ic ic-sm")}
+              ${icon("help", "ic ic-sm")}
               <span>Sinov rejimi</span>
             </button>
           </div>
@@ -1608,8 +1677,7 @@
         ${renderInterviewItems()}
       </div>
     `;
-
-    const searchInp = $("#iq-search-input");
+const searchInp = $("#iq-search-input");
     if (searchInp) {
       searchInp.addEventListener("input", (e) => {
         iqSearchQuery = e.target.value.toLowerCase().trim();
@@ -1627,6 +1695,529 @@
         }
       });
     }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Interactive Quiz & Assessment Engine (A, B, C, D Tests)
+   * ------------------------------------------------------------------ */
+  const QUIZ_CATEGORIES = [
+    { id: "all", label: "🌟 Barchasi" },
+    { id: "php", label: "🐘 PHP & OOP" },
+    { id: "laravel", label: "⚡ Laravel Core" },
+    { id: "eloquent", label: "🗄️ Eloquent & DB" },
+    { id: "api", label: "🌐 REST API & Auth" },
+    { id: "redis", label: "⚡ Redis & Kesh" },
+    { id: "queue", label: "📬 Navbatlar (Queue)" },
+    { id: "security", label: "🛡️ Xavfsizlik" },
+    { id: "architecture", label: "🏛️ Arxitektura" },
+    { id: "devops", label: "🐳 DevOps & Linux" }
+  ];
+
+  const QUIZ_LEVELS = [
+    { id: "all", label: "⚡ Barcha darajalar" },
+    { id: "junior", label: "🌱 Junior" },
+    { id: "middle", label: "🔷 Middle" },
+    { id: "senior", label: "🔥 Senior" }
+  ];
+
+  let quizActiveCat = "all";
+  let quizActiveLevel = "all";
+  let quizSelectedCount = 10; // 5, 10, 15, or 0 (all)
+  let quizState = "lobby"; // "lobby" | "running" | "finished"
+  let quizIdx = 0;
+  let quizQuestions = [];
+  let quizAnswers = {};
+  let quizScores = {};
+
+  try {
+    const raw = localStorage.getItem("lsm:quiz_scores");
+    if (raw) quizScores = JSON.parse(raw);
+  } catch (e) {}
+
+  function getQuizPool(catId = quizActiveCat, levelId = quizActiveLevel) {
+    const all = window.INTERVIEW_TESTS || [];
+    return all.filter(t => {
+      const matchCat = (catId === "all" || t.category === catId);
+      const matchLevel = (levelId === "all" || (t.level || "middle") === levelId);
+      return matchCat && matchLevel;
+    });
+  }
+
+  function handleQuizChangeCat(catId) {
+    quizActiveCat = catId;
+    quizState = "lobby";
+    updateQuizView();
+  }
+
+  function handleQuizChangeLevel(levelId) {
+    quizActiveLevel = levelId;
+    quizState = "lobby";
+    updateQuizView();
+  }
+
+  function handleQuizSetCount(count) {
+    quizSelectedCount = Number(count);
+    updateQuizView();
+  }
+
+  function playSfx(type) {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      const now = ctx.currentTime;
+      if (type === "check") {
+        osc.frequency.setValueAtTime(587.33, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      } else if (type === "celebrate") {
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.setValueAtTime(659.25, now + 0.1);
+        osc.frequency.setValueAtTime(783.99, now + 0.2);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else {
+        osc.frequency.setValueAtTime(320, now);
+        gain.gain.setValueAtTime(0.04, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        osc.start(now);
+        osc.stop(now + 0.08);
+      }
+    } catch (e) {}
+  }
+
+  function handleQuizStart() {
+    const pool = getQuizPool();
+    if (!pool.length) return;
+
+    const shuffled = pool.slice().sort(() => 0.5 - Math.random());
+    const count = (quizSelectedCount > 0 && quizSelectedCount < shuffled.length) ? quizSelectedCount : shuffled.length;
+    quizQuestions = shuffled.slice(0, count);
+    quizIdx = 0;
+    quizAnswers = {};
+    quizState = "running";
+    playSfx("toggle");
+    updateQuizView();
+  }
+
+  function handleQuizSelect(optKey) {
+    if (quizState !== "running" || !quizQuestions.length) return;
+    const q = quizQuestions[quizIdx];
+    if (quizAnswers[q.id]) return; // already answered
+
+    const isRight = (optKey === q.correct);
+    quizAnswers[q.id] = { selected: optKey, correct: q.correct, isRight };
+
+    if (isRight) {
+      playSfx("check");
+    } else {
+      playSfx("toggle");
+    }
+
+    updateQuizView();
+  }
+
+  function handleQuizNext() {
+    if (quizState !== "running") return;
+    if (quizIdx + 1 < quizQuestions.length) {
+      quizIdx++;
+      updateQuizView();
+    } else {
+      quizState = "finished";
+      playSfx("celebrate");
+      updateQuizView();
+    }
+  }
+
+  function handleQuizRestart() {
+    handleQuizStart();
+  }
+
+  function handleQuizBackToLobby() {
+    quizState = "lobby";
+    updateQuizView();
+  }
+
+  function handleQuizReviewWrongs() {
+    const wrongQs = quizQuestions.filter(q => quizAnswers[q.id] && !quizAnswers[q.id].isRight);
+    if (!wrongQs.length) return;
+
+    quizQuestions = wrongQs.slice().sort(() => 0.5 - Math.random());
+    quizIdx = 0;
+    quizAnswers = {};
+    quizState = "running";
+    playSfx("toggle");
+    updateQuizView();
+  }
+
+  function updateQuizView() {
+    const box = document.getElementById("iq-quiz-box");
+    if (box) {
+      box.innerHTML = renderQuizInnerHtml();
+    }
+
+    // Update active category buttons
+    document.querySelectorAll("[data-quiz-cat]").forEach(b => {
+      const isActive = b.dataset.quizCat === quizActiveCat;
+      b.classList.toggle("active", isActive);
+      b.setAttribute("aria-pressed", String(isActive));
+    });
+
+    // Update active level buttons
+    document.querySelectorAll("[data-quiz-level]").forEach(b => {
+      const isActive = b.dataset.quizLevel === quizActiveLevel;
+      b.classList.toggle("active", isActive);
+      b.setAttribute("aria-pressed", String(isActive));
+    });
+
+    // Update count buttons if in lobby
+    document.querySelectorAll("[data-quiz-count]").forEach(b => {
+      const countVal = Number(b.dataset.quizCount);
+      const isActive = (countVal === quizSelectedCount);
+      b.classList.toggle("active", isActive);
+    });
+  }
+
+  function renderQuizPage() {
+    const allTests = window.INTERVIEW_TESTS || [];
+
+    const catCounts = {};
+    QUIZ_CATEGORIES.forEach(c => {
+      catCounts[c.id] = c.id === "all" ? allTests.length : allTests.filter(t => t.category === c.id).length;
+    });
+
+    const levelCounts = {};
+    QUIZ_LEVELS.forEach(lvl => {
+      levelCounts[lvl.id] = lvl.id === "all" ? allTests.length : allTests.filter(t => (t.level || "middle") === lvl.id).length;
+    });
+
+    view().innerHTML = `
+      ${loadErrorBlock()}
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="#/">Bosh sahifa</a>
+        <span class="sep">/</span>
+        <span aria-current="page">Texnik Testlar (Quiz)</span>
+      </nav>
+
+      <header class="iq-hero reveal">
+        <div class="iq-hero-main">
+          <div class="idx">SELF-ASSESSMENT & BENCHMARK</div>
+          <h1>Texnik Testlar (Quiz)</h1>
+          <p class="lead">
+            PHP, Laravel, Eloquent, SQL, Redis, Navbatlar, Xavfsizlik va Arxitektura bo'yicha amaliy intervyu testlari. Mavzu va darajani tanlang, tayyorgarlik zali orqali testni boshlang va har bir savolda Senior tushuntirishini darhol o'rganing.
+          </p>
+        </div>
+      </header>
+
+      <!-- Filtrlar guruhi: Har doim yuqorida turadi -->
+      <div class="iq-quiz-filter-group reveal">
+        <div class="iq-quiz-filter-label">
+          ${icon("layers", "ic ic-sm")} 1. Yo'nalish va Mavzuni tanlang
+        </div>
+        <div class="iq-quiz-cats">
+          ${QUIZ_CATEGORIES.map(c => `
+            <button type="button" class="iq-quiz-cat-btn ${quizActiveCat === c.id ? "active" : ""}" data-quiz-cat="${c.id}" aria-pressed="${quizActiveCat === c.id}">
+              <span>${c.label}</span>
+              <span class="iq-quiz-cat-count">${catCounts[c.id] || 0}</span>
+              ${quizScores[c.id] ? `<span title="Eng yaxshi natija" style="color:#eab308;font-size:11px">★ ${quizScores[c.id]}%</span>` : ""}
+            </button>
+          `).join("")}
+        </div>
+
+        <div class="iq-quiz-filter-label" style="margin-top:14px">
+          ${icon("target", "ic ic-sm")} 2. Qiyinlik darajasini tanlang
+        </div>
+        <div class="iq-quiz-levels">
+          ${QUIZ_LEVELS.map(lvl => `
+            <button type="button" class="iq-quiz-level-btn ${quizActiveLevel === lvl.id ? "active" : ""}" data-quiz-level="${lvl.id}" aria-pressed="${quizActiveLevel === lvl.id}">
+              <span>${lvl.label}</span>
+              <span class="iq-quiz-cat-count">${levelCounts[lvl.id] || 0}</span>
+            </button>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="iq-quiz-box reveal" id="iq-quiz-box">
+        ${renderQuizInnerHtml()}
+      </div>
+    `;
+  }
+
+  function renderQuizInnerHtml() {
+    if (quizState === "lobby") {
+      return renderQuizLobbyHtml();
+    }
+    if (quizState === "finished") {
+      return renderQuizResultHtml();
+    }
+    return renderQuizQuestionHtml();
+  }
+
+  function renderQuizLobbyHtml() {
+    const pool = getQuizPool();
+    const totalAvailable = pool.length;
+
+    const catObj = QUIZ_CATEGORIES.find(c => c.id === quizActiveCat);
+    const lvlObj = QUIZ_LEVELS.find(l => l.id === quizActiveLevel);
+
+    if (totalAvailable === 0) {
+      return `
+        <div class="iq-quiz-lobby">
+          <div class="iq-quiz-lobby-icon">🔍</div>
+          <h2 class="iq-quiz-lobby-title">Mos testlar topilmadi</h2>
+          <p class="iq-quiz-lobby-desc">
+            Tanlangan <b>${esc(catObj ? catObj.label : quizActiveCat)}</b> mavzusi va <b>${esc(lvlObj ? lvlObj.label : quizActiveLevel)}</b> darajasi bo'yicha savollar topilmadi.
+          </p>
+          <button class="btn btn-primary" data-quiz-cat="all" data-quiz-level="all">
+            Barcha testlarni ko'rish
+          </button>
+        </div>
+      `;
+    }
+
+    // Determine counts buttons
+    const countOptions = [];
+    if (totalAvailable >= 5) countOptions.push(5);
+    if (totalAvailable >= 10) countOptions.push(10);
+    if (totalAvailable >= 15) countOptions.push(15);
+    countOptions.push(0); // 0 = all
+
+    // Ensure current selected count makes sense
+    if (quizSelectedCount !== 0 && quizSelectedCount > totalAvailable) {
+      quizSelectedCount = totalAvailable >= 10 ? 10 : (totalAvailable >= 5 ? 5 : 0);
+    }
+
+    return `
+      <div class="iq-quiz-lobby">
+        <div class="iq-quiz-lobby-icon">🚀</div>
+        <h2 class="iq-quiz-lobby-title">Tayyormisiz? Bilimingizni sinang!</h2>
+        <p class="iq-quiz-lobby-desc">
+          Har bir savol real intervyu savollari asosida tuzilgan. Javob tanlaganingizdan so'ng darhol Senior darajadagi batafsil tushuntirish va to'g'ri kod yondashuvi ko'rsatiladi.
+        </p>
+
+        <div class="iq-quiz-lobby-meta">
+          <div class="iq-quiz-meta-item">
+            <span>📌</span>
+            <span>Mavzu: <b>${esc(catObj ? catObj.label : "Barchasi")}</b></span>
+          </div>
+          <div class="iq-quiz-meta-item">
+            <span>⚡</span>
+            <span>Daraja: <b>${esc(lvlObj ? lvlObj.label : "Barcha darajalar")}</b></span>
+          </div>
+          <div class="iq-quiz-meta-item">
+            <span>📚</span>
+            <span>Hovuzda: <b>${totalAvailable} ta</b> savol</span>
+          </div>
+        </div>
+
+        <div class="iq-quiz-count-picker">
+          <span class="iq-quiz-count-label">Savollar soni:</span>
+          ${countOptions.map(c => `
+            <button type="button" class="iq-quiz-count-btn ${quizSelectedCount === c ? "active" : ""}" data-quiz-count="${c}">
+              ${c === 0 ? `Barchasi (${totalAvailable})` : `${c} ta`}
+            </button>
+          `).join("")}
+        </div>
+
+        <div>
+          <button type="button" class="iq-quiz-start-btn" data-quiz-start>
+            <span>🚀 Testni boshlash</span>
+            <kbd class="iq-kbd-badge" style="background:rgba(255,255,255,0.22);color:#fff;border-color:rgba(255,255,255,0.3)">Enter</kbd>
+          </button>
+        </div>
+
+        <div class="iq-quiz-hints">
+          <span>⌨️ Javob berish: <kbd class="iq-kbd-badge">A</kbd> <kbd class="iq-kbd-badge">B</kbd> <kbd class="iq-kbd-badge">C</kbd> <kbd class="iq-kbd-badge">D</kbd></span>
+          <span>Keyingi savol: <kbd class="iq-kbd-badge">Enter</kbd></span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderQuizQuestionHtml() {
+    if (!quizQuestions.length) {
+      return renderQuizLobbyHtml();
+    }
+
+    const currentQ = quizQuestions[quizIdx];
+    const totalQ = quizQuestions.length;
+    const progressPct = Math.round(((quizIdx) / totalQ) * 100);
+
+    let rightCount = 0;
+    let wrongCount = 0;
+    Object.values(quizAnswers).forEach(a => {
+      if (a.isRight) rightCount++;
+      else wrongCount++;
+    });
+
+    const isCurrentAnswered = Boolean(quizAnswers[currentQ.id]);
+    const currentAnswerObj = quizAnswers[currentQ.id];
+    const qLevel = currentQ.level || "middle";
+
+    return `
+      <div class="iq-quiz-topbar">
+        <div class="iq-quiz-step-info">
+          <span class="iq-quiz-step-badge">SAVOL ${quizIdx + 1} / ${totalQ}</span>
+          <span class="iq-quiz-level-badge-inline level-badge-${qLevel}">${qLevel.toUpperCase()}</span>
+          <span style="font-weight:600;color:var(--text)">${esc(currentQ.categoryLabel || "")}</span>
+        </div>
+        <div class="iq-quiz-stats-live">
+          <span class="iq-quiz-live-correct">✓ ${rightCount} to'g'ri</span>
+          <span class="iq-quiz-live-wrong">✕ ${wrongCount} xato</span>
+        </div>
+      </div>
+
+      <div class="iq-quiz-progress-track">
+        <div class="iq-quiz-progress-fill" style="width: ${progressPct}%"></div>
+      </div>
+
+      <div class="iq-quiz-q-wrap">
+        <div class="iq-quiz-q-title">${esc(currentQ.question)}</div>
+        <div class="iq-quiz-q-sub">ID: ${currentQ.id} · Variantlardan birini tanlang (A, B, C, D)</div>
+      </div>
+
+      <div class="iq-quiz-options">
+        ${currentQ.options.map(opt => {
+          let extraClass = "";
+          let badgeText = opt.key;
+
+          if (isCurrentAnswered) {
+            if (opt.key === currentQ.correct) {
+              extraClass = "opt-correct";
+              badgeText = "✓";
+            } else if (opt.key === currentAnswerObj.selected) {
+              extraClass = "opt-wrong";
+              badgeText = "✕";
+            } else {
+              extraClass = "opt-dimmed";
+            }
+          }
+
+          return `
+            <button type="button" class="iq-quiz-opt ${extraClass}" 
+                    data-quiz-opt="${opt.key}" 
+                    ${isCurrentAnswered ? "disabled" : ""}>
+              <span class="iq-quiz-opt-letter">
+                <kbd class="iq-kbd-key">${badgeText}</kbd>
+              </span>
+              <span class="iq-quiz-opt-text">${esc(opt.text)}</span>
+            </button>
+          `;
+        }).join("")}
+      </div>
+
+      ${isCurrentAnswered ? `
+        <div class="iq-quiz-explanation">
+          <div class="iq-quiz-exp-head">
+            ${icon("sparkles", "ic ic-sm")} Senior Dasturchi Tushuntirishi
+          </div>
+          <div class="iq-quiz-exp-body">
+            ${esc(currentQ.explanation)}
+          </div>
+        </div>
+      ` : ""}
+
+      <div class="iq-quiz-foot">
+        <div style="font-size:13px;color:var(--text-3);display:flex;align-items:center;gap:12px">
+          ${isCurrentAnswered 
+            ? (currentAnswerObj.isRight ? "<span style='color:#16a34a;font-weight:600'>✓ Barakalla, to'g'ri javob!</span>" : "<span style='color:#dc2626;font-weight:600'>✕ Noto'g'ri. Tushuntirishni diqqat bilan o'rganing.</span>")
+            : '<span>Variantni bosing yoki <kbd class="iq-kbd-badge">A</kbd> <kbd class="iq-kbd-badge">B</kbd> <kbd class="iq-kbd-badge">C</kbd> <kbd class="iq-kbd-badge">D</kbd> ni bosing</span>'}
+          <button type="button" class="btn btn-sm" data-quiz-to-lobby style="padding:3px 8px;font-size:11.5px">
+            Chiqqan holda Lobby ga qaytish
+          </button>
+        </div>
+        <div>
+          ${isCurrentAnswered ? `
+            <button class="btn btn-primary" data-quiz-next>
+              <span>${quizIdx + 1 < totalQ ? "Keyingi savol" : "Natijani ko'rish"}</span>
+              <kbd class="iq-kbd-badge" style="background:rgba(255,255,255,0.22);color:#fff;margin-left:4px">Enter</kbd>
+            </button>
+          ` : `
+            <button class="btn btn-sm" disabled style="opacity:.45">
+              <span>Variant tanlang</span>
+            </button>
+          `}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderQuizResultHtml() {
+    const totalQ = quizQuestions.length;
+    let rightCount = 0;
+    let wrongCount = 0;
+    Object.values(quizAnswers).forEach(a => {
+      if (a.isRight) rightCount++;
+      else wrongCount++;
+    });
+    const pctScore = totalQ > 0 ? Math.round((rightCount / totalQ) * 100) : 0;
+
+    const prevBest = quizScores[quizActiveCat] || 0;
+    if (pctScore > prevBest) {
+      quizScores[quizActiveCat] = pctScore;
+      try { localStorage.setItem("lsm:quiz_scores", JSON.stringify(quizScores)); } catch (e) {}
+    }
+
+    let emoji = "🎯";
+    let badge = "Yaxshi natija";
+    let badgeStyle = "background:rgba(59,130,246,0.15);color:#3b82f6";
+    let desc = "Siz asosiy amaliy bilimlarni yaxshi bilasiz. Ba'zi murakkab savollarda xatolar bo'ldi, Senior tushuntirishlarini o'qib chiqishni tavsiya qilamiz.";
+
+    if (pctScore >= 90) {
+      emoji = "🏆";
+      badge = "Senior / Lead darajasi!";
+      badgeStyle = "background:rgba(34,197,94,0.15);color:#22c55e";
+      desc = "Ajoyib va mukammal natija! Ushbu mavzudagi chuqur va nozik jihatlarni to'liq o'zlashtirgansiz.";
+    } else if (pctScore >= 70) {
+      emoji = "⭐";
+      badge = "Strong Middle darajasi";
+      badgeStyle = "background:rgba(16,185,129,0.15);color:#10b981";
+      desc = "Mustahkam bilim! Bir nechta kam uchraydigan holatlarni qayta takrorlab olsangiz, har qanday intervyudan oson o'ta olasiz.";
+    } else if (pctScore >= 50) {
+      emoji = "📚";
+      badge = "Junior / Pre-Middle darajasi";
+      badgeStyle = "background:rgba(234,179,8,0.15);color:#eab308";
+      desc = "Qoniqarli natija. Ushbu mavzudagi savol-javoblarni qayta o'qib chiqishni maslahat beramiz.";
+    } else {
+      emoji = "💡";
+      badge = "Boshlang'ich daraja";
+      badgeStyle = "background:rgba(239,68,68,0.15);color:#ef4444";
+      desc = "Ushbu yo'nalish bo'yicha nazariy va amaliy bilimlarni kuchaytirish zarur. Yo'l xaritasi va intervyu javoblarini batafsil o'rganing.";
+    }
+
+    return `
+      <div class="iq-quiz-result-box">
+        <div class="iq-quiz-result-emoji">${emoji}</div>
+        <div class="iq-quiz-result-score">${rightCount} / ${totalQ} (${pctScore}%)</div>
+        <div>
+          <span class="iq-quiz-result-badge" style="${badgeStyle}">${badge}</span>
+        </div>
+        <p class="iq-quiz-result-desc">${desc}</p>
+
+        <div class="iq-quiz-result-actions" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+          ${wrongCount > 0 ? `
+            <button class="btn btn-primary" data-quiz-review-wrongs style="background:#ea580c;border-color:#ea580c">
+              ${icon("refresh-cw", "ic ic-sm")} Faqat xato qilingan savollarni qayta ishlash (${wrongCount} ta)
+            </button>
+          ` : ""}
+          <button class="btn btn-primary" data-quiz-restart>
+            ${icon("reset", "ic ic-sm")} Barchasini qaytadan topshirish
+          </button>
+          <button class="btn" data-quiz-to-lobby>
+            ${icon("target", "ic ic-sm")} Yangi test / Filtrlarni o'zgartirish
+          </button>
+        </div>
+      </div>
+    `;
   }
 
   /* ------------------------------------------------------------------ *
@@ -1923,6 +2514,7 @@
     const m = hash.match(/^#\/s\/([^/]+)(?:\/(.+))?$/);
     const mLevels = hash.match(/^#\/levels(?:\?lvl=([a-z]+))?$/);
     const mInterview = hash.match(/^#\/interview(?:\?(.*))?$/);
+    const mQuiz = hash.match(/^#\/quiz(?:\?(.*))?$/);
     document.body.classList.remove("nav-open");
     $("#menu-btn").setAttribute("aria-expanded", "false");
 
@@ -1941,6 +2533,11 @@
       document.title = "Intervyu Savol-Javoblari · Laravel Skill Map";
       renderInterview();
       markActive(null, false, true);
+      window.scrollTo(0, 0);
+    } else if (mQuiz) {
+      document.title = "Texnik Testlar (Quiz) — Laravel Skill Map";
+      renderQuizPage();
+      markActive(null, false, false, true);
       window.scrollTo(0, 0);
     } else {
       document.title = "Laravel Skill Map";
@@ -2201,6 +2798,47 @@
 
     document.addEventListener("keydown", (e) => {
       const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName) || document.activeElement.isContentEditable;
+
+      // Keyboard navigation for Quiz page
+      if (!typing && window.location.hash.startsWith("#/quiz") && !pal().classList.contains("open") && !$("#mock-overlay")) {
+        if (quizState === "lobby") {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleQuizStart();
+            return;
+          }
+        } else if (quizState === "running" && quizQuestions.length) {
+          const curQ = quizQuestions[quizIdx];
+          const isAnswered = Boolean(curQ && quizAnswers[curQ.id]);
+
+          if (!isAnswered) {
+            const k = e.key.toUpperCase();
+            if (["A", "B", "C", "D"].includes(k)) {
+              e.preventDefault();
+              handleQuizSelect(k);
+              return;
+            } else if (["1", "2", "3", "4"].includes(e.key)) {
+              e.preventDefault();
+              const numMap = { "1": "A", "2": "B", "3": "C", "4": "D" };
+              handleQuizSelect(numMap[e.key]);
+              return;
+            }
+          } else {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              handleQuizNext();
+              return;
+            }
+          }
+        } else if (quizState === "finished") {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleQuizRestart();
+            return;
+          }
+        }
+      }
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal().classList.contains("open") ? closePalette() : openPalette(); return; }
       if (e.key === "/" && !typing) { e.preventDefault(); openPalette(); return; }
       if (e.key === "Escape") {
