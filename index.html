@@ -96,6 +96,9 @@
         <svg class="ic"><use href="#i-more"/></svg>
       </button>
       <div class="dropdown" id="more-menu" role="menu">
+        <button role="menuitem" data-action="link-file" id="menu-link"><svg class="ic"><use href="#i-link"/></svg><span class="menu-link-text">progress.json fayliga ulash</span></button>
+        <button role="menuitem" data-action="unlink-file" id="menu-unlink" style="display:none"><svg class="ic"><use href="#i-trash"/></svg>Fayl aloqasini uzish</button>
+        <hr />
         <button role="menuitem" data-action="export"><svg class="ic"><use href="#i-download"/></svg>Progressni eksport (JSON)</button>
         <label role="menuitem" tabindex="0"><svg class="ic"><use href="#i-upload"/></svg>Progressni import qilish
           <input type="file" id="import-input" accept="application/json,.json" class="sr-only" />

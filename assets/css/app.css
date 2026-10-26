@@ -177,6 +177,44 @@ kbd {
 .icon-btn[aria-expanded="true"] { background: var(--surface-2); color: var(--text); border-color: var(--border); }
 .menu-btn { display: none; }
 
+.sync-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 40px; padding: 0 12px; border-radius: var(--r);
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text-2); font: 500 13px var(--font); cursor: pointer;
+  transition: all var(--t-fast); white-space: nowrap;
+}
+.sync-btn:hover {
+  background: var(--surface-2); border-color: var(--border-strong); color: var(--text);
+}
+.sync-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-3); flex-shrink: 0;
+  transition: background var(--t-fast), box-shadow var(--t-fast);
+}
+.sync-btn.active {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--text);
+}
+.sync-btn.active .sync-dot {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.sync-btn.saving .sync-dot {
+  animation: sync-pulse 0.6s ease-in-out;
+}
+@keyframes sync-pulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 var(--accent); }
+  50% { transform: scale(1.6); box-shadow: 0 0 12px 3px var(--accent); }
+  100% { transform: scale(1); box-shadow: 0 0 8px var(--accent); }
+}
+
+@media (max-width: 680px) {
+  .sync-btn .sync-text { display: none; }
+  .sync-btn { padding: 0 10px; }
+}
+
 .theme-btn .ic-moon { display: none; }
 :root[data-theme="light"] .theme-btn .ic-sun { display: none; }
 :root[data-theme="light"] .theme-btn .ic-moon { display: block; }
@@ -931,66 +969,245 @@ code, kbd, pre { font-variant-ligatures: none; }
 .side-interview[aria-current="page"] { background: var(--surface-2); color: var(--text); font-weight: 600; }
 .side-interview[aria-current="page"] svg { color: var(--accent-text); }
 
-.interview-stats {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--sp-4);
+/* Hero stats banner */
+.iq-hero {
+  display: grid; grid-template-columns: 1fr auto; gap: var(--sp-6);
+  padding: var(--sp-6); border-radius: var(--r-lg);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, var(--surface)), var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
   margin-bottom: var(--sp-6);
+  position: relative; overflow: hidden;
 }
-.interview-filters {
+.iq-hero::after {
+  content: ""; position: absolute; right: -50px; bottom: -50px; width: 220px; height: 220px;
+  background: radial-gradient(circle, var(--accent-soft), transparent 70%);
+  pointer-events: none; border-radius: 50%; opacity: 0.5;
+}
+.iq-hero-main { display: flex; flex-direction: column; gap: var(--sp-3); }
+.iq-hero-title { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.iq-hero-desc { font-size: 14px; color: var(--text-2); line-height: 1.55; max-width: 660px; }
+
+.iq-stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-3);
+  margin-top: var(--sp-2);
+}
+.iq-stat-box {
+  padding: 12px 14px; border-radius: var(--r);
+  background: var(--surface-2); border: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.iq-stat-box .iq-stat-lbl {
+  font: 600 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--text-3);
+  display: flex; align-items: center; gap: 6px;
+}
+.iq-stat-box .iq-stat-val {
+  font: 700 20px/1.1 var(--mono); color: var(--text);
+}
+.iq-stat-box .iq-stat-val small { font-size: 13px; color: var(--text-3); font-weight: 500; }
+
+.iq-hero-ring-wrap {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 14px 20px; border-radius: var(--r-lg);
+  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+  border: 1px solid var(--border);
+  min-width: 160px; text-align: center; gap: 8px; flex-shrink: 0;
+}
+.iq-ring {
+  position: relative; width: 96px; height: 96px; display: grid; place-items: center;
+}
+.iq-ring svg {
+  width: 96px; height: 96px; transform: rotate(-90deg); overflow: visible;
+}
+.iq-ring .track {
+  fill: none; stroke: var(--surface-3); stroke-width: 8;
+}
+.iq-ring .val {
+  fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round;
+  transition: stroke-dashoffset 600ms var(--ease);
+}
+.iq-ring-text {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; pointer-events: none;
+}
+.iq-ring-text b {
+  font: 700 20px/1 var(--mono); color: var(--text);
+}
+.iq-ring-text span {
+  font: 700 9px/1 var(--mono); color: var(--text-3); letter-spacing: .08em; text-transform: uppercase; margin-top: 3px;
+}
+
+/* Filter & Control bar */
+.iq-controls {
   display: flex; flex-direction: column; gap: var(--sp-4);
-  padding: var(--sp-4); background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r); margin-bottom: var(--sp-6);
+  padding: var(--sp-4) var(--sp-5); background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--r-lg);
+  margin-bottom: var(--sp-6);
+  box-shadow: 0 4px 20px -10px rgba(0,0,0,.3);
 }
-.interview-search {
-  position: relative; display: flex; align-items: center;
+.iq-search-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
 }
-.interview-search input {
-  width: 100%; min-height: 42px; padding: 0 16px 0 42px;
+.iq-search-box {
+  position: relative; flex: 1; min-width: 260px; display: flex; align-items: center;
+}
+.iq-search-box input {
+  width: 100%; min-height: 44px; padding: 0 36px 0 42px;
   background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r);
   color: var(--text); font: 400 14px var(--font); outline: none;
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
 }
-.interview-search input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.interview-search .ic { position: absolute; left: 14px; color: var(--text-3); width: 18px; height: 18px; }
+.iq-search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.iq-search-box .search-ic { position: absolute; left: 14px; color: var(--text-3); width: 18px; height: 18px; pointer-events: none; }
+.iq-search-clear {
+  position: absolute; right: 10px; background: transparent; border: none; color: var(--text-3);
+  cursor: pointer; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+  font-size: 14px; font-weight: 600;
+}
+.iq-search-clear:hover { color: var(--text); background: var(--surface-3); }
 
-.interview-filter-row {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+.iq-tools {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
-.interview-filter-label {
-  font: 600 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--text-3);
-  min-width: 70px;
-}
-.interview-pills {
-  display: flex; flex-wrap: wrap; gap: 6px;
-}
-.interview-pills button {
-  min-height: 30px; padding: 0 12px; border-radius: 99px;
+.iq-tool-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 40px; padding: 0 14px; border-radius: var(--r);
   background: var(--surface-2); border: 1px solid var(--border);
-  color: var(--text-2); font: 500 12px var(--font); cursor: pointer;
-  transition: background var(--t-fast), border-color var(--t-fast), color var(--t-fast);
+  color: var(--text-2); font: 500 13px var(--font); cursor: pointer;
+  transition: all var(--t-fast); white-space: nowrap;
 }
-.interview-pills button:hover { color: var(--text); border-color: var(--border-strong); }
-.interview-pills button[aria-pressed="true"] {
-  background: var(--surface); color: var(--text); border-color: var(--accent);
-  font-weight: 600; box-shadow: 0 0 0 1px var(--accent);
+.iq-tool-btn:hover { background: var(--surface-3); border-color: var(--border-strong); color: var(--text); }
+.iq-tool-btn.active {
+  background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); font-weight: 600;
+}
+.iq-tool-btn .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+/* Pill Filter Rows & Interactive Filter Buttons */
+.iq-pills-wrap {
+  display: flex; flex-direction: column; gap: 12px; margin-top: 4px;
+}
+.iq-pills-row,
+.iq-filter-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.iq-pills-label,
+.iq-filter-label {
+  font: 700 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--text-3);
+  min-width: 86px; flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px;
+}
+.iq-pills {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
 }
 
-.iq-list {
-  display: grid; gap: var(--sp-4);
+/* Haqiqiy bosiladigan, jozibador interaktiv tugma (Button) */
+.iq-pills button,
+.iq-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  min-height: 34px; padding: 6px 13px; border-radius: 99px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  color: var(--text-2); font: 500 12.5px/1 var(--font); cursor: pointer;
+  user-select: none; outline: none;
+  transition: all var(--t-fast) var(--ease);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+
+.iq-pills button:hover,
+.iq-pill:hover {
+  background: var(--surface-3); border-color: var(--border-strong);
+  color: var(--text); transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+}
+
+.iq-pills button:active,
+.iq-pill:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.iq-pills button:focus-visible,
+.iq-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Tanlangan (Aktiv) holat */
+.iq-pills button[aria-pressed="true"],
+.iq-pill[aria-pressed="true"] {
+  background: var(--accent-soft); color: var(--accent-text);
+  border-color: var(--accent); font-weight: 600;
+  box-shadow: 0 0 0 1px var(--accent), 0 3px 10px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* Tugma ichidagi hisoblagich chipi (Count Badge) */
+.iq-pills button .count-chip,
+.iq-pill .count-chip,
+.iq-pill-count {
+  display: inline-flex; align-items: center; justify-content: center;
+  font: 600 11px/1 var(--mono); min-width: 18px; padding: 2px 6px; border-radius: 99px;
+  background: var(--surface); color: var(--text-3);
+  border: 1px solid var(--border);
+  transition: all var(--t-fast);
+}
+
+.iq-pills button:hover .count-chip,
+.iq-pill:hover .count-chip {
+  color: var(--text); border-color: var(--border-strong);
+}
+
+.iq-pills button[aria-pressed="true"] .count-chip,
+.iq-pill[aria-pressed="true"] .count-chip,
+.iq-pill[aria-pressed="true"] .iq-pill-count {
+  background: var(--accent); color: var(--on-accent);
+  border-color: transparent; font-weight: 700;
+}
+
+.iq-results-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding-top: var(--sp-3); border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--text-3); flex-wrap: wrap;
+}
+.iq-results-count { font: 500 12px var(--mono); color: var(--text-2); }
+.iq-results-count b { color: var(--accent-text); }
+
+/* Cards list */
+.iq-list { display: grid; gap: var(--sp-4); }
+
 .iq-card {
-  border: 1px solid var(--border); background: var(--surface); border-radius: var(--r);
-  overflow: hidden; transition: border-color var(--t-fast);
+  border: 1px solid var(--border); background: var(--surface); border-radius: var(--r-lg);
+  overflow: hidden; transition: border-color var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast);
+  position: relative;
 }
-.iq-card:hover { border-color: var(--border-strong); }
-.iq-card.open { border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); }
+.iq-card::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--level-color, var(--border));
+  transition: width var(--t-fast);
+}
+.iq-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 10px 28px -12px rgba(0,0,0,.5);
+}
+.iq-card:hover::before { width: 6px; }
+.iq-card.open {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border));
+}
+
+.iq-card[data-level="junior"] { --level-color: var(--accent); }
+.iq-card[data-level="middle"] { --level-color: var(--st-1); }
+.iq-card[data-level="senior"] { --level-color: var(--st-4); }
+.iq-card[data-level="lead"]   { --level-color: var(--st-2); }
+
 .iq-card-header {
-  display: flex; align-items: flex-start; gap: 14px; padding: 16px 20px;
+  display: flex; align-items: flex-start; gap: 14px; padding: 18px 22px 18px 20px;
   cursor: pointer; background: transparent; width: 100%; border: none; text-align: left;
-  color: inherit;
+  color: inherit; transition: background var(--t-fast);
 }
 .iq-card-header:hover { background: color-mix(in srgb, var(--surface-2) 60%, transparent); }
+
+.iq-num {
+  font: 700 12px/1 var(--mono); color: var(--text-3);
+  padding: 4px 6px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--border);
+  flex-shrink: 0; margin-top: 2px;
+}
 .iq-badge {
-  font: 600 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+  font: 700 10px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
   padding: 4px 8px; border-radius: 6px; flex-shrink: 0; margin-top: 2px;
 }
 .iq-badge.junior { background: var(--accent-soft); color: var(--accent-text); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); }
@@ -999,74 +1216,84 @@ code, kbd, pre { font-variant-ligatures: none; }
 .iq-badge.lead   { background: var(--st-2-soft); color: var(--st-2); border: 1px solid color-mix(in srgb, var(--st-2) 30%, transparent); }
 
 .iq-title-wrap { flex: 1; min-width: 0; }
-.iq-title { font-size: 16px; font-weight: 600; line-height: 1.4; color: var(--text); margin-bottom: 6px; }
+.iq-title { font-size: 16px; font-weight: 600; line-height: 1.45; color: var(--text); margin-bottom: 6px; }
 .iq-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); flex-wrap: wrap; }
-.iq-chev { color: var(--text-3); transition: transform var(--t) var(--ease); flex-shrink: 0; margin-top: 4px; }
-.iq-card.open .iq-chev { transform: rotate(180deg); }
+.iq-meta .tag-cat { font: 500 11px var(--mono); color: var(--text-2); background: var(--surface-2); padding: 2px 7px; border-radius: 4px; }
+.iq-chev { color: var(--text-3); transition: transform var(--t) var(--ease); flex-shrink: 0; margin-top: 6px; }
+.iq-card.open .iq-chev { transform: rotate(180deg); color: var(--accent-text); }
 
 .iq-card-body {
-  display: none; padding: 0 20px 20px 20px; border-top: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface-2) 30%, transparent);
+  display: none; padding: 0 22px 22px 22px; border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-2) 35%, transparent);
 }
-.iq-card.open .iq-card-body { display: block; }
+.iq-card.open .iq-card-body { display: block; animation: reveal 250ms var(--ease); }
+
+/* Practice Mode Prompt */
+.iq-practice-prompt {
+  margin: 16px 0 10px; padding: 14px 18px; border-radius: var(--r);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border: 1px dashed var(--accent);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+}
+.iq-practice-prompt p { margin: 0; font-size: 13px; color: var(--text-2); }
+.iq-reveal-btn {
+  font: 600 12px var(--mono); padding: 6px 12px; border-radius: var(--r-sm);
+  background: var(--accent); color: var(--on-accent); border: none; cursor: pointer;
+  transition: opacity var(--t-fast);
+}
+.iq-reveal-btn:hover { opacity: 0.9; }
+
 .iq-answer-label {
-  font: 600 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em;
-  color: var(--text-3); margin: 16px 0 10px; display: flex; align-items: center; gap: 6px;
+  font: 700 11px/1 var(--mono); text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-3); margin: 18px 0 10px; display: flex; align-items: center; gap: 6px;
 }
 .iq-tip-box {
-  margin-top: 16px; padding: 14px 16px; border-radius: var(--r-sm);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+  margin-top: 16px; padding: 16px 18px; border-radius: var(--r);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, var(--surface)), var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
 }
 .iq-tip-box h4 {
-  font: 600 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em;
-  color: var(--accent-text); margin: 0 0 6px; display: flex; align-items: center; gap: 6px;
+  font: 700 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--accent-text); margin: 0 0 8px; display: flex; align-items: center; gap: 6px;
 }
-.iq-tip-box p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-2); }
+.iq-tip-box p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--text-2); }
+
 .iq-card-foot {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border);
+  margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--border);
   font-size: 13px; color: var(--text-3); flex-wrap: wrap;
 }
+.iq-card-actions-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .iq-card-foot a { color: var(--accent-text); text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: 500; }
 .iq-card-foot a:hover { text-decoration: underline; }
 
 .iq-check-btn {
-  display: inline-flex; align-items: center; gap: 6px; font: 500 12px var(--font);
-  padding: 4px 10px; border-radius: 99px; border: 1px solid var(--border);
+  display: inline-flex; align-items: center; gap: 6px; font: 600 12px var(--font);
+  padding: 6px 12px; border-radius: 99px; border: 1px solid var(--border);
   background: var(--surface); color: var(--text-2); cursor: pointer;
   transition: all var(--t-fast);
 }
 .iq-check-btn:hover { border-color: var(--accent); color: var(--text); }
 .iq-check-btn.done { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
 
-/* In-subskill interview box */
-.sub-interview-box {
-  margin-top: 12px; padding: 14px 16px; border-radius: var(--r);
-  background: var(--surface-2); border: 1px solid var(--border);
+.iq-copy-btn {
+  display: inline-flex; align-items: center; gap: 6px; font: 500 12px var(--font);
+  padding: 6px 10px; border-radius: 99px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text-3); cursor: pointer;
+  transition: all var(--t-fast);
 }
-.sub-interview-box .box-head {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+.iq-copy-btn:hover { color: var(--text); border-color: var(--border-strong); }
+
+@media (max-width: 900px) {
+  .iq-hero { grid-template-columns: 1fr; }
+  .iq-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .iq-hero-ring-wrap { flex-direction: row; gap: 16px; text-align: left; margin-top: var(--sp-2); }
 }
-.sub-interview-box .box-title {
-  font: 600 12px/1 var(--mono); text-transform: uppercase; letter-spacing: .06em;
-  color: var(--accent-text); display: flex; align-items: center; gap: 6px;
+@media (max-width: 600px) {
+  .iq-stats-grid { grid-template-columns: 1fr; }
+  .iq-search-row { flex-direction: column; align-items: stretch; }
+  .iq-tools { width: 100%; justify-content: space-between; }
 }
-.sub-interview-items { display: grid; gap: 10px; }
-.sub-interview-item {
-  padding: 10px 12px; background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-}
-.sub-interview-item summary {
-  font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; list-style: none;
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-}
-.sub-interview-item summary::-webkit-details-marker { display: none; }
-.sub-interview-item summary::after {
-  content: "Javobni ko'rish →"; font: 500 12px var(--mono); color: var(--accent-text);
-}
-.sub-interview-item[open] summary::after { content: "Yopish ↑"; color: var(--text-3); }
-.sub-interview-ans { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 13px; line-height: 1.6; }
 
 /* ==========================================================================
    Tech Stack Section (Home page)

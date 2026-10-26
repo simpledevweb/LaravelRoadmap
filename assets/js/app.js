@@ -140,10 +140,176 @@
   }
 
   /* ------------------------------------------------------------------ *
-   * Progress state
+   * Progress state & Local File System Sync
    * ------------------------------------------------------------------ */
   let progress = store.get(KEYS.progress, {});
   if (typeof progress !== "object" || progress === null) progress = {};
+  let masteredIq = new Set(store.get(KEYS.questions, []));
+
+  const idb = {
+    open() {
+      return new Promise((res, rej) => {
+        const req = indexedDB.open("lsm_storage", 1);
+        req.onupgradeneeded = () => req.result.createObjectStore("handles");
+        req.onsuccess = () => res(req.result);
+        req.onerror = () => rej(req.error);
+      });
+    },
+    async get(key) {
+      try {
+        const db = await this.open();
+        return new Promise((res) => {
+          const tx = db.transaction("handles", "readonly");
+          const req = tx.objectStore("handles").get(key);
+          req.onsuccess = () => res(req.result);
+          req.onerror = () => res(null);
+        });
+      } catch { return null; }
+    },
+    async set(key, val) {
+      try {
+        const db = await this.open();
+        return new Promise((res) => {
+          const tx = db.transaction("handles", "readwrite");
+          tx.objectStore("handles").put(val, key);
+          tx.oncomplete = () => res(true);
+          tx.onerror = () => res(false);
+        });
+      } catch { return false; }
+    },
+    async del(key) {
+      try {
+        const db = await this.open();
+        return new Promise((res) => {
+          const tx = db.transaction("handles", "readwrite");
+          tx.objectStore("handles").delete(key);
+          tx.oncomplete = () => res(true);
+          tx.onerror = () => res(false);
+        });
+      } catch { return false; }
+    }
+  };
+
+  let activeFileHandle = null;
+
+  function updateSyncUI(active = false, filename = "progress.json") {
+    const unlinkBtn = $("#menu-unlink");
+    const linkText = $(".menu-link-text");
+    if (active) {
+      if (linkText) linkText.textContent = `${filename} (Ulangan)`;
+      if (unlinkBtn) unlinkBtn.style.display = "flex";
+    } else {
+      if (linkText) linkText.textContent = "progress.json fayliga ulash";
+      if (unlinkBtn) unlinkBtn.style.display = "none";
+    }
+  }
+
+  async function saveToLinkedFile() {
+    if (!activeFileHandle) return;
+    try {
+      const writable = await activeFileHandle.createWritable();
+      const payload = {
+        app: "laravel-skill-map",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        progress: progress,
+        questions: Array.from(masteredIq)
+      };
+      await writable.write(JSON.stringify(payload, null, 2));
+      await writable.close();
+    } catch (err) {
+      console.warn("Faylga saqlashda xatolik:", err);
+      if (err && err.name === "NotAllowedError") {
+        activeFileHandle = null;
+        updateSyncUI(false);
+      }
+    }
+  }
+
+  async function linkProgressFile() {
+    if (!window.showOpenFilePicker) {
+      alert("Sizning brauzeringiz File System Access API'ni qo'llab-quvvatlamaydi. Chrome, Edge yoki Opera brauzerlaridan foydalaning.");
+      return;
+    }
+    try {
+      const [handle] = await window.showOpenFilePicker({
+        types: [{
+          description: "JSON Fayl (progress.json)",
+          accept: { "application/json": [".json"] }
+        }],
+        multiple: false
+      });
+      if (!handle) return;
+      activeFileHandle = handle;
+      await idb.set("progressHandle", handle);
+
+      const file = await handle.getFile();
+      const fileText = await file.text();
+      let importedSomething = false;
+      if (fileText.trim()) {
+        try {
+          const data = JSON.parse(fileText);
+          const p = data && typeof data.progress === "object" ? data.progress : data;
+          if (p && Object.keys(p).length > 0) {
+            const hasLocal = Object.keys(progress).length > 0;
+            const shouldLoad = !hasLocal || confirm(`"${file.name}" faylida saqlangan progress mavjud (${Object.keys(p).length} ta mavzu). Saytga yuklaylikmi?`);
+            if (shouldLoad) {
+              const clean = {};
+              Object.entries(p).forEach(([k, v]) => {
+                if (SUB_BY_ID[k] && Number.isInteger(v) && v > 0 && v <= 4) clean[k] = v;
+              });
+              progress = clean;
+              store.set(KEYS.progress, progress);
+              if (Array.isArray(data.questions)) {
+                masteredIq = new Set(data.questions);
+                store.set(KEYS.questions, data.questions);
+              }
+              route();
+              updateSidebarProgress();
+              importedSomething = true;
+            }
+          }
+        } catch (e) {
+          console.warn("Fayl JSON emas yoki bo'sh:", e);
+        }
+      }
+
+      updateSyncUI(true, file.name);
+      await saveToLinkedFile();
+      toast(importedSomething ? `Fayl ulandi va ma'lumotlar yuklandi!` : `Fayl ulandi! Barcha o'zgarishlar "${file.name}"ga avtomatik yoziladi.`);
+    } catch (err) {
+      if (err && err.name !== "AbortError") {
+        console.error(err);
+        toast("Faylni ulashda xatolik yuz berdi");
+      }
+    }
+  }
+
+  async function unlinkProgressFile() {
+    activeFileHandle = null;
+    await idb.del("progressHandle");
+    updateSyncUI(false);
+    toast("Fayl bilan aloqa uzildi");
+  }
+
+  async function checkExistingHandle() {
+    if (!window.showOpenFilePicker) return;
+    try {
+      const handle = await idb.get("progressHandle");
+      if (!handle) return;
+      const perm = await handle.queryPermission({ mode: "readwrite" });
+      if (perm === "granted") {
+        activeFileHandle = handle;
+        const file = await handle.getFile();
+        updateSyncUI(true, file.name);
+      } else {
+        const linkText = $(".menu-link-text");
+        if (linkText) linkText.textContent = "progress.json ni qayta ulash";
+      }
+    } catch (e) {
+      console.warn("Handle tekshirishda xato:", e);
+    }
+  }
 
   const statusOf = (subId) => {
     const v = progress[subId];
@@ -152,6 +318,7 @@
   function setStatus(subId, st) {
     if (st === 0) delete progress[subId]; else progress[subId] = st;
     store.set(KEYS.progress, progress);
+    saveToLinkedFile();
   }
   function statsFor(subs) {
     const counts = [0, 0, 0, 0, 0];
@@ -633,29 +800,6 @@
           ${x.acceptanceCriteria.length ? `<div><div class="field-label">${icon("list-checks", "ic ic-sm")}Qabul mezonlari</div>
             <ul class="checklist">${x.acceptanceCriteria.map((c) => `<li>${icon("check")}<span>${inline(c)}</span></li>`).join("")}</ul></div>` : ""}
           ${prereq ? `<div><div class="field-label">Oldindan bilish kerak</div><div class="prereq">${prereq}</div></div>` : ""}
-          ${(() => {
-            const mqs = (window.INTERVIEW_QUESTIONS || []).filter((q) => q.subskillId === x.id);
-            if (!mqs.length) return "";
-            return `
-              <div class="sub-interview-box">
-                <div class="box-head">
-                  <div class="box-title">${icon("help", "ic ic-sm")} Texnik intervyu savoli (${mqs.length})</div>
-                  <a href="#/interview" style="font-size:11px;color:var(--text-3);text-decoration:none">Barcha savollar →</a>
-                </div>
-                <div class="sub-interview-items">
-                  ${mqs.map((q) => `
-                    <details class="sub-interview-item">
-                      <summary>${esc(q.title)}</summary>
-                      <div class="sub-interview-ans">
-                        <div>${markdown(q.answer)}</div>
-                        ${q.tip ? `<div class="iq-tip-box" style="margin-top:10px"><h4>${icon("sparkles", "ic ic-sm")} Senior maslahati</h4><p>${esc(q.tip)}</p></div>` : ""}
-                      </div>
-                    </details>
-                  `).join("")}
-                </div>
-              </div>
-            `;
-          })()}
           <div class="status-picker-wrap"><div class="field-label" id="${domId}-st">Status</div>
             <div class="status-picker" role="radiogroup" aria-labelledby="${domId}-st">
               ${STATUSES.map((s, i) => `<button role="radio" data-set="${i}" data-st="${i}" aria-checked="${i === st}" title="${s.hint}"><i class="st-dot"></i>${s.label}</button>`).join("")}
@@ -846,6 +990,27 @@
       toggleMasteredIq(iqCheck.dataset.iqCheck);
       return;
     }
+    const iqCopy = t.closest("[data-iq-copy]");
+    if (iqCopy) {
+      const qId = iqCopy.dataset.iqCopy;
+      const q = (window.INTERVIEW_QUESTIONS || []).find((x) => x.id === qId);
+      if (q) {
+        const ans = Array.isArray(q.answer) ? q.answer.join("\n") : q.answer;
+        const full = `Savol: ${q.title}\n\nJavob:\n${ans}\n\n${q.tip ? "Senior Maslahati: " + q.tip : ""}`;
+        copyText(full);
+        toast("Savol va javob nusxalandi");
+      }
+      return;
+    }
+    const iqReveal = t.closest("[data-iq-reveal]");
+    if (iqReveal) {
+      const qId = iqReveal.dataset.iqReveal;
+      const promptEl = $(`#prompt-${CSS.escape(qId)}`);
+      const ansEl = $(`#ans-${CSS.escape(qId)}`);
+      if (promptEl) promptEl.style.display = "none";
+      if (ansEl) ansEl.style.display = "block";
+      return;
+    }
     const lvlBtn = t.closest("[data-iq-lvl]");
     if (lvlBtn) {
       iqFilterLevel = lvlBtn.dataset.iqLvl;
@@ -857,6 +1022,67 @@
     if (catBtn) {
       iqFilterCat = catBtn.dataset.iqCat;
       $$("[data-iq-cat]").forEach((b) => b.setAttribute("aria-pressed", String(b === catBtn)));
+      filterInterviewList();
+      return;
+    }
+    const statusBtn = t.closest("[data-iq-status]");
+    if (statusBtn) {
+      iqFilterStatus = statusBtn.dataset.iqStatus;
+      $$("[data-iq-status]").forEach((b) => b.setAttribute("aria-pressed", String(b === statusBtn)));
+      filterInterviewList();
+      return;
+    }
+    const practiceBtn = t.closest("[data-iq-practice]");
+    if (practiceBtn) {
+      iqPracticeMode = !iqPracticeMode;
+      practiceBtn.classList.toggle("active", iqPracticeMode);
+      practiceBtn.setAttribute("aria-pressed", String(iqPracticeMode));
+      filterInterviewList();
+      toast(iqPracticeMode ? "Sinov rejimi yoqildi! Model javoblar yashirildi." : "Sinov rejimi o'chirildi.");
+      return;
+    }
+    const expandBtn = t.closest("[data-iq-expand-all]");
+    if (expandBtn) {
+      iqAllExpanded = !iqAllExpanded;
+      $$(".iq-card").forEach((card) => {
+        card.classList.toggle("open", iqAllExpanded);
+        const toggleBtn = card.querySelector("[data-iq-toggle]");
+        if (toggleBtn) toggleBtn.setAttribute("aria-expanded", String(iqAllExpanded));
+      });
+      expandBtn.innerHTML = `${icon(iqAllExpanded ? "collapse" : "expand", "ic ic-sm")} ${iqAllExpanded ? "Barchasini yopish" : "Barchasini ochish"}`;
+      return;
+    }
+    const randomBtn = t.closest("[data-iq-random]");
+    if (randomBtn) {
+      const filtered = getIqFilteredList();
+      if (filtered.length) {
+        const randQ = filtered[Math.floor(Math.random() * filtered.length)];
+        const card = $(`#${CSS.escape(randQ.id)}`);
+        if (card) {
+          card.classList.add("open");
+          card.scrollIntoView({ behavior: "smooth", block: "center" });
+          toast(`Tasodifiy savol ochildi: #${randQ.id.replace('iq-', '')}`);
+        }
+      }
+      return;
+    }
+    const clearBtn = t.closest("[data-iq-clear-search]");
+    if (clearBtn) {
+      const inp = $("#iq-search-input");
+      if (inp) { inp.value = ""; iqSearchQuery = ""; filterInterviewList(); }
+      return;
+    }
+    const resetBtn = t.closest("[data-iq-reset-filters]");
+    if (resetBtn) {
+      iqFilterLevel = "all";
+      iqFilterCat = "all";
+      iqFilterStatus = "all";
+      iqSearchQuery = "";
+      const inp = $("#iq-search-input");
+      if (inp) inp.value = "";
+      $$("[data-iq-lvl]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.iqLvl === "all")));
+      $$("[data-iq-cat]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.iqCat === "all")));
+      $$("[data-iq-status]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.iqStatus === "all")));
       filterInterviewList();
       return;
     }
@@ -971,8 +1197,10 @@
    * ------------------------------------------------------------------ */
   let iqFilterLevel = "all";
   let iqFilterCat = "all";
+  let iqFilterStatus = "all";
+  let iqPracticeMode = false;
+  let iqAllExpanded = false;
   let iqSearchQuery = "";
-  let masteredIq = new Set(store.get(KEYS.questions, []));
 
   const IQ_CATEGORIES = [
     { id: "all", label: "Barchasi" },
@@ -993,73 +1221,168 @@
       masteredIq.add(id);
     }
     store.set(KEYS.questions, Array.from(masteredIq));
+    saveToLinkedFile();
     const btn = $(`[data-iq-check="${id}"]`);
     if (btn) {
       const isDone = masteredIq.has(id);
       btn.classList.toggle("done", isDone);
       btn.innerHTML = `${icon(isDone ? "check" : "target", "ic ic-sm")} ${isDone ? "O'zlashtirildi" : "O'zlashtirish"}`;
     }
+    const card = $(`#${CSS.escape(id)}`);
+    if (card) {
+      const isDone = masteredIq.has(id);
+      let doneTag = card.querySelector(".tag-done");
+      if (isDone && !doneTag) {
+        const meta = card.querySelector(".iq-meta");
+        if (meta) {
+          const span = document.createElement("span");
+          span.className = "tag-done";
+          span.style.cssText = "color:var(--accent-text);font-weight:600;display:inline-flex;align-items:center;gap:3px";
+          span.innerHTML = `${icon("check", "ic ic-sm")} O'zlashtirildi`;
+          meta.appendChild(span);
+        }
+      } else if (!isDone && doneTag) {
+        doneTag.remove();
+      }
+    }
     updateIqStats();
+  }
+
+  function getIqFilteredList() {
+    const questions = window.INTERVIEW_QUESTIONS || [];
+    return questions.filter((q) => {
+      const matchLvl = iqFilterLevel === "all" || q.level === iqFilterLevel;
+      const matchCat = iqFilterCat === "all" || q.category === iqFilterCat;
+      const isMastered = masteredIq.has(q.id);
+      const matchStatus = iqFilterStatus === "all" ||
+        (iqFilterStatus === "mastered" && isMastered) ||
+        (iqFilterStatus === "unmastered" && !isMastered);
+      const matchSearch = !iqSearchQuery ||
+        q.title.toLowerCase().includes(iqSearchQuery) ||
+        (Array.isArray(q.answer) ? q.answer.join(" ") : q.answer).toLowerCase().includes(iqSearchQuery) ||
+        (q.tip || "").toLowerCase().includes(iqSearchQuery) ||
+        (q.categoryLabel || "").toLowerCase().includes(iqSearchQuery) ||
+        (q.subskillId || "").toLowerCase().includes(iqSearchQuery);
+      return matchLvl && matchCat && matchStatus && matchSearch;
+    });
   }
 
   function updateIqStats() {
     const questions = window.INTERVIEW_QUESTIONS || [];
+    const total = questions.length || 1;
     const doneCount = Array.from(masteredIq).filter((id) => questions.some((q) => q.id === id)).length;
+    const remainingCount = Math.max(0, questions.length - doneCount);
+    const progressPct = pct(doneCount / total);
+
     const statDoneEl = $("#iq-stat-done");
+    const statRemEl = $("#iq-stat-remaining");
     const statPctEl = $("#iq-stat-pct");
     const statBarEl = $("#iq-stat-bar");
-    if (statDoneEl) statDoneEl.textContent = `${doneCount} / ${questions.length}`;
-    if (statPctEl) statPctEl.textContent = `${pct(doneCount / (questions.length || 1))}%`;
-    if (statBarEl) statBarEl.style.width = `${pct(doneCount / (questions.length || 1))}%`;
+    const ringPctEl = $("#iq-ring-pct");
+    const ringCircleEl = $("#iq-ring-circle");
+    const countEl = $("#iq-result-count");
+
+    if (statDoneEl) statDoneEl.innerHTML = `${doneCount} <small>/ ${questions.length}</small>`;
+    if (statRemEl) statRemEl.textContent = `${remainingCount} ta`;
+    if (statPctEl) statPctEl.textContent = `${progressPct}%`;
+    if (statBarEl) statBarEl.style.width = `${progressPct}%`;
+    if (ringPctEl) ringPctEl.textContent = `${progressPct}%`;
+
+    if (ringCircleEl) {
+      const circumference = 251.3;
+      const offset = circumference - (circumference * (doneCount / total));
+      ringCircleEl.style.strokeDashoffset = String(offset);
+    }
+
+    if (countEl) {
+      const filtered = getIqFilteredList();
+      countEl.textContent = `${filtered.length} ta savol`;
+    }
+
+    // Holat pilla tugmalari ichidagi sonlarni yangilash
+    const allBtn = $('[data-iq-status="all"] .count-chip');
+    const mBtn = $('[data-iq-status="mastered"] .count-chip');
+    const uBtn = $('[data-iq-status="unmastered"] .count-chip');
+    if (allBtn) allBtn.textContent = String(questions.length);
+    if (mBtn) mBtn.textContent = String(doneCount);
+    if (uBtn) uBtn.textContent = String(remainingCount);
   }
 
   function renderInterviewItems() {
-    const questions = window.INTERVIEW_QUESTIONS || [];
-    const filtered = questions.filter((q) => {
-      const matchLvl = iqFilterLevel === "all" || q.level === iqFilterLevel;
-      const matchCat = iqFilterCat === "all" || q.category === iqFilterCat;
-      const matchSearch = !iqSearchQuery ||
-        q.title.toLowerCase().includes(iqSearchQuery) ||
-        (Array.isArray(q.answer) ? q.answer.join(" ") : q.answer).toLowerCase().includes(iqSearchQuery) ||
-        (q.tip || "").toLowerCase().includes(iqSearchQuery);
-      return matchLvl && matchCat && matchSearch;
-    });
+    const filtered = getIqFilteredList();
 
     if (!filtered.length) {
-      return `<div class="empty">${icon("search")}<div>Ushbu filtr bo'yicha savollar topilmadi.</div></div>`;
+      return `
+        <div class="empty" style="padding:var(--sp-8) var(--sp-4);background:var(--surface);border:1px dashed var(--border);border-radius:var(--r-lg);margin-top:var(--sp-4)">
+          <div style="font-size:32px;color:var(--text-3);margin-bottom:8px">${icon("search")}</div>
+          <h3 style="margin-bottom:6px;font-size:16px;color:var(--text)">Ushbu filtr bo'yicha savollar topilmadi</h3>
+          <p style="font-size:13px;color:var(--text-3);margin-bottom:14px">Qidiruv so'zini o'zgartiring yoki filtrlarni dastlabki holatiga qaytaring.</p>
+          <button class="btn btn-sm" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button>
+        </div>
+      `;
     }
 
     return filtered.map((q) => {
       const isMastered = masteredIq.has(q.id);
+      const isOpen = iqAllExpanded;
+      const cleanNum = q.id.replace("iq-", "");
+
       return `
-        <article class="iq-card" id="${q.id}" data-id="${q.id}">
-          <button class="iq-card-header" data-iq-toggle="${q.id}" aria-expanded="false">
+        <article class="iq-card ${isOpen ? "open" : ""}" id="${q.id}" data-id="${q.id}" data-level="${q.level}">
+          <button class="iq-card-header" data-iq-toggle="${q.id}" aria-expanded="${isOpen}">
             <span class="iq-badge ${q.level}">${q.level}</span>
             <div class="iq-title-wrap">
               <div class="iq-title">${esc(q.title)}</div>
               <div class="iq-meta">
-                <span>${esc(q.categoryLabel)}</span>
-                ${q.subskillId ? `<span>· Mavzu: <code class="inline-code">${q.subskillId}</code></span>` : ""}
+                <span class="tag-cat">${esc(q.categoryLabel)}</span>
+                <span>·</span>
+                <span>ID: <code class="inline-code">#${cleanNum}</code></span>
+                ${q.subskillId ? `<span>· Mavzu: <code class="inline-code">${esc(q.subskillId)}</code></span>` : ""}
+                ${isMastered ? `<span class="tag-done" style="color:var(--accent-text);font-weight:600;display:inline-flex;align-items:center;gap:3px">${icon("check", "ic ic-sm")} O'zlashtirildi</span>` : ""}
               </div>
             </div>
             <span class="iq-chev">${icon("chev-down", "ic")}</span>
           </button>
           <div class="iq-card-body">
-            <div class="iq-answer-label">${icon("target", "ic ic-sm")} Model javob (Kutiladigan tushuntirish):</div>
-            <div>${markdown(q.answer)}</div>
-            ${q.tip ? `
-              <div class="iq-tip-box">
-                <h4>${icon("sparkles", "ic ic-sm")} Senior maslahati & Intervyu sirlari</h4>
-                <p>${esc(q.tip)}</p>
+            ${iqPracticeMode ? `
+              <div class="iq-practice-prompt" id="prompt-${q.id}">
+                <p><strong>${icon("target", "ic ic-sm")} Sinov rejimi:</strong> Savolga avval o'zingiz mustaqil javob berishga urinib ko'ring, so'ngra model javob bilan tekshiring.</p>
+                <button class="iq-reveal-btn" data-iq-reveal="${q.id}">Javobni ko'rish →</button>
               </div>
-            ` : ""}
+              <div class="iq-ans-wrapper" id="ans-${q.id}" style="display:none">
+                <div class="iq-answer-label">${icon("target", "ic ic-sm")} Model javob (Kutiladigan chuqur tushuntirish):</div>
+                <div class="iq-answer-prose">${markdown(q.answer)}</div>
+                ${q.tip ? `
+                  <div class="iq-tip-box">
+                    <h4>${icon("sparkles", "ic ic-sm")} Senior maslahati & Intervyu sirlari</h4>
+                    <p>${esc(q.tip)}</p>
+                  </div>
+                ` : ""}
+              </div>
+            ` : `
+              <div class="iq-ans-wrapper" id="ans-${q.id}">
+                <div class="iq-answer-label">${icon("target", "ic ic-sm")} Model javob (Kutiladigan chuqur tushuntirish):</div>
+                <div class="iq-answer-prose">${markdown(q.answer)}</div>
+                ${q.tip ? `
+                  <div class="iq-tip-box">
+                    <h4>${icon("sparkles", "ic ic-sm")} Senior maslahati & Intervyu sirlari</h4>
+                    <p>${esc(q.tip)}</p>
+                  </div>
+                ` : ""}
+              </div>
+            `}
             <div class="iq-card-foot">
-              <button class="iq-check-btn ${isMastered ? "done" : ""}" data-iq-check="${q.id}">
-                ${icon(isMastered ? "check" : "target", "ic ic-sm")} ${isMastered ? "O'zlashtirildi" : "O'zlashtirish"}
-              </button>
+              <div class="iq-card-actions-left">
+                <button class="iq-check-btn ${isMastered ? "done" : ""}" data-iq-check="${q.id}">
+                  ${icon(isMastered ? "check" : "target", "ic ic-sm")} ${isMastered ? "O'zlashtirildi" : "O'zlashtirish"}
+                </button>
+                <button class="iq-copy-btn" data-iq-copy="${q.id}" title="Savol va javobni nusxalash">
+                  ${icon("copy", "ic ic-sm")} Nusxalash
+                </button>
+              </div>
               ${q.skillSlug ? `
                 <a href="#/s/${q.skillSlug}/${q.subskillId || ""}">
-                  ${icon("arrow-right", "ic ic-sm")} Bu mavzuni xaritada ko'rish
+                  ${icon("arrow-right", "ic ic-sm")} Ushbu mavzuni xaritada o'rganish
                 </a>
               ` : ""}
             </div>
@@ -1074,61 +1397,170 @@
     if (listEl) {
       listEl.innerHTML = renderInterviewItems();
     }
+    const countEl = $("#iq-result-count");
+    if (countEl) {
+      const filtered = getIqFilteredList();
+      countEl.textContent = `${filtered.length} ta savol`;
+    }
+    const resetWrap = $("#iq-reset-wrap");
+    if (resetWrap) {
+      const isFiltered = iqFilterLevel !== "all" || iqFilterCat !== "all" || iqFilterStatus !== "all" || !!iqSearchQuery;
+      resetWrap.innerHTML = isFiltered
+        ? `<button class="iq-reset-link" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button>`
+        : "";
+    }
   }
 
   function renderInterview() {
     const questions = window.INTERVIEW_QUESTIONS || [];
+    const total = questions.length || 1;
     const doneCount = Array.from(masteredIq).filter((id) => questions.some((q) => q.id === id)).length;
+    const remainingCount = Math.max(0, questions.length - doneCount);
+    const progressPct = pct(doneCount / total);
+    const seniorLeadCount = questions.filter((q) => q.level === "senior" || q.level === "lead").length;
+
+    // Har bir darajadagi savollar sonini oldindan hisoblash
+    const lvlCounts = {
+      all: questions.length,
+      junior: questions.filter((q) => q.level === "junior").length,
+      middle: questions.filter((q) => q.level === "middle").length,
+      senior: questions.filter((q) => q.level === "senior").length,
+      lead: questions.filter((q) => q.level === "lead").length
+    };
+
+    // Har bir sohadagi savollar sonini hisoblash
+    const catCounts = {};
+    IQ_CATEGORIES.forEach((c) => {
+      catCounts[c.id] = c.id === "all" ? questions.length : questions.filter((q) => q.category === c.id).length;
+    });
+
+    const circumference = 251.3;
+    const ringOffset = circumference - (circumference * (doneCount / total));
 
     view().innerHTML = `
       ${loadErrorBlock()}
       <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Bosh sahifa</a><span class="sep">/</span><span aria-current="page">Intervyu savol-javoblari</span></nav>
-      <header class="skill-head reveal" style="margin-bottom:var(--sp-5)">
-        <div class="idx">TECHNICAL INTERVIEW PREPARATION</div>
-        <h1>Intervyu Savol-Javoblari</h1>
-        <p class="lead" style="margin-top:8px">PHP, Laravel, MySQL, Kesh, Arxitektura va Xavfsizlik bo'yicha real texnik intervyularda eng ko'p tushadigan chuqur savollar, model javoblar va Senior maslahatlari.</p>
+      
+      <header class="iq-hero reveal">
+        <div class="iq-hero-main">
+          <div class="idx">TECHNICAL INTERVIEW PREPARATION & BENCHMARK</div>
+          <h1>Intervyu Savol-Javoblari</h1>
+          <p class="lead">
+            PHP, Laravel, MySQL, Redis, Navbatlar, Arxitektura, Xavfsizlik va DevOps bo'yicha real texnik intervyularda eng ko'p tushadigan chuqur <strong>${questions.length} ta</strong> savol, model javoblar va Senior maslahatlari.
+          </p>
+        </div>
+        <div class="iq-hero-ring-wrap">
+          <div class="iq-ring" aria-label="Tayyorgarlik darajasi: ${progressPct}%">
+            <svg viewBox="0 0 100 100" width="96" height="96">
+              <circle class="track" cx="50" cy="50" r="40"></circle>
+              <circle class="val" id="iq-ring-circle" cx="50" cy="50" r="40"
+                style="stroke-dasharray: 251.3; stroke-dashoffset: ${ringOffset}"></circle>
+            </svg>
+            <div class="iq-ring-text">
+              <b id="iq-ring-pct">${progressPct}%</b>
+              <span>TAYYORLIK</span>
+            </div>
+          </div>
+          <div style="font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)">Tayyorgarlik darajasi</div>
+        </div>
       </header>
 
-      <section class="interview-stats" aria-label="Intervyu statistikasi">
-        <div class="stat">
-          <div class="label">${icon("help", "ic ic-sm")}Jami savollar</div>
-          <div class="value">${questions.length} ta</div>
+      <section class="iq-stats-grid reveal" aria-label="Intervyu statistikasi">
+        <div class="iq-stat-box">
+          <div class="iq-stat-label">${icon("help", "ic ic-sm")} Jami savollar</div>
+          <div class="iq-stat-num">${questions.length} <small>ta</small></div>
+          <div class="iq-stat-sub">8 ta yo'nalish bo'yicha</div>
         </div>
-        <div class="stat">
-          <div class="label">${icon("check", "ic ic-sm")}O'zlashtirildi</div>
-          <div class="value" id="iq-stat-done">${doneCount} <small>/ ${questions.length}</small></div>
-          <div class="bar"><i id="iq-stat-bar" style="width:${pct(doneCount / (questions.length || 1))}%"></i></div>
+        <div class="iq-stat-box">
+          <div class="iq-stat-label">${icon("check", "ic ic-sm")} O'zlashtirildi</div>
+          <div class="iq-stat-num" id="iq-stat-done" style="color:var(--accent-text)">${doneCount} <small>/ ${questions.length}</small></div>
+          <div class="iq-stat-sub">Shaxsiy trackerda qayd etilgan</div>
         </div>
-        <div class="stat">
-          <div class="label">${icon("target", "ic ic-sm")}Tayyorgarlik darajasi</div>
-          <div class="value" id="iq-stat-pct">${pct(doneCount / (questions.length || 1))}%</div>
+        <div class="iq-stat-box">
+          <div class="iq-stat-label">${icon("target", "ic ic-sm")} O'rganish kerak</div>
+          <div class="iq-stat-num" id="iq-stat-remaining">${remainingCount} <small>ta</small></div>
+          <div class="iq-stat-sub">Hali belgilanmagan savollar</div>
+        </div>
+        <div class="iq-stat-box">
+          <div class="iq-stat-label">${icon("sparkles", "ic ic-sm")} Senior & Lead</div>
+          <div class="iq-stat-num" style="color:var(--st-4)">${seniorLeadCount} <small>ta</small></div>
+          <div class="iq-stat-sub">Eng chuqur arxitektura savollari</div>
         </div>
       </section>
 
-      <div class="interview-filters">
-        <div class="interview-search">
-          ${icon("search")}
-          <input type="search" id="iq-search-input" placeholder="Savollar ichidan qidiring (masalan: N+1, idempotency, lock, session, kafka)..." value="${esc(iqSearchQuery)}" />
-        </div>
-        <div class="interview-filter-row">
-          <span class="interview-filter-label">Daraja:</span>
-          <div class="interview-pills" id="iq-level-pills">
-            <button data-iq-lvl="all" aria-pressed="${iqFilterLevel === "all"}">Barchasi</button>
-            <button data-iq-lvl="junior" aria-pressed="${iqFilterLevel === "junior"}">Junior</button>
-            <button data-iq-lvl="middle" aria-pressed="${iqFilterLevel === "middle"}">Middle</button>
-            <button data-iq-lvl="senior" aria-pressed="${iqFilterLevel === "senior"}">Senior</button>
-            <button data-iq-lvl="lead" aria-pressed="${iqFilterLevel === "lead"}">Lead</button>
+      <section class="iq-controls reveal" aria-label="Boshqaruv va qidiruv">
+        <div class="iq-search-row">
+          <div class="iq-search-box">
+            ${icon("search", "ic")}
+            <input type="search" id="iq-search-input" placeholder="Savol, texnologiya yoki kalit so'zni qidiring (masalan: N+1, idempotency, redis, lock)..." value="${esc(iqSearchQuery)}" />
+            ${iqSearchQuery ? `<button class="iq-search-clear" data-iq-clear-search aria-label="Qidiruvni tozalash">${icon("close", "ic ic-sm")}</button>` : ""}
+          </div>
+          <div class="iq-tools">
+            <button class="iq-tool-btn ${iqPracticeMode ? "active" : ""}" data-iq-practice aria-pressed="${iqPracticeMode}" title="Model javoblarni yashirib, o'zingizni sinash">
+              ${icon("target", "ic ic-sm")}
+              <span>Sinov rejimi</span>
+            </button>
+            <button class="iq-tool-btn" data-iq-expand-all title="Barcha kartalarni birdan ochish yoki yopish">
+              ${icon(iqAllExpanded ? "collapse" : "expand", "ic ic-sm")}
+              <span>${iqAllExpanded ? "Yopish" : "Ochish"}</span>
+            </button>
+            <button class="iq-tool-btn" data-iq-random title="Filtrlanganlar ichidan tasodifiy savolni ochish">
+              ${icon("refresh", "ic ic-sm")}
+              <span>Tasodifiy</span>
+            </button>
           </div>
         </div>
-        <div class="interview-filter-row">
-          <span class="interview-filter-label">Soha:</span>
-          <div class="interview-pills" id="iq-cat-pills">
-            ${IQ_CATEGORIES.map((c) => `<button data-iq-cat="${c.id}" aria-pressed="${iqFilterCat === c.id}">${c.label}</button>`).join("")}
-          </div>
-        </div>
-      </div>
 
-      <div class="iq-list" id="iq-items">
+        <div class="iq-pills-wrap">
+          <div class="iq-pills-row">
+            <span class="iq-pills-label">Holat:</span>
+            <div class="iq-pills" id="iq-status-pills">
+              <button type="button" class="iq-pill" data-iq-status="all" aria-pressed="${iqFilterStatus === "all"}">
+                Barchasi <span class="count-chip">${questions.length}</span>
+              </button>
+              <button type="button" class="iq-pill" data-iq-status="mastered" aria-pressed="${iqFilterStatus === "mastered"}">
+                O'zlashtirilgan <span class="count-chip">${doneCount}</span>
+              </button>
+              <button type="button" class="iq-pill" data-iq-status="unmastered" aria-pressed="${iqFilterStatus === "unmastered"}">
+                O'rganish kerak <span class="count-chip">${remainingCount}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="iq-pills-row">
+            <span class="iq-pills-label">Daraja:</span>
+            <div class="iq-pills" id="iq-level-pills">
+              <button type="button" class="iq-pill" data-iq-lvl="all" aria-pressed="${iqFilterLevel === "all"}">Barchasi <span class="count-chip">${lvlCounts.all}</span></button>
+              <button type="button" class="iq-pill" data-iq-lvl="junior" aria-pressed="${iqFilterLevel === "junior"}">Junior <span class="count-chip">${lvlCounts.junior}</span></button>
+              <button type="button" class="iq-pill" data-iq-lvl="middle" aria-pressed="${iqFilterLevel === "middle"}">Middle <span class="count-chip">${lvlCounts.middle}</span></button>
+              <button type="button" class="iq-pill" data-iq-lvl="senior" aria-pressed="${iqFilterLevel === "senior"}">Senior <span class="count-chip">${lvlCounts.senior}</span></button>
+              <button type="button" class="iq-pill" data-iq-lvl="lead" aria-pressed="${iqFilterLevel === "lead"}">Lead <span class="count-chip">${lvlCounts.lead}</span></button>
+            </div>
+          </div>
+
+          <div class="iq-pills-row">
+            <span class="iq-pills-label">Yo'nalish:</span>
+            <div class="iq-pills" id="iq-cat-pills">
+              ${IQ_CATEGORIES.map((c) => `
+                <button type="button" class="iq-pill" data-iq-cat="${c.id}" aria-pressed="${iqFilterCat === c.id}">
+                  ${esc(c.label)} <span class="count-chip">${catCounts[c.id]}</span>
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+
+        <div class="iq-results-bar">
+          <div>Filtr bo'yicha: <strong id="iq-result-count" style="color:var(--text)">${getIqFilteredList().length} ta savol</strong> ko'rsatilmoqda</div>
+          <div id="iq-reset-wrap">
+            ${(iqFilterLevel !== "all" || iqFilterCat !== "all" || iqFilterStatus !== "all" || iqSearchQuery) ? `
+              <button class="iq-reset-link" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button>
+            ` : ""}
+          </div>
+        </div>
+      </section>
+
+      <div class="iq-list reveal" id="iq-items">
         ${renderInterviewItems()}
       </div>
     `;
@@ -1138,6 +1570,17 @@
       searchInp.addEventListener("input", (e) => {
         iqSearchQuery = e.target.value.toLowerCase().trim();
         filterInterviewList();
+        const clearBtn = $("[data-iq-clear-search]");
+        if (iqSearchQuery && !clearBtn) {
+          const btn = document.createElement("button");
+          btn.className = "iq-search-clear";
+          btn.setAttribute("data-iq-clear-search", "");
+          btn.setAttribute("aria-label", "Qidiruvni tozalash");
+          btn.innerHTML = icon("close", "ic ic-sm");
+          searchInp.parentElement.appendChild(btn);
+        } else if (!iqSearchQuery && clearBtn) {
+          clearBtn.remove();
+        }
       });
     }
   }
@@ -1348,8 +1791,42 @@
       const a = e.target.closest("[data-action]");
       if (!a) return;
       setMenu(false);
+      if (a.dataset.action === "link-file") {
+        if (activeFileHandle) {
+          saveToLinkedFile();
+          toast("progress.json fayliga saqlandi");
+        } else {
+          (async () => {
+            const savedHandle = await idb.get("progressHandle");
+            if (savedHandle) {
+              try {
+                const perm = await savedHandle.requestPermission({ mode: "readwrite" });
+                if (perm === "granted") {
+                  activeFileHandle = savedHandle;
+                  const file = await savedHandle.getFile();
+                  updateSyncUI(true, file.name);
+                  await saveToLinkedFile();
+                  toast(`"${file.name}" bilan aloqa tiklandi!`);
+                  return;
+                }
+              } catch (e) {}
+            }
+            linkProgressFile();
+          })();
+        }
+      }
+      if (a.dataset.action === "unlink-file") {
+        unlinkProgressFile();
+      }
       if (a.dataset.action === "export") {
-        const blob = new Blob([JSON.stringify({ app: "laravel-skill-map", version: 1, exportedAt: new Date().toISOString(), progress }, null, 2)], { type: "application/json" });
+        const payload = {
+          app: "laravel-skill-map",
+          version: 1,
+          exportedAt: new Date().toISOString(),
+          progress,
+          questions: Array.from(masteredIq)
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
         const url = URL.createObjectURL(blob);
         const link = Object.assign(document.createElement("a"), { href: url, download: `skill-progress-${new Date().toISOString().slice(0, 10)}.json` });
         document.body.appendChild(link); link.click(); link.remove();
@@ -1359,6 +1836,8 @@
       if (a.dataset.action === "reset") {
         if (!confirm("Barcha progress o'chiriladi. Davom etasizmi?")) return;
         progress = {}; store.set(KEYS.progress, progress);
+        masteredIq.clear(); store.set(KEYS.questions, []);
+        saveToLinkedFile();
         route(); updateSidebarProgress(); toast("Progress tozalandi");
       }
     });
@@ -1374,6 +1853,11 @@
         const clean = {};
         Object.entries(src || {}).forEach(([k, v]) => { if (SUB_BY_ID[k] && Number.isInteger(v) && v > 0 && v <= 4) clean[k] = v; });
         progress = clean; store.set(KEYS.progress, progress);
+        if (Array.isArray(data.questions)) {
+          masteredIq = new Set(data.questions);
+          store.set(KEYS.questions, data.questions);
+        }
+        saveToLinkedFile();
         route(); updateSidebarProgress();
         toast(`${Object.keys(clean).length} ta mavzu holati import qilindi`);
       } catch { toast("JSON faylni o'qib bo'lmadi"); }
@@ -1404,6 +1888,7 @@
    * ------------------------------------------------------------------ */
   bindChrome();
   bindPalette();
+  checkExistingHandle();
   loadData().then(() => {
     buildModel();
     buildIndex();
