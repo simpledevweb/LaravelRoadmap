@@ -1736,6 +1736,16 @@ const searchInp = $("#iq-search-input");
     if (raw) quizScores = JSON.parse(raw);
   } catch (e) {}
 
+  function getQuizLevelCounts(catId = quizActiveCat) {
+    const allTests = window.INTERVIEW_TESTS || [];
+    const catTests = catId === "all" ? allTests : allTests.filter(t => t.category === catId);
+    const counts = {};
+    QUIZ_LEVELS.forEach(lvl => {
+      counts[lvl.id] = lvl.id === "all" ? catTests.length : catTests.filter(t => (t.level || "middle") === lvl.id).length;
+    });
+    return counts;
+  }
+
   function getQuizPool(catId = quizActiveCat, levelId = quizActiveLevel) {
     const all = window.INTERVIEW_TESTS || [];
     return all.filter(t => {
@@ -1748,6 +1758,13 @@ const searchInp = $("#iq-search-input");
   function handleQuizChangeCat(catId) {
     quizActiveCat = catId;
     quizState = "lobby";
+
+    // 1-filtr o'zgarganda 2-filtrdagi sonlarni tekshiramiz: agar hozirgi darajada savol bo'lmasa, 'all' ga qaytaramiz
+    const lvlCounts = getQuizLevelCounts(quizActiveCat);
+    if (quizActiveLevel !== "all" && (!lvlCounts[quizActiveLevel] || lvlCounts[quizActiveLevel] === 0)) {
+      quizActiveLevel = "all";
+    }
+
     updateQuizView();
   }
 
@@ -1891,10 +1908,16 @@ const searchInp = $("#iq-search-input");
       b.setAttribute("aria-pressed", String(isActive));
     });
 
+    const levelCounts = getQuizLevelCounts(quizActiveCat);
     document.querySelectorAll("[data-quiz-level]").forEach(b => {
-      const isActive = b.dataset.quizLevel === quizActiveLevel;
+      const lvlId = b.dataset.quizLevel;
+      const isActive = lvlId === quizActiveLevel;
       b.classList.toggle("active", isActive);
       b.setAttribute("aria-pressed", String(isActive));
+      const countEl = b.querySelector(".iq-quiz-cat-count");
+      if (countEl) {
+        countEl.textContent = levelCounts[lvlId] || 0;
+      }
     });
 
     document.querySelectorAll("[data-quiz-count]").forEach(b => {
@@ -1912,10 +1935,7 @@ const searchInp = $("#iq-search-input");
       catCounts[c.id] = c.id === "all" ? allTests.length : allTests.filter(t => t.category === c.id).length;
     });
 
-    const levelCounts = {};
-    QUIZ_LEVELS.forEach(lvl => {
-      levelCounts[lvl.id] = lvl.id === "all" ? allTests.length : allTests.filter(t => (t.level || "middle") === lvl.id).length;
-    });
+    const levelCounts = getQuizLevelCounts(quizActiveCat);
 
     view().innerHTML = `
       ${loadErrorBlock()}
