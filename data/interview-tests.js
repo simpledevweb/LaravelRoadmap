@@ -219,6 +219,870 @@ window.INTERVIEW_TESTS = [
     "level": "junior"
   },
   {
+    "id": "t-php-9",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "junior",
+    "question": "PHP 8 da kiritilgan Constructor Property Promotion sintaksisi haqida qaysi fikr to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Constructor argumentlariga ko'rinish modifikatori (public/protected/private) berilsa, PHP xususiyatni avtomatik e'lon qiladi va qiymatini o'zlashtiradi"
+      },
+      {
+        "key": "B",
+        "text": "U faqat private xususiyatlar uchun ishlaydi, public yoki protected xususiyatlar uchun ishlamaydi"
+      },
+      {
+        "key": "C",
+        "text": "Bu sintaksis abstract klasslarda va interfeyslarda ham ishlatilishi shart"
+      },
+      {
+        "key": "D",
+        "text": "Promotion ishlatilganda konstruktor tanasida (body) hech qanday boshqa kod yozish mumkin emas"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP 8.0 Constructor Property Promotion orqali argument oldiga public, protected yoki private qo'yilganda, xususiyat klass sathida avtomatik ravishda e'lon qilinadi va kelgan argument qiymati unga beriladi. Bu ortiqcha boilerplate kodni (property e'lon qilish va $this->x = $x yozishni) yo'qotadi."
+  },
+  {
+    "id": "t-php-10",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "junior",
+    "question": "PHP da `declare(strict_types=1);` direktivasi qanday ishlaydi va qayerga ta'sir qiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Butun loyihaning barcha fayllariga global ta'sir qiladi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat ushbu direktiva yozilgan faylning ichidagi funksiya chaqiruvlariga (caller file) qat'iy tip tekshiruvini qo'llaydi"
+      },
+      {
+        "key": "C",
+        "text": "Faqat klass metodlariga ta'sir qiladi, oddiy funksiyalarga ta'sir qilmaydi"
+      },
+      {
+        "key": "D",
+        "text": "PHP runtime da xotirani 2 baravar tejash rejimini yoqadi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "declare(strict_types=1); fayl darajasida (file-level) ishlaydi va faqat shu fayldan turib amalga oshirilgan funksiya yoki metod chaqiruvlariga ta'sir qiladi. Ya'ni tekshiruv funksiya e'lon qilingan faylda emas, aynan chaqiruvchi faylda yoqilgan bo'lishi kerak."
+  },
+  {
+    "id": "t-php-11",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP 8.0 da kiritilgan `match` ifodasi `switch` operatoridan qaysi asosiy jihati bilan farq qiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "match faqat sonlarni solishtiradi, switch esa satrlarni solishtiradi"
+      },
+      {
+        "key": "B",
+        "text": "match qat'iy tekshiruv (===) ishlatadi, qiymat qaytaradi va break talab qilmaydi"
+      },
+      {
+        "key": "C",
+        "text": "switch doimo tezroq ishlaydi, chunki match JIT tomonidan optimizatsiya qilinmaydi"
+      },
+      {
+        "key": "D",
+        "text": "match da default holatini ko'rsatish mumkin emas, switch da esa mumkin"
+      }
+    ],
+    "correct": "B",
+    "explanation": "match ifodasi (expression) qiymat qaytaradi, 'fallthrough' xususiyatiga ega emas (ya'ni har bir tarmoqdan keyin avtomatik chiqadi, break shart emas) va eng muhimi qat'iy tenglik (strict equality ===) orqali tekshiradi. Mos keluvchi tarmoq topilmasa UnhandledMatchError xatosini beradi."
+  },
+  {
+    "id": "t-php-12",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP 8.1 da kiritilgan `readonly` xususiyatlari (properties) bo'yicha qaysi qoida to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Readonly property faqat bitta marta initsializatsiya qilinadi va unga doimo tip (type) ko'rsatilishi shart"
+      },
+      {
+        "key": "B",
+        "text": "Readonly property ga boshlang'ich qiymatni to'g'ridan-to'g'ri klassda belgilash mumkin: public readonly int $id = 1;"
+      },
+      {
+        "key": "C",
+        "text": "Readonly property qiymatini klass tashqarisidan istalgan paytda o'zgartirish mumkin"
+      },
+      {
+        "key": "D",
+        "text": "Readonly property larni private qilib e'lon qilib bo'lmaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Readonly xususiyatlar tipi ko'rsatilgan (typed) bo'lishi shart va ular faqat bir marta o'z klassi doirasida initsializatsiya qilinadi. Boshlang'ich qiymat bilan e'lon qilish mumkin emas, chunki bu holda uning qiymatini konstruktorda ham o'zgartirib bo'lmay qolardi."
+  },
+  {
+    "id": "t-php-13",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP 8.1 Enums (Backed Enums) haqida qaysi fikr to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Backed enumlar faqat `int` yoki `string` tipidagi qiymatlarga ega bo'lishi mumkin"
+      },
+      {
+        "key": "B",
+        "text": "Enum holatlariga (cases) float yoki array qiymatlarni ham biriktirish mumkin"
+      },
+      {
+        "key": "C",
+        "text": "Enum klass bo'lmagani uchun unda metodlar va interfeyslar ishlatib bo'lmaydi"
+      },
+      {
+        "key": "D",
+        "text": "Status::from('invalid') mavjud bo'lmagan qiymat uchun null qaytaradi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP da Backed Enum lar faqat int yoki string tipidagi qiymat (scalar value) qabul qila oladi. Undan tashqari enumlar metodlarga ega bo'lishi va interfeyslarni implement qilishi mumkin. from() metodi topilmasa ValueError tashlaydi, tryFrom() esa null qaytaradi."
+  },
+  {
+    "id": "t-php-14",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP 8.1 Fibers (Tolalar) mexanizmining asosiy vazifasi va xususiyati nimada?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Ko'p oqimli (multi-threading) parallel hisoblashlarni CPU yadrolariga taqsimlash"
+      },
+      {
+        "key": "B",
+        "text": "To'xtatilishi va qayta davom ettirilishi mumkin bo'lgan to'liq stakli (stackful) korutinalar bo'lib, no-blocking asinxron arxitekturani ta'minlaydi"
+      },
+      {
+        "key": "C",
+        "text": "Fayllarni siqish (zip/gzip) jarayonini tezlashtiruvchi C darajasidagi kengaytma"
+      },
+      {
+        "key": "D",
+        "text": "SQL so'rovlarini avtomatik keshlovchi ichki PHP xotira mexanizmi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "PHP 8.1 Fibers — bu stackful coroutine mexanizmi. U dastur bajarilishini Fiber::suspend() orqali to'xtatib, keyinchalik ->resume() orqali to'xtagan joyidan davom ettirish imkonini beradi. Bu RevoltPHP, Amp yoki Swoole kabi event-loop kutubxonalari uchun sinxron ko'rinishdagi toza asinxron kod yozish asosi hisoblanadi."
+  },
+  {
+    "id": "t-php-15",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "junior",
+    "question": "PHP da Nullsafe operatori (`?->`) qanday vazifani bajaradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Agar zanjirdagi obyekt null bo'lsa, xatolik (Error) tashlamasdan butun zanjir natijasi sifatida null qaytaradi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat database so'rovlarida null qiymatlarni 0 ga almashtiradi"
+      },
+      {
+        "key": "C",
+        "text": "Obyektning barcha private xususiyatlarini avtomatik null ga tenglashtiradi"
+      },
+      {
+        "key": "D",
+        "text": "Tenglikni tekshirish uchun `=== null` o'rniga ishlatiladi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Nullsafe operatori $user?->getAddress()?->getCity() zanjirida agar biror bo'g'in null bo'lsa, keyingi metodlar chaqirilmaydi (short-circuiting) va butun ifoda xavfsiz tarzda null qaytaradi."
+  },
+  {
+    "id": "t-php-16",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP da `Closure::bind` yoki `Closure::bindTo` metodlari qanday maqsadlarda ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Anonim funksiyani ma'lum bir obyekt doirasiga ($this) va klass scope'iga bog'lab, hatto private a'zolariga kirish imkonini beradi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat ma'lumotlar bazasi tranzaksiyalarini commit qilish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Funksiyani JSON formatiga serializatsiya qilish uchun"
+      },
+      {
+        "key": "D",
+        "text": "Closure ni global o'zgaruvchiga aylantirish uchun"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Closure::bind() yoki $closure->bindTo($newthis, $newscope) anonim funksiyaning ijro doirasi ($this) va ko'rinish chegarasini (scope) o'zgartiradi. Agar scope sifatida klass nomi yoki uning obyekti berilsa, ushbu closure obyektning private va protected xususiyatlarini to'g'ridan-to'g'ri o'qiy oladi yoki o'zgartira oladi."
+  },
+  {
+    "id": "t-php-17",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da `trait` larda metodlar nomlari to'qnashganda (conflict), qaysi kalit so'z orqali ziddiyat hal qilinadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`override`"
+      },
+      {
+        "key": "B",
+        "text": "`insteadof` va `as`"
+      },
+      {
+        "key": "C",
+        "text": "`resolve`"
+      },
+      {
+        "key": "D",
+        "text": "`implements`"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Agar ikkita Trait da bir xil nomli metod bo'lsa, PHP fatal error beradi. Buni bartaraf qilish uchun use TraitA, TraitB { TraitA::method insteadof TraitB; TraitB::method as aliasMethod; } sintaksisi qo'llaniladi."
+  },
+  {
+    "id": "t-php-18",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "Liskov Substitution Principle (LSP) ga ko'ra, bola klass ota klass metodini override qilganda parametrlari va qaytarish tipi qanday bo'lishi kerak?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Parametrlar contravariant (kengroq yoki teng), qaytarish tipi covariant (torroq yoki teng) bo'lishi kerak"
+      },
+      {
+        "key": "B",
+        "text": "Parametrlar ham, qaytarish tipi ham faqat aynan bir xil bo'lishi shart"
+      },
+      {
+        "key": "C",
+        "text": "Parametrlar covariant, qaytarish tipi esa contravariant bo'lishi lozim"
+      },
+      {
+        "key": "D",
+        "text": "Bola klass xohlagan tipni qabul qilib, xohlagan tipni qaytarishi mumkin"
+      }
+    ],
+    "correct": "A",
+    "explanation": "LSP va PHP 7.4+ tip tizimiga binoan: Parametr tiplari kontravariant bo'lishi mumkin (ota klass talab qilganidan ko'ra kengroq qabul qila oladi), qaytarish tipi esa kovariant bo'lishi kerak (ota klass va'da qilganidan ko'ra aniqroq/torroq tip qaytarishi mumkin). Bu ota klass o'rniga bola klass qo'yilganda kod buzilmasligini kafolatlaydi."
+  },
+  {
+    "id": "t-php-19",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da `__invoke()` sehrli metodi (magic method) nima vazifa bajaradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Obyekt funksiya kabi chaqirilganda ($obj()) avtomatik ishga tushadi"
+      },
+      {
+        "key": "B",
+        "text": "Obyekt echo yoki print qilinganda string qaytaradi"
+      },
+      {
+        "key": "C",
+        "text": "Mavjud bo'lmagan statik metod chaqirilganda ishlaydi"
+      },
+      {
+        "key": "D",
+        "text": "Obyekt xotiradan o'chirilayotganda chaqiriladi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Agar klass ichida __invoke() metodi yozilsa, ushbu klass instansiyasi 'callable' ga aylanadi va uni xuddi oddiy funksiya kabi $instance($args) ko'rinishida chaqirish mumkin (Single Action Controller yoki Invokable Command larda keng qo'llaniladi)."
+  },
+  {
+    "id": "t-php-20",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP Garbage Collector da 'Cyclic Reference' (aylanma bog'liqlik) muammosi qanday hal qilinadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "PHP da faqat Reference Counting ishlatiladi, shuning uchun aylanma bog'liqlikdagi obyektlar hech qachon tozalanmaydi"
+      },
+      {
+        "key": "B",
+        "text": "Concurrent Cycle Collection algoritmi orqali zval ranglari (binafsha, kulrang, qora, oq) bo'yicha tahlil qilinib, sikllar aniqlanadi va xotira bo'shatiladi"
+      },
+      {
+        "key": "C",
+        "text": "Har bir so'rov (request) tugashida butun server o'chirib yoqiladi"
+      },
+      {
+        "key": "D",
+        "text": "Aylanma bog'liqlik vujudga kelganda PHP darhol Fatal Memory Error beradi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "PHP 5.3 dan boshlab Goldman va Bacon tomonidan ishlab chiqilgan Cyclic Garbage Collector qo'llaniladi. U refcount kamayganda ehtimoliy sikllarni 'binafsha' buferga joylaydi va bufer to'lganda (10,000 ta ob'ekt) simulyatsiya orqali sikllarni aniqlab (oq tugunlarni) xotiradan tozalaydi."
+  },
+  {
+    "id": "t-php-21",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "junior",
+    "question": "PHP da `final class` yoki `final` metod e'lon qilish nima uchun kerak?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Klassdan boshqa klasslar meros olishini (inheritance) yoki metodni override qilishni taqiqlash uchun"
+      },
+      {
+        "key": "B",
+        "text": "Klass obyekti yaratilishini taqiqlab, faqat statik metodlarni qoldirish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Klass ichidagi barcha o'zgaruvchilarni o'zgarmas (const) qilish uchun"
+      },
+      {
+        "key": "D",
+        "text": "Faylni interpretatsiyadan to'xtatish uchun"
+      }
+    ],
+    "correct": "A",
+    "explanation": "final kalit so'zi klass oldiga qo'yilsa, undan bola klass yaratish taqiqlanadi (class Child extends FinalClass xato beradi). Metod oldiga qo'yilsa, bola klassda ushbu metodni qayta yozish (override qilish) taqiqlanadi."
+  },
+  {
+    "id": "t-php-22",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da Anonymous Class (Anonim klass) haqida qaysi fikr to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`new class { ... }` orqali bir martalik sodda obyektlar yaratish mumkin bo'lib, u interfeyslarni implement qilishi va boshqa klasslardan meros olishi mumkin"
+      },
+      {
+        "key": "B",
+        "text": "Anonim klass konstruktorga ega bo'lishi mumkin emas"
+      },
+      {
+        "key": "C",
+        "text": "Anonim klasslar faqat test yozishda ishlatiladi, asosiy kodda PHP SyntaxError beradi"
+      },
+      {
+        "key": "D",
+        "text": "Anonim klasslar xotiradan hech qachon o'chirilmaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP 7 da kiritilgan new class($args) implements SomeInterface { ... } sintaksisi bir martalik ishlatiladigan sodda obyektlar, mocklar yoki strategiyalar yaratishda alohida .php fayl ochib o'tirmasdan foydalanish uchun juda qulaydir."
+  },
+  {
+    "id": "t-php-23",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da Generator funksiyada `yield from` qanday vazifani bajaradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Boshqa bir Generator yoki massivdan barcha qiymatlarni delegatsiya asosida ketma-ket chiqarib beradi"
+      },
+      {
+        "key": "B",
+        "text": "Faqat tashqi API dan kelgan javoblarni qabul qiladi"
+      },
+      {
+        "key": "C",
+        "text": "Generatorni to'xtatib, xotirani darhol tozalaydi"
+      },
+      {
+        "key": "D",
+        "text": "yield qiymatini ma'lumotlar bazasiga saqlaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "yield from $iterable sintaksisi ichki generator yoki massiv (array/Traversable) ichidagi qiymatlarni tashqi chaqiruvchiga to'g'ridan-to'g'ri delegatsiya qiladi. Bu murakkab generator zanjirlarini qisqa va tushunarli yozishga yordam beradi."
+  },
+  {
+    "id": "t-php-24",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP 8.2 da kiritilgan DNF (Disjunctive Normal Form) tiplari nimani bildiradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Intersection (va - &) tiplarini Union (yoki - |) tiplari ichida qavslar orqali guruhlash imkoniyati, masalan: `(HasTitle&HasAuthor)|null`"
+      },
+      {
+        "key": "B",
+        "text": "Faqat database maydonlari uchun mo'ljallangan no-SQL ma'lumotlar tipi"
+      },
+      {
+        "key": "C",
+        "text": "Tiplarni dinamik ravishda runtime paytida stringdan o'giruvchi eval() funksiyasi"
+      },
+      {
+        "key": "D",
+        "text": "Barcha tiplarni avtomatik ravishda mixed tipiga tenglashtiruvchi rejim"
+      }
+    ],
+    "correct": "A",
+    "explanation": "DNF (Disjunctive Normal Form) tiplari PHP 8.2 da kiritilgan bo'lib, u Union va Intersection tiplarini birlashtirish imkonini beradi. Masalan, (A & B) | (C & D) yoki (Countable & ArrayAccess) | null ko'rinishidagi qat'iy va moslashuvchan tiplash imkonini beradi."
+  },
+  {
+    "id": "t-php-25",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "junior",
+    "question": "PHP da Abstract class va Interface o'rtasidagi asosiy farq nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Abstract class tana qismiga (body) ega to'liq metodlar va xususiyatlar (properties) saqlashi mumkin, interfeysda esa faqat metod signature lari va konstantalar bo'ladi"
+      },
+      {
+        "key": "B",
+        "text": "Klass bir vaqtning o'zida bir nechta abstract klassdan meros olishi mumkin, lekin faqat bitta interfeysni implement qiladi"
+      },
+      {
+        "key": "C",
+        "text": "Interfeyslarda barcha metodlar private bo'lishi shart"
+      },
+      {
+        "key": "D",
+        "text": "Abstract klasslardan to'g'ridan-to'g'ri new AbstractClass() qilib obyekt olish mumkin"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP da klass faqat bitta abstract klassdan meros (extends) olishi mumkin, lekin istalgancha interfeysni implement qilishi mumkin. Abstract klassda holat (properties) va tayyor logika (metodlar tanasi) bo'lishi mumkin, interfeys esa faqat shartnoma (kontrakt) vazifasini o'taydi."
+  },
+  {
+    "id": "t-php-26",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da `clone` kalit so'zi ishlatilganda va klassda `__clone()` metodi yozilmaganda qanday klonlash sodir bo'ladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Shallow copy (yuzaki nusxa): skalyar qiymatlar nusxalanadi, ammo obyekt xususiyatlari asl obyekt bilan bir xil manzilga ishora qilib qoladi"
+      },
+      {
+        "key": "B",
+        "text": "Deep copy (chuqur nusxa): barcha ichki obyektlar ham rekursiv yangitdan yaratiladi"
+      },
+      {
+        "key": "C",
+        "text": "PHP darhol fatal error tashlaydi, chunki __clone() metodi bo'lishi shart"
+      },
+      {
+        "key": "D",
+        "text": "Faqatgina o'sha obyektning xotiradagi id raqami (hash) o'zgaradi, boshqa hech narsa nusxalanmaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Standart clone amalida PHP yuzaki nusxa (shallow copy) oladi. Agar ob'ekt ichida boshqa ob'ektlar bo'lsa, ularning faqat havolasi (reference) ko'chiriladi. Chuqur nusxa (deep copy) hosil qilish uchun __clone() sehrli metodida ichki obyektlarni ham qo'lda $this->subObj = clone $this->subObj; qilish talab etiladi."
+  },
+  {
+    "id": "t-php-27",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP da Opcache va JIT (Just-In-Time) kompilyatori ishlash prinsipi bo'yicha qaysi ta'rif to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Opcache PHP kodni Opcode ga aylantirib umumiy xotirada saqlaydi; JIT esa eng ko'p bajariladigan CPU-bound opcodelarni to'g'ridan-to'g'ri mashina kodiga (machine code) kompilyatsiya qiladi"
+      },
+      {
+        "key": "B",
+        "text": "JIT ma'lumotlar bazasi so'rovlarini 100 baravar tezlashtiradi va tarmoq kutish vaqtini yo'qotadi"
+      },
+      {
+        "key": "C",
+        "text": "Opcache yoqilgan bo'lsa, PHP fayllaridagi o'zgarishlar hech qachon yangilanmaydi"
+      },
+      {
+        "key": "D",
+        "text": "JIT PHP 7.0 da kiritilgan bo'lib, faqat CLI muhitida ishlaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Opcache har bir so'rovda faylni qayta parsing va kompilyatsiya qilishdan qutqaradi (Opcode keshlanadi). PHP 8 da kiritilgan JIT esa DynASM orqali tez-tez chaqiriladigan 'qaynoq' opcodelarni to'g'ridan-to'g'ri x86/ARM mashina kodiga aylantiradi. Bu CPU-bound vazifalarda (matematika, tasvirlar, ML) katta yutuq beradi."
+  },
+  {
+    "id": "t-php-28",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "junior",
+    "question": "PHP da `===` (identiklik) va `==` (tenglik) operatorlarining asosiy farqi nimada?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`===` ham qiymatni, ham ma'lumot turini (tipini) solishtiradi; `==` esa tiplarni avtomatik o'zgartirib (type coercion) faqat qiymatni tekshiradi"
+      },
+      {
+        "key": "B",
+        "text": "`==` qat'iy tekshiruv, `===` esa faqat obyektlar uchun ishlatiladi"
+      },
+      {
+        "key": "C",
+        "text": "`===` faqat sonlarni tekshirish uchun, `==` esa matnlar uchun ishlatiladi"
+      },
+      {
+        "key": "D",
+        "text": "Ular orasida hech qanday farq yo'q, ikkalasi ham bir xil ishlaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP da == operatori tiplarni avtomatik tarzda moslashtiradi (masalan, 0 == '0' -> true). === operatori esa tiplarni o'zgartirmasdan, ularning tipi va qiymati to'liq bir xilligini tekshiradi (0 === '0' -> false). Kutilmagan xatolarni oldini olish uchun doimo === tavsiya etiladi."
+  },
+  {
+    "id": "t-php-29",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP da Reflection API yordamida qaysi amalni bajarish mumkin?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Klasslar, metodlar va xususiyatlarning tuzilishini runtime paytida tahlil qilish, hatto private property larning qiymatini o'qish va o'zgartirish"
+      },
+      {
+        "key": "B",
+        "text": "Faqat fayllarni diskdan o'chirish va serverni qayta yuklash"
+      },
+      {
+        "key": "C",
+        "text": "Baza jadvallarini avtomatik migrate qilish"
+      },
+      {
+        "key": "D",
+        "text": "PHP interpretatorining C kodini o'zgartirish"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Reflection API (ReflectionClass, ReflectionProperty va h.k.) dasturning o'zini o'zi ichkaridan tekshirish imkonini beradi. Laravel IoC konteyneri aynan Reflection orqali klass konstruktorining qaramliklarini (dependencies) avtomatik aniqlab, ularni inyekt qiladi."
+  },
+  {
+    "id": "t-php-30",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da Arrow Functions (`fn($x) => $x * 2`) anonim funksiyalardan (`function($x) use (...)`) qaysi qulayligi bilan ajralib turadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Tashqi ko'lamdagi (outer scope) o'zgaruvchilarni `use` kalit so'zisiz avtomatik ravishda qiymat bo'yicha (by-value) ushlaydi"
+      },
+      {
+        "key": "B",
+        "text": "Arrow function ichida bir nechta ifodalarni (multiline statements) bemalol yozish mumkin"
+      },
+      {
+        "key": "C",
+        "text": "Tashqi o'zgaruvchilarni avtomatik havola (by-reference) orqali o'zgartira oladi"
+      },
+      {
+        "key": "D",
+        "text": "Faqat massivlarning array_map funksiyasi bilan ishlaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP 7.4 da kiritilgan Arrow Functions yagona ifodadan iborat bo'lib, tashqi o'zgaruvchilarni avtomatik tarzda o'z ichiga oladi (implicit by-value binding). Ammo ular bir nechta qatorli kod yoki void amallar uchun emas, aniq bitta ifoda qiymatini qaytarish uchun mo'ljallangan."
+  },
+  {
+    "id": "t-php-31",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da `try - catch - finally` blokida, agar `try` yoki `catch` ichida `return` bo'lsa, `finally` bloki bajariladimi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Ha, `finally` bloki har qanday holatda ham, hatto `return` chaqirilgan bo'lsa ham ijro etiladi"
+      },
+      {
+        "key": "B",
+        "text": "Yo'q, `return` chaqirilgach funksiya darhol tugaydi va `finally` e'tiborga olinmaydi"
+      },
+      {
+        "key": "C",
+        "text": "Faqat fatal error yuz bergandagina finally bajariladi"
+      },
+      {
+        "key": "D",
+        "text": "Faqat catch bloki ishlamasa finally bajariladi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP da finally bloki kafolatlangan bajarilish (guaranteed cleanup) uchun mo'ljallangan. Agar try yoki catch blokida return bo'lsa, qiymat hisoblanadi, lekin return qilishdan oldin finally bloki to'liq bajariladi va shundan so'nggina natija qaytariladi."
+  },
+  {
+    "id": "t-php-32",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP da Singleton dizayn patternini to'liq xavfsiz (bulletproof) qilish uchun qaysi sehrli metodlarni yopish (private qilish yoki xato tashlash) lozim?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`__construct()`, `__clone()` va `__wakeup()` (yoki `__unserialize()`)"
+      },
+      {
+        "key": "B",
+        "text": "Faqat `__toString()` va `__invoke()`"
+      },
+      {
+        "key": "C",
+        "text": "Faqat `__destruct()` va `__get()`"
+      },
+      {
+        "key": "D",
+        "text": "Hech qaysisini yopish shart emas, faqat statik metod yetarli"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Haqiqiy Singleton faqat bitta instansiyaga ega bo'lishi kerak. new orqali yangi obyekt yaratmaslik uchun __construct private qilinadi; clone orqali nusxalamaslik uchun __clone private qilinadi; va unserialize() orqali yangi instansiya tiklanmasligi uchun __wakeup yoki __unserialize bloklanadi."
+  },
+  {
+    "id": "t-php-33",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP 8.0 da Named Arguments (Nomlangan argumentlar) xususiyati bo'yicha qaysi qoida to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Parametrlarni o'z nomlari bilan ixtiyoriy tartibda uzatish va oraliqdagi ixtiyoriy (default) parametrlarni tashlab ketish mumkin"
+      },
+      {
+        "key": "B",
+        "text": "Nomlangan argumentlar faqat massivlarni uzatishda ishlaydi"
+      },
+      {
+        "key": "C",
+        "text": "Nomlangan argumentlar ishlatilganda funksiyaning parametrlari private bo'lishi shart"
+      },
+      {
+        "key": "D",
+        "text": "Agar nomlangan argument ishlatilsa, funksiya faqat string qaytarishi kerak"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP 8.0 Named Arguments funksiya parametrlarining o'rnini eslab o'tirmasdan $fn(paramName: $val) ko'rinishida berish imkonini yaratadi. Shuningdek, 10 ta default parametrning faqat 8-chisiga qiymat berish kerak bo'lsa, oldingi 7 tasini yozib o'tirish shart emas."
+  },
+  {
+    "id": "t-php-34",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP da `SplSubject` va `SplObserver` interfeyslari orqali qaysi GoF dizayn patterni realizatsiya qilinadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Observer (Kuzatuvchi) patterni"
+      },
+      {
+        "key": "B",
+        "text": "Factory Method patterni"
+      },
+      {
+        "key": "C",
+        "text": "Decorator patterni"
+      },
+      {
+        "key": "D",
+        "text": "Adapter patterni"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP Standart Kutubxonasida (SPL) Observer patterni uchun tayyor SplSubject (attach, detach, notify) va SplObserver (update) interfeyslari mavjud. Ular obyekt holati o'zgarganda boshqa qaram obyektlarni xabardor qilish mexanizmini standartlashtiradi."
+  },
+  {
+    "id": "t-php-35",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da `__get()` va `__set()` sehrli metodlari qachon ishga tushadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Mavjud bo'lmagan (inaccessible) yoki ko'rinish chegarasi yopiq (private/protected) xususiyatga murojaat qilinganda yoki qiymat yozilganda"
+      },
+      {
+        "key": "B",
+        "text": "Har qanday public xususiyat o'qilganda yoki yozilganda"
+      },
+      {
+        "key": "C",
+        "text": "Faqat ma'lumotlar bazasidan model yuklanganda"
+      },
+      {
+        "key": "D",
+        "text": "Faqat klass statik chaqirilganda"
+      }
+    ],
+    "correct": "A",
+    "explanation": "__get($property) va __set($property, $value) faqat ob'ektda mavjud bo'lmagan yoki o'sha ko'lamda (scope) ko'rinmaydigan xususiyatlarga murojaat etilganda chaqiriladi. Agar xususiyat public bo'lsa, PHP to'g'ridan-to'g'ri o'qiydi/yozadi va bu sehrli metodlar chaqirilmaydi."
+  },
+  {
+    "id": "t-php-36",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "Composer PSR-4 avtoyuklash (autoloading) spetsifikatsiyasi bo'yicha qaysi qoida to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "To'liq kvalifikatsiyalangan klass nomi (FQCN) namespace prefiksidan so'ng kataloglar iyerarxiyasi va fayl nomi bilan birga '.php' kengaytmasiga to'liq mos kelishi kerak"
+      },
+      {
+        "key": "B",
+        "text": "Har bir klass faylida faqat pastki chiziqlar (_) bilan ajratilgan nomlar bo'lishi shart"
+      },
+      {
+        "key": "C",
+        "text": "Barcha klasslar yagona bitta katta fayl ichida saqlanishi kerak"
+      },
+      {
+        "key": "D",
+        "text": "Klass nomi va fayl nomining registri (katta-kichik harflar) farq qilishi mumkin"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PSR-4 bo'yicha namespace prefiksi (masalan, App\\) ma'lum bir papkaga (masalan, app/) bog'lanadi. Qolgan har bir sub-namespace papka nomiga, eng oxirgi klass nomi esa aynan shu nomdagi .php faylga (katta-kichik harflar sezgirligi bilan) to'liq mos kelishi shart."
+  },
+  {
+    "id": "t-php-37",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "junior",
+    "question": "PHP da `in_array('0', [false, true])` ifodasi PHP 7 da va PHP 8 da qanday natija qaytaradi va nega?",
+    "options": [
+      {
+        "key": "A",
+        "text": "PHP 7 da `true` (chunki '0' == false), PHP 8 da ham `true` (agar 3-parametr $strict=true berilmasa)"
+      },
+      {
+        "key": "B",
+        "text": "PHP 8 da darhol TypeError beradi"
+      },
+      {
+        "key": "C",
+        "text": "Har doim false qaytaradi"
+      },
+      {
+        "key": "D",
+        "text": "Faqat array_search ishlatilgandagina true qaytaradi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "in_array() uchinchi parametri $strict standart holda false bo'lgani sababli noqat'iy tenglik (==) bilan tekshiradi. PHP da (bool)'0' false bo'lsa-da, '0' == false true beradi. Xavfsiz tekshiruv uchun doimo in_array('0', [false, true], true) ishlatilishi shart."
+  },
+  {
+    "id": "t-php-38",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP 8.2 da kiritilgan `readonly class` butun klassga qo'llanilganda qanday cheklovlar vujudga keladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Klassning barcha xususiyatlari avtomatik readonly va typed bo'ladi, statik xususiyatlar (static properties) va dinamik xususiyatlar (dynamic properties) qo'shish qat'iyan taqiqlanadi"
+      },
+      {
+        "key": "B",
+        "text": "Klassdan umuman obyekt yaratib bo'lmaydi"
+      },
+      {
+        "key": "C",
+        "text": "Klass metodlari hech qanday parametr qabul qila olmaydi"
+      },
+      {
+        "key": "D",
+        "text": "Readonly klass boshqa hech qanday interfeysni implement qila olmaydi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Readonly class e'lon qilinganda: uning har bir instansiya xususiyati avtomatik readonly hisoblanadi va tipga ega bo'lishi shart. Dinamik xususiyatlar taqiqlanadi va static xususiyatlar e'lon qilish mumkin emas. Shuningdek, undan meros oluvchi har qanday bola klass ham readonly bo'lishi shart."
+  },
+  {
+    "id": "t-php-39",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "middle",
+    "question": "PHP da Open/Closed Principle (OCP) ni buzmasdan yangi to'lov tizimlarini (Click, Payme, Uzum) qo'shishning eng to'g'ri OOP yondashuvi qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Yagona `PaymentGatewayInterface` yaratib, har bir to'lov tizimini alohida klass sifatida implement qilish va strategiya (Strategy pattern) orqali chaqirish"
+      },
+      {
+        "key": "B",
+        "text": "Bitta ulkan klass ichida `switch($type)` yoki `if-else` shartlari orqali yangi to'lov turlarini qo'shib borish"
+      },
+      {
+        "key": "C",
+        "text": "Har bir to'lov tizimi uchun alohida controller ochib, bazadagi jadval strukturasini o'zgartirish"
+      },
+      {
+        "key": "D",
+        "text": "Barcha to'lov kodlarini trait ichiga yozib, hamma joyda o'sha traitni ishlatish"
+      }
+    ],
+    "correct": "A",
+    "explanation": "OCP (Kengayish uchun ochiq, o'zgarish uchun yopiq) tamoyiliga binoan yangi funksionallik mavjud kodni o'zgartirmasdan, yangi kod qo'shish orqali kiritilishi kerak. Interfeys va Strategy pattern orqali yangi to'lov turi mavjud kodga tegilmasdan oson ulanadi."
+  },
+  {
+    "id": "t-php-40",
+    "category": "php",
+    "categoryLabel": "PHP tili",
+    "level": "senior",
+    "question": "PHP da `Throwable` interfeysi iyerarxiyasida `Error` va `Exception` o'rtasidagi asosiy konseptual farq nimada?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`Error` — PHP engine/runtime darajasidagi jiddiy muammolar (TypeError, ParseError, DivisionByZeroError) uchun; `Exception` esa dasturiy (biznes-logika) xatoliklari uchun mo'ljallangan"
+      },
+      {
+        "key": "B",
+        "text": "`Error` ni try-catch orqali ushlab bo'lmaydi, faqat `Exception` ni ushlash mumkin"
+      },
+      {
+        "key": "C",
+        "text": "`Exception` faqat frontend uchun, `Error` esa backend uchun javob beradi"
+      },
+      {
+        "key": "D",
+        "text": "PHP 7 dan keyin `Exception` eskirgan va o'rniga faqat `Error` ishlatiladi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "PHP 7 dan boshlab deyarli barcha xatoliklar Throwable interfeysiga birlashtirildi. Error klassi (TypeError, ArithmeticError, ParseError va h.k.) PHP dvigatelining ichki jiddiy xatolari bo'lib, ular ilgari fatal error bo'lgan. Exception esa odatda dasturchi tomonidan nazorat qilinadigan va throw qilinadigan xatoliklar uchun ishlatiladi. Ikkalasini ham catch (Throwable $e) bilan ushlash mumkin."
+  },
+  {
     "id": "t-lar-1",
     "category": "laravel",
     "categoryLabel": "Laravel asoslari",
