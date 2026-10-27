@@ -89,3 +89,52 @@ Qoidalar:
 
 1. `data/skills/86-yangi-skill.js` yarating (mavjud fayl namunasida).
 2. `data/manifest.js` → `SKILL_FILES` ga fayl nomini, `SKILL_GROUPS` dagi kerakli guruhga `86` ni qo'shing.
+
+---
+
+## Chuqur darslar (subskill sahifasi)
+
+Har bir subskill uchun alohida katta sahifa bor: `#/s/<skill-slug>/<subId>`. Qisqa `description` shu sahifada "Qisqacha" bo'limida chiqadi, **chuqur kontent esa alohida faylda** yoziladi:
+
+`data/lessons/<subId>.js` (masalan `data/lessons/13.12.js`)
+
+```js
+registerLesson("13.12", {
+  lesson: [
+    "### Sarlavha",
+    "Tushuntirish matni (Markdown)...",
+    "",
+    "- ro'yxat",
+    "1. raqamli ro'yxat"
+  ],
+  examples: [
+    { title: "Misol nomi", lang: "php", code: ["// kod", "$x = 1;"], note: "Izoh (ixtiyoriy)" }
+  ],
+  pitfalls: [
+    "Odatiy xato va nima uchun xato ekani."
+  ]
+});
+```
+
+Yangi fayl yaratgach, nomini `data/manifest.js` dagi `window.LESSON_FILES` ga qo'shing.
+
+| Maydon | Nima yoziladi |
+|---|---|
+| `lesson` | 350–600 so'z. `###` bo'limlar: nima, nega kerak, qanday ishlaydi, qachon ishlatiladi/ishlatilmaydi, Laravel dagi o'rni. |
+| `examples` | 2–3 ta kod misoli: muammo/yechim, odatiy ishlatilish, test. Har birida `title`, `lang`, `code`; `note` ixtiyoriy. |
+| `pitfalls` | 3–4 ta odatiy xato. |
+
+Qoidalar: o'zbek (lotin), texnik atamalar inglizcha; kod ishlaydigan va qisqa bo'lsin; `**qalin**` ichida `kod` ishlatmang (sayt buni noto'g'ri chiqaradi); versiyaga bog'liq narsani aniq yozing; bilmagan narsani to'qimang.
+
+### Flash uchun tayyor prompt
+
+```
+Sen Senior PHP/Laravel mentorisan. Quyidagi subskill uchun data/lessons/<subId>.js faylini yoz.
+- Til: o'zbek (lotin). Texnik atamalar inglizcha qoladi.
+- Format: registerLesson("<subId>", { lesson: [...], examples: [...], pitfalls: [...] }) (yuqoridagi namunaga qat'iy rioya qil).
+- lesson 350-600 so'z, ### bo'limlar bilan; examples 2-3 ta ishlaydigan kod; pitfalls 3-4 ta.
+- Faqat aniq bilgan narsangni yoz. Versiyaga bog'liq xususiyatni belgila. **qalin** ichida `kod` ishlatma.
+- Natija: to'liq, sintaksisi to'g'ri JS fayl.
+
+<subskill id, title va hozirgi description shu yerga>
+```

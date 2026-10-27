@@ -286,3 +286,6 @@ window.SKILL_FILES = [
   "84-technical-leadership.js",
   "85-architecture-review.js"
 ];
+
+/* Chuqur darslar (data/lessons/<subId>.js). Yangi dars qo'shsangiz fayl nomini shu yerga ham yozing. */
+window.LESSON_FILES = ["13.12.js", "13.11.js", "13.3.js", "17.3.js", "46.6.js", "12.6.js", "1.4.js", "1.5.js", "1.34.js", "1.36.js", "1.1.js", "1.2.js", "1.3.js", "1.6.js", "1.7.js", "1.8.js", "1.9.js", "1.10.js", "1.11.js", "1.12.js", "1.13.js", "1.14.js", "1.15.js", "1.16.js", "1.17.js", "1.18.js", "1.19.js", "1.20.js", "1.21.js", "1.22.js", "1.23.js", "1.24.js", "1.25.js", "1.26.js", "1.27.js", "1.28.js", "1.29.js", "1.30.js", "1.31.js", "1.32.js", "1.33.js", "1.35.js", "1.37.js", "1.38.js", "1.39.js", "1.40.js", "1.41.js"];

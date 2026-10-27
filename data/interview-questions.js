@@ -87,7 +87,7 @@ window.INTERVIEW_QUESTIONS = [
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
-    subskillId: "1.26",
+    subskillId: "1.34",
     answer: [
       "**Property Hooks**: PHP 8.4 da getter va setter metodlarining o'rnini bosuvchi qisqa sintaksis. Alohida `getName()` yoki `setName()` yozish o'rniga property ichida mantiq yoziladi.",
       "",
@@ -1079,7 +1079,7 @@ window.INTERVIEW_QUESTIONS = [
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
-    subskillId: "1.1",
+    subskillId: "1.25",
     answer: [
       "**OPcache ishlash tartibi:**",
       "PHP har safar skriptni ishlatganda 4 ta bosqichdan o'tadi: Lexing (Tokenizatsiya) → Parsing (AST yaratish) → Compilation (Opcode generatsiyasi) → Execution (Zend Engine ijrosi). OPcache kompilyatsiya qilingan bayt-kodni (Opcode) umumiy xotirada (Shared Memory) saqlaydi, natijada keyingi so'rovlarda dastlabki 3 ta bosqich o'tkazib yuboriladi.",
@@ -1100,7 +1100,7 @@ window.INTERVIEW_QUESTIONS = [
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
-    subskillId: "1.24",
+    subskillId: "1.40",
     answer: [
       "**Fibers** — bu PHP da to'liq mustaqil chaqiruv steki (call stack) ga ega bo'lgan to'xtatiladigan (suspendable) kod bloklari (korutinalar / coroutines).",
       "",
@@ -1127,7 +1127,7 @@ window.INTERVIEW_QUESTIONS = [
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
-    subskillId: "1.12",
+    subskillId: "1.36",
     answer: [
       "Ko'p tillarda massiv boshqa funksiyaga uzatilganda yoki o'zgaruvchiga tenglashtirilganda uning to'liq nusxasi olinadi yoki manzil uzatiladi. PHP da esa **Copy-on-Write (COW)** qo'llaniladi.",
       "",
@@ -1146,7 +1146,7 @@ window.INTERVIEW_QUESTIONS = [
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
-    subskillId: "1.25",
+    subskillId: "1.33",
     answer: [
       "**1. Readonly Classes (PHP 8.2):**",
       "Butun classni `readonly class DTO` deb e'lon qilish uning barcha property'larini avtomatik `readonly` qiladi va dinamik xossalar qo'shilishini taqiqlaydi. Bu sof Immutable DTO va Value Object yaratishni kafolatlaydi.",
@@ -2051,7 +2051,7 @@ window.INTERVIEW_QUESTIONS = [
     category: "php",
     categoryLabel: "PHP tili",
     skillSlug: "php",
-    subskillId: "1.28",
+    subskillId: "1.34",
     answer: [
       "PHP 8.4 da kelgan **Property Hooks** va **Asymmetric Visibility** C# va Swift tillaridagi kabi xususiyatlarni qulay boshqarish imkonini beradi.",
       "",
@@ -2622,7 +2622,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.25",
+    "subskillId": "1.35",
     "answer": [
       "`SplObjectStorage` obyektlarni kalit sifatida saqlaydi, ammo obyektga kuchli havola (strong reference) saqlab qoladi. Agar asosiy obyekt dasturda o'chirilsa ham, xaritada saqlanib qolib xotiradan tozalanmaydi (Memory Leak).",
       "",
@@ -2647,7 +2647,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.22",
+    "subskillId": "1.25",
     "answer": [
       "PHP 8.0 da kelgan **JIT (Tracing JIT)** OPcache ichida ishlaydi. U ko'p takrorlanadigan Opcode bloklarini to'g'ridan-to'g'ri protsessorning mashina kodiga (Machine Code - x86/ARM) o'giradi.",
       "",
@@ -2664,7 +2664,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.15",
+    "subskillId": "1.17",
     "answer": [
       "`yield from` (Generator Delegation) bitta generator ichidan boshqa generator, massiv yoki Traversable obyektni delegatsiya qilish (ichma-ich oqim hosil qilish) imkonini beradi.",
       "",
@@ -2696,7 +2696,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.26",
+    "subskillId": "1.16",
     "answer": [
       "PHP 8.0 gacha metadata (masalan `@Route('/home')` yoki `@ORM\\\\Column`) faqat matnli izoh (DocBlock) sifatida yozilar va regex bilan o'qilar edi (xatoliklar xavfi yuqori, tiplar yo'q).",
       "",
@@ -2725,7 +2725,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.6",
+    "subskillId": "1.29",
     "answer": [
       "Kompyuterlar sonlarni ikkilik (binary IEEE 754) formatida saqlaydi. Ko'plab o'nlik kasrlar (masalan `0.1` yoki `0.7`) ikkilik tizimda cheksiz davriy kasrga aylanadi va yaxlitlash xatosi paydo bo'ladi.",
       "",
@@ -2750,7 +2750,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.27",
+    "subskillId": "1.33",
     "answer": [
       "PHP 8.1 da `readonly property`, PHP 8.2 da esa butun `readonly class` sintaksisi qo'shildi (Sinfdagi barcha xususiyatlar avtomat readonly bo'ladi).",
       "",
@@ -2794,7 +2794,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.14",
+    "subskillId": "1.15",
     "answer": [
       "PHP 7 gacha Fatal Error (masalan, mavjud bo'lmagan metodni chaqirish yoki tip nomutanosibligi) skriptni darhol to'xtatar va `try-catch` bilan ushlab bo'lmas edi.",
       "",
@@ -2843,7 +2843,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.18",
+    "subskillId": "1.35",
     "answer": [
       "PHP dagi oddiy massiv (Associative Array) aslida murakkab Hash Table tuzilmasidir va har bir element uchun katta miqdorda qo'shimcha xotira sarflaydi.",
       "",
@@ -4807,7 +4807,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.3",
+    "subskillId": "1.9",
     "answer": [
       "PHP da nomsiz funksiyalar (Closures) va PHP 7.4 da kiritilgan Arrow Functions kodni qisqa va qulay yozish imkonini beradi:",
       "",
@@ -4859,7 +4859,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.3",
+    "subskillId": "1.12",
     "answer": [
       "PHP bitta merosxo'rlik (single inheritance) tilidir. Trait - bu bir nechta mustaqil sinflar o'rtasida metodlarni qayta ishlatish (horizontal code reuse) mexanizmidir:",
       "",
@@ -5202,7 +5202,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.2",
+    "subskillId": "1.13",
     "answer": [
       "`final` kalit so'zi ob'ektga yo'naltirilgan dasturlashda vorislik (inheritance) va metodlarni qayta yozishni cheklash uchun ishlatiladi:",
       "",
@@ -5257,7 +5257,7 @@ window.INTERVIEW_QUESTIONS = [
     "category": "php",
     "categoryLabel": "PHP tili",
     "skillSlug": "php",
-    "subskillId": "1.3",
+    "subskillId": "1.17",
     "answer": [
       "`file()`, `file_get_contents()` yoki butun faylni bitta massivga o'qish 100MB+ fayllarda PHP ning `Allowed memory size exhausted` xatosiga olib keladi. Chunki PHP massivlari xotirada 3-5 barobar ko'proq joy egallaydi:",
       "",

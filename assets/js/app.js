@@ -64,6 +64,10 @@
     registered.push({ ...skill, _file: src ? decodeURIComponent(src.split("/").pop()) : "" });
   };
 
+  /* Chuqur darslar: data/lessons/<subId>.js -> registerLesson("13.12", { lesson, examples, pitfalls }) */
+  const LESSONS = {};
+  window.registerLesson = (id, data) => { LESSONS[String(id)] = data || {}; };
+
   window.addEventListener("error", (e) => {
     if (e.filename && e.filename.includes("/data/skills/")) {
       fileErrors[decodeURIComponent(e.filename.split("/").pop())] = `${e.message} (qator ${e.lineno})`;
@@ -72,10 +76,19 @@
 
   function loadData() {
     const files = window.SKILL_FILES || [];
+    const lessons = window.LESSON_FILES || [];
     return new Promise((resolve) => {
-      if (!files.length) return resolve();
-      let left = files.length;
+      if (!files.length && !lessons.length) return resolve();
+      let left = files.length + lessons.length;
       const done = () => { if (--left === 0) resolve(); };
+      lessons.forEach((f) => {
+        const s = document.createElement("script");
+        s.src = `data/lessons/${f}`;
+        s.async = false;
+        s.onload = done;
+        s.onerror = done;
+        document.body.appendChild(s);
+      });
       files.forEach((f) => {
         const s = document.createElement("script");
         s.src = `data/skills/${f}`;
@@ -604,50 +617,40 @@
     return IQ_BY_SUB[subId] || 0;
   }
 
+  /* Qisqa mazmun: tavsifning birinchi gapi (markdown belgilarisiz) */
+  function subExcerpt(desc) {
+    const first = String(desc || "").split(/\n\s*\n|```/)[0].replace(/[`*_#>]/g, "").replace(/\s+/g, " ").trim();
+    if (!first) return "";
+    if (first.length <= 130) return first;
+    const cut = first.slice(0, 130);
+    return cut.slice(0, cut.lastIndexOf(" ") > 80 ? cut.lastIndexOf(" ") : 130) + "…";
+  }
+
   function subItem(x) {
     const st = statusOf(x.id);
     const domId = `sub-${x.id.replace(/\./g, "-")}`;
     const chips = [
       x.priority && PRIORITY[x.priority] ? `<span class="chip ${x.priority}">${PRIORITY[x.priority]}</span>` : "",
       x.level ? `<span class="chip level">${esc(x.level)}</span>` : "",
+      LESSONS[x.id] ? `<span class="chip lesson" title="Chuqur dars bor">Dars</span>` : "",
       !x.description ? `<span class="chip missing" title="Tavsif hali yozilmagan">tavsif yo'q</span>` : "",
     ].join("");
-    const prereq = x.prerequisites.map((p) => {
-      const target = SUB_BY_ID[p] || BY_SLUG[p];
-      if (!target) return `<span class="chip">${inline(p)}</span>`;
-      const href = target.skill ? `#/s/${target.skill.slug}/${target.id}` : `#/s/${target.slug}`;
-      return `<a class="chip" href="${href}">${target.skill ? `<span class="mono">${target.num}</span> ` : ""}${inline(target.title)}</a>`;
-    }).join("");
+    const ex = subExcerpt(x.description);
 
     return `<li class="sub" id="${domId}" data-sub="${x.id}" data-st="${st}" data-level="${levelOf(x)}">
       <div class="sub-row">
         <button class="st-toggle" data-cycle aria-label="Status: ${STATUSES[st].label}. Keyingisiga o'tkazish">
           <span class="ring"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
         </button>
-        <button class="sub-main" data-toggle aria-expanded="false" aria-controls="${domId}-panel">
-          <span class="sid">${x.num}</span><span class="t">${inline(x.title)}</span>
-        </button>
+        <a class="sub-main" href="#/s/${x.skill.slug}/${x.id}">
+          <span class="sid">${x.num}</span>
+          <span class="sub-text"><span class="t">${inline(x.title)}</span>${ex ? `<span class="sub-excerpt">${esc(ex)}</span>` : ""}</span>
+        </a>
         <div class="sub-side">
           <span class="chips">${chips}</span>
           <span class="st-name">${st ? STATUSES[st].label : ""}</span>
-          <button class="icon-btn" data-toggle aria-label="Batafsil" tabindex="-1">${icon("chev-down", "ic chev")}</button>
+          ${icon("chev-right", "ic chev")}
         </div>
-      </div>
-      <div class="sub-panel" id="${domId}-panel" role="region" aria-label="${esc(x.title.replace(/`/g, ""))}">
-        <div><div class="sub-body">
-          <div>${x.description ? markdown(x.description)
-            : placeholder("Tavsif hali yozilmagan", `data/skills/${x.skill.file} → id: "${x.id}" → description`)}</div>
-          ${x.practicalTask ? `<div><div class="field-label">${icon("target", "ic ic-sm")}Amaliy topshiriq</div><div class="task">${markdown(x.practicalTask)}</div></div>` : ""}
-          ${x.acceptanceCriteria.length ? `<div><div class="field-label">${icon("list-checks", "ic ic-sm")}Qabul mezonlari</div>
-            <ul class="checklist">${x.acceptanceCriteria.map((c) => `<li>${icon("check")}<span>${inline(c)}</span></li>`).join("")}</ul></div>` : ""}
-          ${prereq ? `<div><div class="field-label">Oldindan bilish kerak</div><div class="prereq">${prereq}</div></div>` : ""}
-          <div class="status-picker-wrap"><div class="field-label" id="${domId}-st">Status</div>
-            <div class="status-picker" role="radiogroup" aria-labelledby="${domId}-st">
-              ${STATUSES.map((s, i) => `<button role="radio" data-set="${i}" data-st="${i}" aria-checked="${i === st}" title="${s.hint}"><i class="st-dot"></i>${s.label}</button>`).join("")}
-            </div>
-            <p class="status-hints">${STATUSES.slice(1).map((s) => `<b>${s.label}</b> — ${s.hint}`).join(" · ")}</p></div>
-          <div class="sub-foot">${iqCountFor(x.id) ? `<a class="btn btn-sm" href="#/interview?sub=${esc(x.id)}">${icon("help", "ic ic-sm")}Intervyu savollari: ${iqCountFor(x.id)} ta</a>` : ""}<button class="btn btn-sm" data-copy>${icon("link", "ic ic-sm")}Havolani nusxalash</button></div>
-        </div></div>
       </div>
     </li>`;
   }
@@ -687,6 +690,92 @@
       </section>`;
   }
 
+  /* ---------------- Subskill sahifasi (dars) ---------------- */
+  function codeCardHtml(ex) {
+    const code = text(ex.code);
+    return `<figure class="code-card">
+      <figcaption><b>${esc(ex.title || "Misol")}</b><span class="lang">${esc(ex.lang || "php")}</span>
+        <button type="button" class="icon-btn" data-copy-code aria-label="Kodni nusxalash" title="Nusxalash">${icon("copy", "ic ic-sm")}</button></figcaption>
+      <pre data-lang="${esc(ex.lang || "php")}"><code>${highlight(code)}</code></pre>
+      ${ex.note ? `<p class="code-note">${inline(ex.note)}</p>` : ""}
+    </figure>`;
+  }
+
+  function renderSubskill(x) {
+    const s = x.skill;
+    store.set(KEYS.last, s.slug);
+    const L = LESSONS[x.id] || null;
+    const st = statusOf(x.id);
+    const idx = s.subskills.indexOf(x);
+    const prev = s.subskills[idx - 1] || null, next = s.subskills[idx + 1] || null;
+    const prevSkill = !prev ? SKILLS[s.index - 1] : null, nextSkill = !next ? SKILLS[s.index + 1] : null;
+    const qs = (window.INTERVIEW_QUESTIONS || []).filter((q) => q.subskillId === x.id);
+    const g = s.groupRef;
+    const prereq = x.prerequisites.map((p) => {
+      const target = SUB_BY_ID[p] || BY_SLUG[p];
+      if (!target) return `<span class="chip">${inline(p)}</span>`;
+      const href = target.skill ? `#/s/${target.skill.slug}/${target.id}` : `#/s/${target.slug}`;
+      return `<a class="chip" href="${href}">${inline(target.title)}</a>`;
+    }).join("");
+    const lvlLabel = x.level || "";
+    const pager = (sub, skill, dir) => {
+      if (sub) return `<a ${dir === "next" ? 'class="next"' : ""} href="#/s/${s.slug}/${sub.id}"><span class="dir">${dir === "next" ? `Keyingi${icon("arrow-right", "ic ic-sm")}` : `${icon("arrow-left", "ic ic-sm")}Oldingi`}</span><span class="t">${sub.num} · ${inline(sub.title)}</span></a>`;
+      if (skill) return `<a ${dir === "next" ? 'class="next"' : ""} href="#/s/${skill.slug}"><span class="dir">${dir === "next" ? `Keyingi skill${icon("arrow-right", "ic ic-sm")}` : `${icon("arrow-left", "ic ic-sm")}Oldingi skill`}</span><span class="t">${pad(skill.num)} · ${esc(skill.title)}</span></a>`;
+      return "";
+    };
+
+    view().innerHTML = `
+      ${loadErrorBlock()}
+      <div class="lesson-layout">
+        <article class="lesson">
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Bosh sahifa</a><span class="sep">/</span><span>${esc(g ? g.title : "")}</span><span class="sep">/</span><a href="#/s/${s.slug}">${esc(s.title)}</a><span class="sep">/</span><span aria-current="page">${x.num}</span></nav>
+          <header class="lesson-head reveal">
+            <div class="chips">
+              <span class="chip mono">${x.num}</span>
+              ${x.priority ? `<span class="chip ${x.priority}">${esc(PRIORITY[x.priority] || x.priority)}</span>` : ""}
+              ${lvlLabel ? `<span class="chip level">${esc(lvlLabel)}</span>` : ""}
+              ${qs.length ? `<a class="chip" href="#/interview?sub=${esc(x.id)}">Intervyu savollari: ${qs.length}</a>` : ""}
+            </div>
+            <h1>${inline(x.title)}</h1>
+          </header>
+
+          <section class="lesson-sec"><h2>Qisqacha</h2><div class="md">${markdown(x.description)}</div></section>
+
+          ${L && L.lesson ? `<section class="lesson-sec"><h2>Chuqur tushuntirish</h2><div class="md lesson-md">${markdown(L.lesson)}</div></section>`
+            : `<section class="lesson-sec">${placeholder("Chuqur dars hali yozilmagan", `data/lessons/${x.id}.js`)}</section>`}
+
+          ${L && L.examples && L.examples.length ? `<section class="lesson-sec"><h2>Kod misollari</h2>${L.examples.map(codeCardHtml).join("")}</section>` : ""}
+
+          ${L && L.pitfalls && L.pitfalls.length ? `<section class="lesson-sec"><h2>Odatiy xatolar</h2><ul class="pitfalls">${list(L.pitfalls).map((p) => `<li>${inline(p)}</li>`).join("")}</ul></section>` : ""}
+
+          ${x.practicalTask ? `<section class="lesson-sec"><h2>Amaliy topshiriq</h2><div class="task">${markdown(x.practicalTask)}</div></section>` : ""}
+
+          ${x.acceptanceCriteria.length ? `<section class="lesson-sec"><h2>Qabul mezonlari</h2><ul class="checklist">${x.acceptanceCriteria.map((c) => `<li>${icon("check")}<span>${inline(c)}</span></li>`).join("")}</ul></section>` : ""}
+
+          ${prereq ? `<section class="lesson-sec"><h2>Oldindan bilish kerak</h2><div class="prereq">${prereq}</div></section>` : ""}
+
+          ${qs.length ? `<section class="lesson-sec"><h2>Shu mavzudagi intervyu savollari</h2>
+            <ul class="lesson-qs">${qs.map((q) => `<li><a href="#/interview?sub=${esc(x.id)}"><span class="iq-badge ${q.level}">${q.level}</span><span>${esc(q.title)}</span></a></li>`).join("")}</ul></section>` : ""}
+
+        </article>
+
+        <aside class="lesson-rail" aria-label="Mavzu paneli">
+          <section class="rail-card">
+            <h3 class="panel-title">Holat</h3>
+            <div class="status-picker lesson-status" role="radiogroup" aria-label="Mavzu holati">
+              ${STATUSES.map((v, i) => `<button type="button" role="radio" data-lesson-set="${i}" data-st="${i}" aria-checked="${i === st}" title="${v.hint}"><i class="st-dot"></i>${v.label}</button>`).join("")}
+            </div>
+          </section>
+          <section class="rail-card">
+            <h3 class="panel-title">${esc(s.title)}</h3>
+            <ol class="lesson-toc">${s.subskills.map((y) => `<li${y === x ? ' aria-current="page"' : ""} data-st="${statusOf(y.id)}"><a href="#/s/${s.slug}/${y.id}"><i class="st-dot"></i><span class="num">${y.num}</span><span class="t">${inline(y.title)}</span>${LESSONS[y.id] ? `<span class="has-lesson" title="Chuqur dars bor"></span>` : ""}</a></li>`).join("")}</ol>
+          </section>
+        </aside>
+      </div>`;
+    const cur = $('.lesson-toc [aria-current="page"]');
+    if (cur) cur.scrollIntoView({ block: "nearest" });
+  }
+
   function renderSkill(s, subId) {
     store.set(KEYS.last, s.slug);
     const prev = SKILLS[s.index - 1], next = SKILLS[s.index + 1];
@@ -719,7 +808,6 @@
               <button data-level-filter="all" aria-pressed="${!globalLevels.size && levelFilter === "all"}"${globalLevels.size ? " disabled" : ""}>Barchasi</button>
               ${CAREER_LEVELS.map((lvl) => `<button data-level-filter="${lvl.id}" aria-pressed="${globalLevels.size ? globalLevels.has(lvl.id) : levelFilter === lvl.id}"${globalLevels.size ? " disabled" : ""}>${lvl.label}</button>`).join("")}
             </div>
-            <button class="icon-btn" data-expand-all aria-label="Hammasini ochish / yopish" title="Hammasini ochish / yopish">${icon("expand")}</button>
           </div>
           <ul class="subs" id="subs">${s.subskills.map(subItem).join("")}</ul>
           <div class="empty" id="subs-empty" hidden>${icon("search")}<div>Bu filtr bo'yicha mavzu yo'q.</div></div>
@@ -849,6 +937,20 @@
       if (card) {
         const nowOpen = card.classList.toggle("open");
         iqToggle.setAttribute("aria-expanded", String(nowOpen));
+      }
+      return;
+    }
+    const copyCode = t.closest("[data-copy-code]");
+    if (copyCode) { const pre = copyCode.closest(".code-card").querySelector("pre"); copyText(pre.innerText); return; }
+    const lset = t.closest("[data-lesson-set]");
+    if (lset) {
+      const m2 = location.hash.match(/^#\/s\/[^/]+\/(.+)$/); const id = m2 && decodeURIComponent(m2[1]);
+      if (id && SUB_BY_ID[id]) {
+        const v = Number(lset.dataset.lessonSet);
+        setStatus(id, v);
+        $$("[data-lesson-set]").forEach((b) => b.setAttribute("aria-checked", String(b === lset)));
+        const li = $(".lesson-toc [aria-current]"); if (li) li.dataset.st = String(v);
+        updateSidebarProgress(SUB_BY_ID[id].skill.slug);
       }
       return;
     }
@@ -2471,9 +2573,10 @@ const searchInp = $("#iq-search-input");
     if (m && BY_SLUG[m[1]]) {
       const s = BY_SLUG[m[1]];
       document.title = `${s.title} · Laravel Skill Map`;
-      renderSkill(s, m[2]);
+      const sub = m[2] && SUB_BY_ID[m[2]] && SUB_BY_ID[m[2]].skill === s ? SUB_BY_ID[m[2]] : null;
+      if (sub) { document.title = `${sub.title.replace(/`/g, "")} · ${s.title} · Laravel Skill Map`; renderSubskill(sub); window.scrollTo(0, 0); }
+      else { renderSkill(s, m[2]); if (!m[2]) window.scrollTo(0, 0); }
       markActive("skills", s.slug);
-      if (!m[2]) window.scrollTo(0, 0);
     } else if (mInterview) {
       document.title = "Intervyu Savol-Javoblari · Laravel Skill Map";
       iqSubFilter = ((mInterview[1] || "").match(/(?:^|&)sub=([\d.]+)/) || [])[1] || "";

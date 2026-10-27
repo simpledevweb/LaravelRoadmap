@@ -1,0 +1,158 @@
+/* Chuqur dars: 1.3. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("1.3", {
+  "lesson": [
+    "### Tip e'lonlari nimaga kerak",
+    "Tip parametr, return va property'ning shartnomasi: xato kodning kirish nuqtasida ushlanadi, IDE va PHPStan to'g'ri ishlaydi, hujjat izohlariga ehtiyoj kamayadi.",
+    "",
+    "### Qaerda e'lon qilinadi",
+    "- Parametr: `function f(int $x)`",
+    "- Return: `function f(): string`, hech narsa qaytarmasa `void`",
+    "- Property: `private ?User $user = null;` (7.4+), tipli property majburiy initsializatsiyadan oldin o'qilsa `Error`",
+    "- Klass konstantasi: `const string X = 'a'` (8.3)",
+    "",
+    "### Tiplar to'plami",
+    "Skalyar (`int`, `float`, `string`, `bool`), `array`, `iterable`, `callable`, `object`, `mixed`, klass/interface nomlari, `self`, `static`, `parent`, `void`, `never` (8.1: funksiya hech qachon qaytmaydi: `throw` yoki `exit`), `null`, `false`, `true` (8.2).",
+    "",
+    "### Muhim tafovutlar",
+    "- `mixed` — \"hammasi\", `null` ham kiradi. U `?T` dan farqli ravishda tip-xavfsizlik bermaydi.",
+    "- `static` return — \"chaqirilgan klass\" (fluent API uchun), `self` — \"e'lon qilingan klass\".",
+    "- `void` funksiya `return;` qila oladi, lekin qiymat qaytara olmaydi; natijasini o'zgaruvchiga yozish ma'nosiz.",
+    "- `never` — `void` emas: `void` qaytadi, `never` qaytmaydi.",
+    "",
+    "### Variance (Liskov)",
+    "Override qilganda parametr tipi **kengayishi mumkin** (contravariance), return tipi **torayishi mumkin** (covariance). Property tipi esa o'zgarmas (invariant) — child'da boshqa tip yozish xato.",
+    "",
+    "### Strict va coercive",
+    "Tip e'loni o'zi yetarli emas: `strict_types` bo'lmasa `\"5\"` ham `int`ga o'giriladi (1.5).",
+    "",
+    "### Amaliy qoida",
+    "Yangi kodda hamma joyga tip yozing. `mixed` ni oxirgi chora sifatida qoldiring; massiv uchun docblock'da element tipini aniqlang (`@param list<User> $users`), chunki `array` ichini PHP tekshirmaydi.",
+    "",
+    "### Tip tekshiruvi qanday ishlaydi",
+    "Tip e'loni PHP'da **runtime'da** tekshiriladi: funksiyaga kirishda argument, chiqishda return qiymati. Mos kelmasa `TypeError`. Coercive rejimda (default) skalyar qiymat mumkin bo'lsa e'lon qilingan tipga o'giriladi, strict rejimda (1.5) o'girilmaydi.",
+    "",
+    "**Skalyar o'girish jadvali (coercive rejim)**",
+    "| Berilgan | `int` ga | `float` ga | `string` ga | `bool` ga |",
+    "|---|---|---|---|---|",
+    "| `\"5\"` | 5 | 5.0 | ok | true |",
+    "| `5.0` | 5 | ok | \"5\" | true |",
+    "| `5.5` | deprecated (8.1), kasr yo'qotiladi | ok | \"5.5\" | true |",
+    "| `\"abc\"` | TypeError | TypeError | ok | true |",
+    "| `null` | TypeError (nullable bo'lmasa) | TypeError | TypeError | TypeError |",
+    "`null` ni skalyar tipli parametrga berish ichki funksiyalarda 8.1 dan deprecated.",
+    "",
+    "### Tiplar tafsiloti",
+    "- `self`, `parent`, `static`: `self` — e'lon qilingan klass; `static` faqat return tipida (late static binding).",
+    "- `object`: istalgan obyekt. `iterable`: `array|Traversable`; 8.2 dan `iterable` `array|Traversable` ning alias'i deb hisoblanadi, ya'ni statik tahlil uchun aniq tip yozish yaxshi.",
+    "- `callable`: property tipi bo'la olmaydi; parametr va return uchun mumkin. Odatda `Closure` tipi aniqroq.",
+    "- `never`: funksiya hech qachon qaytmaydi (`exit`, `throw`, cheksiz tsikl). `void` ning aksi: qaytadi, ammo qiymatsiz.",
+    "- `mixed`: istalgan qiymat (`null` ham). Yozilmagan tip bilan farqi: aniq niyat, statik tahlilda aniqroq.",
+    "- `true`/`false`/`null` 8.2 dan mustaqil tip; `false` ko'p eski funksiyalar qaytaradigan \"xato\" belgisi (`strpos(): int|false`).",
+    "- **Enum** va klass nomlari tip sifatida; interface tipi eng moslashuvchan.",
+    "",
+    "### Property tiplari",
+    "- Tipli property **initsializatsiyalanmagan** holatda bo'ladi (`null` emas!): o'qish `Error`. `isset()` unda `false`.",
+    "- `?T $x = null` default; `T $x = default` faqat konstanta ifoda.",
+    "- Property tipi **invariant**: child'da o'zgartirib bo'lmaydi.",
+    "- `readonly` 1.33; hooks 1.34.",
+    "- Tipli statik property ham mumkin; tipli referensga yozishda tip tekshiriladi.",
+    "",
+    "### Variance va LSP tafsiloti",
+    "- **Contravariance (parametr):** child ota'dan ko'proq qabul qiladi (`A` o'rniga `A|B`).",
+    "- **Covariance (return):** child torroq qaytaradi (`Entity` o'rniga `User`).",
+    "- **Property:** ikkalasi bir vaqtda o'qiladi va yoziladi, shuning uchun invariant.",
+    "- Buzilsa: `Declaration of B::f() must be compatible with A::f()` fatal xatosi.",
+    "",
+    "### Statik tahlil bilan aloqasi",
+    "PHP o'zi `array<int, User>` yoki `list<string>` ni tushunmaydi; PHPDoc generics (`@param array<int,User>`, `@return Collection<int,Post>`) PHPStan/Psalm uchun. Laravel loyihalarida Larastan (PHPStan) level 5–8 tavsiya qilinadi.",
+    "",
+    "### Eng yaxshi amaliyot",
+    "Parametr va return tiplarini hamma joyda yozing, `mixed`dan qoching, `void`/`never` aniq belgilang, nullable'ni faqat haqiqatan kerak joyda ishlating, massivlar o'rniga kichik obyekt/DTO ishlatishni o'ylab ko'ring."
+  ],
+  "examples": [
+    {
+      "title": "Tiplar yig'indisi",
+      "lang": "php",
+      "code": [
+        "declare(strict_types=1);",
+        "",
+        "final class UserService",
+        "{",
+        "    private ?User $cached = null;",
+        "",
+        "    public function find(int $id): ?User",
+        "    {",
+        "        return $this->cached ??= User::find($id);",
+        "    }",
+        "",
+        "    public function fail(string $msg): never",
+        "    {",
+        "        throw new RuntimeException($msg);",
+        "    }",
+        "",
+        "    public function log(string $m): void { error_log($m); }",
+        "}"
+      ]
+    },
+    {
+      "title": "static vs self",
+      "lang": "php",
+      "code": [
+        "class Model",
+        "{",
+        "    public static function make(): static   // child sinfini qaytaradi",
+        "    {",
+        "        return new static();",
+        "    }",
+        "}",
+        "class Post extends Model {}",
+        "",
+        "var_dump(Post::make() instanceof Post);   // true"
+      ]
+    },
+    {
+      "title": "Variance",
+      "lang": "php",
+      "code": [
+        "interface Repo { public function find(int|string $id): Entity; }",
+        "",
+        "class UserRepo implements Repo",
+        "{",
+        "    // parametr kengaydi (mixed), return torayadi (User extends Entity)",
+        "    public function find(mixed $id): User { /* ... */ }",
+        "}"
+      ]
+    },
+    {
+      "title": "Initsializatsiyalanmagan property",
+      "lang": "php",
+      "code": [
+        "class User { public string $name; public ?string $nick = null; }",
+        "$u = new User();",
+        "var_dump(isset($u->name));   // false",
+        "echo $u->nick;               // null: default bor",
+        "echo $u->name;               // Error: must not be accessed before initialization"
+      ]
+    },
+    {
+      "title": "never va false",
+      "lang": "php",
+      "code": [
+        "function redirect(string $url): never { header(\"Location: $url\"); exit; }",
+        "",
+        "function find(array $a, string $x): int|false { return array_search($x, $a, true); }",
+        "if (($i = find($a, 'x')) === false) { /* topilmadi */ }"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "`mixed` va tipsiz parametr bir xil emas: tipsiz bo'lsa to'ldirib bo'lmaydi, `mixed` esa ochiq niyat. Lekin ikkalasi ham tekshiruv bermaydi.",
+    "Tipli property e'lon qilib boshlang'ich qiymat bermasangiz, o'qiganda `must not be accessed before initialization` Error. Konstruktorda qiymat bering yoki `?T = null`.",
+    "`array` tipi ichidagi elementlarni tekshirmaydi: `array $ids` ga satrlar ham kiradi. Docblock yoki `Collection`/typed obyekt ishlating.",
+    "`?int` va `int|null` bir xil, lekin `int $x = null` (implicit nullable) PHP 8.4 da deprecated: aniq `?int $x = null` yozing.",
+    "`never` funksiyadan keyin kod ishlamaydi; lekin agar funksiya aslida qaytsa `TypeError` beradi: `exit`/`throw` ishlatilishiga ishonch hosil qiling.",
+    "Tipli property'ga default qiymat bermay konstruktorda ham to'ldirmasangiz, serialize/clone/`print_r` paytida Error chiqishi mumkin.",
+    "`callable` tipi property bo'la olmaydi: `Closure` yoki interface (`__invoke`) ishlating.",
+    "Statik tahlil bo'lmasa `array` tipi hamma narsani o'tkazadi: PHPDoc generics yoki obyekt."
+  ]
+});

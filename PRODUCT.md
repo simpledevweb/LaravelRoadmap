@@ -14,7 +14,7 @@ One person: the owner, a PHP/Laravel developer growing from Middle Strong toward
 
 Laravel Skill Map is a personal learning map and interview trainer in one place, with both jobs weighted equally:
 
-- **Knowledge map with progress:** 85 skills and 1563 subskills in 16 groups (Category → Skill → Subskill), each with a description, priority, expected level, a practical task, acceptance criteria and prerequisites. Progress is marked per subskill.
+- **Knowledge map with progress:** 85 skills and 1578 subskills in 16 groups (Category → Skill → Subskill), each with a description, priority, expected level, a practical task, acceptance criteria and prerequisites. Progress is marked per subskill.
 - **Interview practice:** a bank of interview questions and quiz tests filtered by topic and level (Junior / Middle / Senior), plus a mock simulator and bookmarks.
 
 Success: the owner can see what they still need to learn for Senior level, and can rehearse interview answers against the same map.
