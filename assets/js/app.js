@@ -6,15 +6,16 @@
    * Constants
    * ------------------------------------------------------------------ */
   const STATUSES = [
-    { label: "Not Started", hint: "Hali boshlanmagan" },
-    { label: "Learning",    hint: "O'rganilmoqda" },
-    { label: "Practicing",  hint: "Amaliyotda qo'llanmoqda" },
-    { label: "Proficient",  hint: "Yaxshi biladi" },
-    { label: "Expert",      hint: "Ekspert darajasi" },
+    { label: "Boshlanmagan",  hint: "Hali boshlanmagan" },
+    { label: "O'rganilmoqda", hint: "Hozir o'rganyapman" },
+    { label: "Ishonchli",     hint: "Intervyuda ishonch bilan javob bera olaman" },
   ];
-  const WEIGHT = [0, 0.25, 0.5, 0.75, 1];
+  const WEIGHT = [0, 0.5, 1];
+  /* v1 (5 holat) -> v2 (3 holat): Practicing -> O'rganilmoqda, Proficient/Expert -> Ishonchli */
+  const STATUS_V1_TO_V2 = [0, 1, 1, 2, 2];
+  const PROGRESS_VERSION = 2;
   const PRIORITY = { core: "Core", important: "Important", optional: "Optional" };
-  const KEYS = { progress: "lsm:progress", theme: "lsm:theme", collapsed: "lsm:collapsed", last: "lsm:last", questions: "lsm:questions", bookmarks: "lsm:bookmarks" };
+  const KEYS = { progress: "lsm:progress", theme: "lsm:theme", collapsed: "lsm:collapsed", last: "lsm:last", quiz: "lsm:quiz_scores", session: "lsm:session", progressV: "lsm:progress-v", questions: "lsm:questions", bookmarks: "lsm:bookmarks" };
 
   const CAREER_LEVELS = [
     { id: "junior", label: "Junior", name: "Junior Developer", subLevels: ["foundation", "junior"], badge: "Junior", color: "var(--accent-text)", bg: "var(--accent-soft)", icon: "code", desc: "PHP sintaksisi, OOP asoslari, MVC, sodda CRUD va bazaviy vositalar" },
@@ -39,12 +40,16 @@
   const pad = (n) => String(n).padStart(2, "0");
   const pct = (x) => Math.round(x * 100);
 
+  let currentUser = null;
+  let userSaveTimer = 0;
+
   const store = {
     get(key, fallback) {
       try { const v = localStorage.getItem(key); return v == null ? fallback : JSON.parse(v); } catch { return fallback; }
     },
     set(key, value) {
       try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* private mode: keep in memory only */ }
+      if (typeof onUserKeyChanged === "function") onUserKeyChanged(key);
     },
   };
 
@@ -144,186 +149,36 @@
    * ------------------------------------------------------------------ */
   let progress = store.get(KEYS.progress, {});
   if (typeof progress !== "object" || progress === null) progress = {};
+
+  /* src: {subId: holat}; version: manba formati (yo'q yoki 1 = eski 5 holat). SUB_BY_ID tekshiruvi chaqiruvchida. */
+  function cleanProgress(src, version) {
+    const map = (version || 1) < 2 ? STATUS_V1_TO_V2 : null;
+    const out = {};
+    Object.entries(src || {}).forEach(([k, v]) => {
+      if (!Number.isInteger(v) || v <= 0 || v > 4) return;
+      const n = map ? map[v] : v;
+      if (n > 0 && n < STATUSES.length) out[k] = n;
+    });
+    return out;
+  }
+  if (store.get(KEYS.progressV, 1) < PROGRESS_VERSION) {
+    progress = cleanProgress(progress, 1);
+    store.set(KEYS.progress, progress);
+    store.set(KEYS.progressV, PROGRESS_VERSION);
+  }
   let masteredIq = new Set(store.get(KEYS.questions, []));
   let bookmarkedIq = new Set(store.get(KEYS.bookmarks, []));
 
-  const idb = {
-    open() {
-      return new Promise((res, rej) => {
-        const req = indexedDB.open("lsm_storage", 1);
-        req.onupgradeneeded = () => req.result.createObjectStore("handles");
-        req.onsuccess = () => res(req.result);
-        req.onerror = () => rej(req.error);
-      });
-    },
-    async get(key) {
-      try {
-        const db = await this.open();
-        return new Promise((res) => {
-          const tx = db.transaction("handles", "readonly");
-          const req = tx.objectStore("handles").get(key);
-          req.onsuccess = () => res(req.result);
-          req.onerror = () => res(null);
-        });
-      } catch { return null; }
-    },
-    async set(key, val) {
-      try {
-        const db = await this.open();
-        return new Promise((res) => {
-          const tx = db.transaction("handles", "readwrite");
-          tx.objectStore("handles").put(val, key);
-          tx.oncomplete = () => res(true);
-          tx.onerror = () => res(false);
-        });
-      } catch { return false; }
-    },
-    async del(key) {
-      try {
-        const db = await this.open();
-        return new Promise((res) => {
-          const tx = db.transaction("handles", "readwrite");
-          tx.objectStore("handles").delete(key);
-          tx.oncomplete = () => res(true);
-          tx.onerror = () => res(false);
-        });
-      } catch { return false; }
-    }
-  };
-
-  let activeFileHandle = null;
-
-  function updateSyncUI(active = false, filename = "progress.json") {
-    const unlinkBtn = $("#menu-unlink");
-    const linkText = $(".menu-link-text");
-    if (active) {
-      if (linkText) linkText.textContent = `${filename} (Ulangan)`;
-      if (unlinkBtn) unlinkBtn.style.display = "flex";
-    } else {
-      if (linkText) linkText.textContent = "progress.json fayliga ulash";
-      if (unlinkBtn) unlinkBtn.style.display = "none";
-    }
-  }
-
-  async function saveToLinkedFile() {
-    if (!activeFileHandle) return;
-    try {
-      const writable = await activeFileHandle.createWritable();
-      const payload = {
-        app: "laravel-skill-map",
-        version: 1,
-        exportedAt: new Date().toISOString(),
-        progress: progress,
-        questions: Array.from(masteredIq),
-        bookmarks: Array.from(bookmarkedIq)
-      };
-      await writable.write(JSON.stringify(payload, null, 2));
-      await writable.close();
-    } catch (err) {
-      console.warn("Faylga saqlashda xatolik:", err);
-      if (err && err.name === "NotAllowedError") {
-        activeFileHandle = null;
-        updateSyncUI(false);
-      }
-    }
-  }
-
-  async function linkProgressFile() {
-    if (!window.showOpenFilePicker) {
-      alert("Sizning brauzeringiz File System Access API'ni qo'llab-quvvatlamaydi. Chrome, Edge yoki Opera brauzerlaridan foydalaning.");
-      return;
-    }
-    try {
-      const [handle] = await window.showOpenFilePicker({
-        types: [{
-          description: "JSON Fayl (progress.json)",
-          accept: { "application/json": [".json"] }
-        }],
-        multiple: false
-      });
-      if (!handle) return;
-      activeFileHandle = handle;
-      await idb.set("progressHandle", handle);
-
-      const file = await handle.getFile();
-      const fileText = await file.text();
-      let importedSomething = false;
-      if (fileText.trim()) {
-        try {
-          const data = JSON.parse(fileText);
-          const p = data && typeof data.progress === "object" ? data.progress : data;
-          if (p && Object.keys(p).length > 0) {
-            const hasLocal = Object.keys(progress).length > 0;
-            const shouldLoad = !hasLocal || confirm(`"${file.name}" faylida saqlangan progress mavjud (${Object.keys(p).length} ta mavzu). Saytga yuklaylikmi?`);
-            if (shouldLoad) {
-              const clean = {};
-              Object.entries(p).forEach(([k, v]) => {
-                if (SUB_BY_ID[k] && Number.isInteger(v) && v > 0 && v <= 4) clean[k] = v;
-              });
-              progress = clean;
-              store.set(KEYS.progress, progress);
-              if (Array.isArray(data.questions)) {
-                masteredIq = new Set(data.questions);
-                store.set(KEYS.questions, data.questions);
-              }
-              route();
-              updateSidebarProgress();
-              importedSomething = true;
-            }
-          }
-        } catch (e) {
-          console.warn("Fayl JSON emas yoki bo'sh:", e);
-        }
-      }
-
-      updateSyncUI(true, file.name);
-      await saveToLinkedFile();
-      toast(importedSomething ? `Fayl ulandi va ma'lumotlar yuklandi!` : `Fayl ulandi! Barcha o'zgarishlar "${file.name}"ga avtomatik yoziladi.`);
-    } catch (err) {
-      if (err && err.name !== "AbortError") {
-        console.error(err);
-        toast("Faylni ulashda xatolik yuz berdi");
-      }
-    }
-  }
-
-  async function unlinkProgressFile() {
-    activeFileHandle = null;
-    await idb.del("progressHandle");
-    updateSyncUI(false);
-    toast("Fayl bilan aloqa uzildi");
-  }
-
-  async function checkExistingHandle() {
-    if (!window.showOpenFilePicker) return;
-    try {
-      const handle = await idb.get("progressHandle");
-      if (!handle) return;
-      const perm = await handle.queryPermission({ mode: "readwrite" });
-      if (perm === "granted") {
-        activeFileHandle = handle;
-        const file = await handle.getFile();
-        updateSyncUI(true, file.name);
-      } else {
-        const linkText = $(".menu-link-text");
-        if (linkText) linkText.textContent = "progress.json ni qayta ulash";
-      }
-    } catch (e) {
-      console.warn("Handle tekshirishda xato:", e);
-    }
-  }
-
   const statusOf = (subId) => {
     const v = progress[subId];
-    return Number.isInteger(v) && v >= 0 && v <= 4 ? v : 0;
+    return Number.isInteger(v) && v >= 0 && v < STATUSES.length ? v : 0;
   };
   function setStatus(subId, st) {
     if (st === 0) delete progress[subId]; else progress[subId] = st;
     store.set(KEYS.progress, progress);
-    saveToLinkedFile();
   }
   function statsFor(subs) {
-    const counts = [0, 0, 0, 0, 0];
+    const counts = STATUSES.map(() => 0);
     let w = 0, described = 0;
     subs.forEach((x) => {
       const st = statusOf(x.id);
@@ -331,7 +186,7 @@
       if (x.description) described++;
     });
     const n = subs.length || 1;
-    return { counts, total: subs.length, progress: w / n, done: counts[3] + counts[4], described };
+    return { counts, total: subs.length, progress: w / n, done: counts[2], described };
   }
   const allSubs = () => SKILLS.flatMap((s) => s.subskills);
 
@@ -399,7 +254,7 @@
         continue;
       }
       const h = line.match(/^(#{1,6})\s+(.*)$/);
-      if (h) { const lvl = Math.min(4, Math.max(3, h[1].length + 1)); out.push(`<h${lvl}>${inline(h[2])}</h${lvl}>`); i++; continue; }
+      if (h) { const lvl = h[1].length >= 4 ? 4 : 3; out.push(`<h${lvl}>${inline(h[2])}</h${lvl}>`); i++; continue; }
 
       if (/^>\s?/.test(line)) {
         const buf = [];
@@ -442,10 +297,7 @@
   function renderSidebar() {
     const nav = $("#sidebar");
     nav.innerHTML = `
-      <a class="side-home" href="#/">${icon("home")}Umumiy ko'rinish</a>
-      <a class="side-levels" href="#/levels">${icon("target")}Darajalar xaritasi</a>
-      <a class="side-interview" href="#/interview">${icon("help")}Intervyu savollari</a>
-      <a class="side-quiz" href="#/quiz">${icon("sparkles")}Texnik Testlar (Quiz)</a>
+      <button class="side-search" data-open-palette aria-label="Skill yoki mavzu qidirish">${icon("search")}<span>Skill yoki mavzu qidiring…</span><kbd>/</kbd></button>
       ${GROUPS.map((g) => `
         <div class="side-group" data-group="${g.id}" data-collapsed="${!!collapsed[g.id]}">
           <button class="side-group-btn" aria-expanded="${!collapsed[g.id]}" aria-controls="sg-${g.id}">
@@ -481,26 +333,17 @@
     });
   }
 
-  function markActive(slug, isLevels = false, isInterview = false, isQuiz = false) {
+  // section: home | skills | levels | interview | quiz — sidebar faqat "skills" bo'limida ko'rinadi
+  function markActive(section, slug = null) {
+    document.body.dataset.section = section;
+    const pb = $("#profile-btn");
+    if (pb) { if (section === "profile") pb.setAttribute("aria-current", "page"); else pb.removeAttribute("aria-current"); }
+    $$(".primary-nav a").forEach((a) => {
+      if (a.dataset.nav === section) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
     $$(".side-link").forEach((a) => {
       if (a.dataset.slug === slug) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
-    const home = $(".side-home");
-    const levels = $(".side-levels");
-    const interview = $(".side-interview");
-    const quiz = $(".side-quiz");
-    if (home) {
-      if (!slug && !isLevels && !isInterview && !isQuiz) home.setAttribute("aria-current", "page"); else home.removeAttribute("aria-current");
-    }
-    if (levels) {
-      if (isLevels) levels.setAttribute("aria-current", "page"); else levels.removeAttribute("aria-current");
-    }
-    if (interview) {
-      if (isInterview) interview.setAttribute("aria-current", "page"); else interview.removeAttribute("aria-current");
-    }
-    if (quiz) {
-      if (isQuiz) quiz.setAttribute("aria-current", "page"); else quiz.removeAttribute("aria-current");
-    }
     if (slug) {
       const link = $(`.side-link[data-slug="${slug}"]`);
       const grp = link && link.closest(".side-group");
@@ -531,243 +374,191 @@
       `<span data-st="${i}"><i class="st-dot"></i>${s.label} <b>${counts[i]}</b></span>`).join("")}</div>`;
   }
 
-  const TECH_STACK = [
-    {
-      title: "PHP",
-      ver: "7.4+ → 8.4",
-      desc: "Tipizatsiya, Attributes, Enums, Fibers, JIT, OPcache va Property Hooks.",
-      tags: ["PHP 8.3/8.4", "OOP", "OPcache", "JIT"],
-      slug: "php",
-      icon: "code"
-    },
-    {
-      title: "Laravel Framework",
-      ver: "10+ / 11+",
-      desc: "Service Container, Eloquent ORM, Pipeline, Octane, Reverb va Artisan ekotizimi.",
-      tags: ["Laravel 11", "Eloquent", "Octane", "Artisan"],
-      slug: "laravel",
-      icon: "rocket"
-    },
-    {
-      title: "MySQL & PostgreSQL",
-      ver: "MySQL 8.0+ / PG 15+",
-      desc: "InnoDB, ACID, B-Tree indekslar, EXPLAIN, Partitioning va Tranzaksiyalar.",
-      tags: ["MySQL 8", "PostgreSQL", "ACID", "Indexes"],
-      slug: "mysql",
-      icon: "database"
-    },
-    {
-      title: "Redis In-Memory",
-      ver: "Redis 7.0+",
-      desc: "Cache-Aside, Distributed Lock (Redlock), Streams, Pub/Sub va Eviction siyosatlari.",
-      tags: ["Redis 7", "Cache-Aside", "Redlock", "Streams"],
-      slug: "redis",
-      icon: "gauge"
-    },
-    {
-      title: "Docker & Compose",
-      ver: "Docker 24+ / Compose v2",
-      desc: "Multi-stage Dockerfile, Alpine, konteynerlar izolyatsiyasi, volume va tarmoqlar.",
-      tags: ["Multi-stage", "Alpine", "Compose", "Linux"],
-      slug: "docker",
-      icon: "boxes"
-    },
-    {
-      title: "Nginx & PHP-FPM / Octane",
-      ver: "Nginx 1.24+ / FastCGI",
-      desc: "pm.max_children tuning, Reverse Proxy, FrankenPHP, Swoole va HTTP/2 / HTTPS.",
-      tags: ["PHP-FPM", "Nginx", "FrankenPHP", "FastCGI"],
-      slug: "php-fpm",
-      icon: "server"
-    },
-    {
-      title: "Laravel Horizon & Queues",
-      ver: "Horizon 5+ / Queues",
-      desc: "Asinxron ishlov, Idempotent job'lar, auto-balancing, batching, chaining va Supervisor.",
-      tags: ["Horizon", "Queues", "Supervisor", "Workers"],
-      slug: "queues-and-background-jobs",
-      icon: "queue"
-    },
-    {
-      title: "RabbitMQ & Apache Kafka",
-      ver: "RabbitMQ 3.12+ / Kafka 3+",
-      desc: "Event-Driven arxitektura, xabarlar brokiri, stream processing va consumer groups.",
-      tags: ["RabbitMQ", "Kafka", "EDA", "Events"],
-      slug: "rabbitmq",
-      icon: "branch"
-    },
-    {
-      title: "Sanctum & API Security",
-      ver: "Sanctum / OAuth 2.0",
-      desc: "SPA Cookie-based sessiyalar, Bearer API Tokenlar, HMAC webhooks, CSRF va OWASP himoyasi.",
-      tags: ["Sanctum", "OAuth 2.0", "HMAC", "OWASP Top 10"],
-      slug: "laravel-sanctum",
-      icon: "shield"
-    },
-    {
-      title: "Pest & PHPUnit",
-      ver: "Pest v2/v3 · PHPUnit 10+",
-      desc: "Unit, Feature va Architecture testing (`arch()`), Mocking, Fake va TDD metodologiyasi.",
-      tags: ["Pest PHP", "PHPUnit 10", "Arch Testing", "TDD"],
-      slug: "pest",
-      icon: "flask"
-    },
-    {
-      title: "PHPStan & Larastan",
-      ver: "Level 8 / Max",
-      desc: "Statik kod tahlili, qat'iy tiplar nazorati, yashirin buglarni CI bosqichidayoq aniqlash.",
-      tags: ["Larastan", "Level 8+", "Strict Types", "CI/CD"],
-      slug: "phpstan",
-      icon: "check"
-    },
-    {
-      title: "DDD & Clean Architecture",
-      ver: "Hexagonal / DDD",
-      desc: "Entities, Value Objects, Aggregate Roots, Dependency Inversion va Bounded Contexts.",
-      tags: ["DDD", "Clean Arch", "SOLID", "Patterns"],
-      slug: "domain-driven-design-ddd",
-      icon: "layers"
+  /* Roadmap (16 bo'lim, ilon izi) */
+  function roadmapHtml() {
+    const rows = [];
+    for (let i = 0; i < GROUPS.length; i += 4) rows.push(GROUPS.slice(i, i + 4));
+    let n = 0;
+    return `
+      <div class="roadmap" role="list">
+        ${rows.map((row, r) => `
+          <ol class="rm-row" data-dir="${r % 2 ? "rtl" : "ltr"}">
+            ${row.map((g) => {
+              n++;
+              const names = g.items.slice(0, 6).map((s) => s.title).join(", ");
+              const tag = n === 1 ? `<i class="rm-tag">Boshlanish</i>` : (n === GROUPS.length ? `<i class="rm-tag">Maqsad</i>` : "");
+              const first = g.items[0];
+              return `<li class="rm-node" style="--i:${n}" role="listitem">
+                <a class="rm-link" href="${first ? `#/s/${first.slug}` : "#/skills"}" title="${esc(g.title)}: ${esc(names)}">
+                  ${tag}<span class="rm-ic">${icon(g.icon)}<em>${n}</em></span>
+                  <b>${esc(g.title)}</b><small>${g.items.length} skill</small>
+                </a>
+              </li>`;
+            }).join("")}
+          </ol>`).join("")}
+      </div>`;
+  }
+
+  /* Roadmap: bekatlar bo'ylab oqadigan "suv yo'li" va yuguruvchi puls */
+  let rmObserver = null;
+  function buildRoadmapFlow() {
+    const root = $(".roadmap");
+    if (!root) return;
+    const nodes = $$(".rm-node", root);
+    if (nodes.length < 2) return;
+    const draw = () => {
+      const W = root.offsetWidth, H = root.offsetHeight;
+      const pts = nodes.map((n) => {
+        const ic = $(".rm-ic", n);
+        let x = ic.offsetWidth / 2, y = ic.offsetHeight / 2, el = ic;
+        while (el && el !== root) { x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; }
+        return { x, y };
+      });
+      const rows = []; // ketma-ket bir xil y dagi nuqtalar = qator
+      pts.forEach((p) => {
+        const row = rows[rows.length - 1];
+        if (row && Math.abs(row[0].y - p.y) < 6) row.push(p); else rows.push([p]);
+      });
+      let d = `M ${pts[0].x} ${pts[0].y}`;
+      rows.forEach((row, r) => {
+        const last = row[row.length - 1];
+        d += ` L ${last.x} ${last.y}`;
+        const next = rows[r + 1];
+        if (!next) return;
+        const toRight = last.x >= row[0].x;
+        const y2 = next[0].y, dy = y2 - last.y;
+        const room = toRight ? W - last.x : last.x;
+        const out = Math.max(14, Math.min(46, room - 6));
+        const rad = Math.min(out, dy / 2);
+        const xt = toRight ? last.x + out : last.x - out;
+        const sx = toRight ? 1 : -1, sw = toRight ? 1 : 0;
+        d += ` L ${xt - sx * rad} ${last.y} A ${rad} ${rad} 0 0 ${sw} ${xt} ${last.y + rad}`
+          + ` L ${xt} ${y2 - rad} A ${rad} ${rad} 0 0 ${sw} ${xt - sx * rad} ${y2}`
+          + ` L ${next[0].x} ${y2}`;
+      });
+      let svg = $(".rm-flow", root);
+      if (!svg) {
+        root.insertAdjacentHTML("afterbegin", `<svg class="rm-flow" aria-hidden="true"><path class="rm-bed"/><path class="rm-track"/><path class="rm-pulse"/></svg>`);
+        svg = $(".rm-flow", root);
+      }
+      svg.setAttribute("width", W); svg.setAttribute("height", H);
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      const bed = $(".rm-bed", svg), track = $(".rm-track", svg), pulse = $(".rm-pulse", svg);
+      [bed, track, pulse].forEach((el) => el.setAttribute("d", d));
+      const L = pulse.getTotalLength();
+      const len = Math.max(60, Math.min(120, L / 28));
+      pulse.style.setProperty("--len", `${len}px`);
+      pulse.style.setProperty("--L", `${L}px`);
+      pulse.style.strokeDasharray = `${len} ${L + len}`;
+      // har bir bekat pulsga qachon yetishini topamiz (yo'l bo'ylab eng yaqin nuqta)
+      let from = 0;
+      pts.forEach((p, i) => {
+        let best = from, bd = Infinity;
+        for (let s = from; s <= L; s += 3) {
+          const q = pulse.getPointAtLength(s), dd = (q.x - p.x) ** 2 + (q.y - p.y) ** 2;
+          if (dd < bd) { bd = dd; best = s; }
+        }
+        from = best;
+        $(".rm-ic", nodes[i]).style.setProperty("--t", (best / (L + len)).toFixed(4));
+      });
+    };
+    draw();
+    if (rmObserver) rmObserver.disconnect();
+    if (window.ResizeObserver) {
+      let raf = 0, lastW = root.offsetWidth;
+      rmObserver = new ResizeObserver(() => {
+        if (root.offsetWidth === lastW) return;
+        lastW = root.offsetWidth;
+        cancelAnimationFrame(raf); raf = requestAnimationFrame(draw);
+      });
+      rmObserver.observe(root);
     }
-  ];
+  }
 
   function renderHome() {
     const subs = allSubs();
-    const st = statsFor(subs);
+    const iqAll = window.INTERVIEW_QUESTIONS || [];
+    const testsAll = (window.INTERVIEW_TESTS || []).length;
+    const authed = !!currentUser;
     const last = BY_SLUG[store.get(KEYS.last, "")];
-    const first = SKILLS[0];
-    const focus = subs.filter((x) => { const v = statusOf(x.id); return v === 1 || v === 2; }).slice(0, 6);
+    const cont = last || SKILLS[0];
+    const st = statsFor(subs);
+    const contStats = cont ? statsFor(cont.subskills) : null;
+    const scores = Object.values(quizScores || {}).filter((v) => Number.isFinite(v));
+    const scoreAvg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+    const iqDone = iqAll.filter((q) => masteredIq.has(q.id)).length;
+    const seg = (n) => `${(n / (st.total || 1)) * 100}%`;
 
     view().innerHTML = `
       ${loadErrorBlock()}
-      <section class="hero-grid reveal">
-        <div class="hero">
-          <span class="eyebrow"><span class="dot"></span>Senior PHP / Laravel Developer</span>
-          <h1>${SKILLS.length} ta skill.<br><span class="grad">${subs.length.toLocaleString("en-US")} ta mavzu.</span><br>Bitta yo'l xaritasi.</h1>
-          <p class="lead">PHP asoslaridan tortib arxitektura review'gacha — Category → Skill → Subskill tuzilmasida. Har bir mavzuni belgilab boring, progressingiz brauzerda saqlanadi.</p>
-          <button class="hero-search" data-open-palette>${icon("search")}<span>Qidirish: N+1, Sanctum, EXPLAIN…</span><kbd>/</kbd></button>
-          <div class="hero-actions">
-            ${last ? `<a class="btn btn-primary" href="#/s/${last.slug}">Davom ettirish: ${esc(last.title)} ${icon("arrow-right")}</a>`
-                   : first ? `<a class="btn btn-primary" href="#/s/${first.slug}">Boshlash: ${esc(first.title)} ${icon("arrow-right")}</a>` : ""}
-            <button class="btn" data-scroll-groups>Bo'limlarni ko'rish</button>
-          </div>
-          <div class="hero-stack-chips">
-            <span class="hero-stack-label">Stack:</span>
-            <a href="#/s/php" class="stack-chip"><span class="dot"></span>PHP 7.4+ → 8.4</a>
-            <a href="#/s/laravel" class="stack-chip"><span class="dot"></span>Laravel 10+ / 11+</a>
-            <a href="#/s/mysql" class="stack-chip"><span class="dot"></span>MySQL 8.0+</a>
-            <a href="#/s/redis" class="stack-chip"><span class="dot"></span>Redis 7+</a>
-            <a href="#/s/docker" class="stack-chip"><span class="dot"></span>Docker</a>
-            <a href="#/s/php-fpm" class="stack-chip"><span class="dot"></span>PHP-FPM / Octane</a>
-            <a href="#/s/queues-and-background-jobs" class="stack-chip"><span class="dot"></span>Queues & Horizon</a>
-            <a href="#/s/pest" class="stack-chip"><span class="dot"></span>Pest / PHPUnit</a>
-          </div>
-        </div>
-        <aside class="panel hero-panel" aria-label="Umumiy progress">
-          <div class="panel-head"><span class="kicker">PROGRESS</span><span class="mono-dim">${st.done}/${st.total}</span></div>
-          <div class="hero-ring${pct(st.progress) === 0 ? " is-zero" : ""}">
-            <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="52"/>
-              <circle class="val" cx="60" cy="60" r="52" stroke-dasharray="${2 * Math.PI * 52}" stroke-dashoffset="${2 * Math.PI * 52 * (1 - st.progress)}"/></svg>
-            <div class="hero-ring-label"><b>${pct(st.progress)}<small>%</small></b><span>o'zlashtirildi</span></div>
-          </div>
-          <ul class="status-bars">${STATUSES.map((x, i) => `
-            <li data-st="${i}"><span class="name"><i class="st-dot"></i>${x.label}</span><b>${st.counts[i]}</b>
-              <span class="mini-bar"><i style="width:${(st.counts[i] / (st.total || 1)) * 100}%"></i></span></li>`).join("")}
-          </ul>
-        </aside>
+      <section class="lp-hero reveal">
+        <h1>Senior Laravel dasturchi bo'lish <span>yo'l xaritasi</span></h1>
+        <p>PHP asoslaridan tizim arxitekturasigacha: ${SKILLS.length} skill, ${subs.length} mavzu. Har bir mavzuni belgilab boring, intervyu savollari va testlar bilan bilimingizni sinang.</p>
       </section>
 
-      <section class="stats reveal" aria-label="Statistika">
-        <div class="stat"><div class="label">${icon("boxes", "ic ic-sm")}Skill'lar</div><div class="value">${SKILLS.length}</div></div>
-        <div class="stat"><div class="label">${icon("list-checks", "ic ic-sm")}Subskill'lar</div><div class="value">${subs.length}</div></div>
-        <div class="stat"><div class="label">${icon("layers", "ic ic-sm")}Bo'limlar</div><div class="value">${GROUPS.length}</div></div>
-        <div class="stat"><div class="label">${icon("file", "ic ic-sm")}Tavsiflar yozilgan</div>
-          <div class="value">${st.described}<small> / ${st.total}</small></div>
-          <div class="bar"><i style="width:${(st.described / (st.total || 1)) * 100}%"></i></div></div>
+      ${authed ? `
+      <div class="dash reveal">
+        <section class="dash-card dash-progress" aria-label="Umumiy progress">
+          <div class="dash-label">Sizning progress</div>
+          <div class="dash-big"><b>${pct(st.progress)}<small>%</small></b><span>${st.done} / ${st.total} mavzu ishonchli</span></div>
+          <div class="stack-bar" role="img" aria-label="Holatlar taqsimoti">
+            <i data-st="2" style="width:${seg(st.counts[2])}"></i><i data-st="1" style="width:${seg(st.counts[1])}"></i><i data-st="0" style="width:${seg(st.counts[0])}"></i>
+          </div>
+          <ul class="stack-legend">${STATUSES.map((x, i) => `<li data-st="${i}"><i class="st-dot"></i>${x.label}<b>${st.counts[i]}</b></li>`).join("")}</ul>
+          <ul class="level-bars">${CAREER_LEVELS.map((lvl) => {
+            const ls = statsFor(subs.filter((x) => levelOf(x) === lvl.id));
+            return `<li><a href="#/levels?lvl=${lvl.id}" style="--lvl-color:${lvl.color}">
+              <span class="name">${esc(lvl.label)}</span><b>${pct(ls.progress)}%</b>
+              <span class="mini-bar"><i style="width:${pct(ls.progress)}%"></i></span></a></li>`;
+          }).join("")}</ul>
+        </section>
+        <section class="dash-card dash-continue" aria-label="Davom ettirish">
+          <div class="dash-label">${last ? "Davom ettirish" : "Boshlash"}</div>
+          <h2>${esc(cont.title)}</h2>
+          <p class="dash-sub">${pad(cont.num)} / ${SKILLS.length} skill · ${cont.subskills.length} mavzu · ${pct(contStats.progress)}%</p>
+          <div class="bar"><i style="width:${pct(contStats.progress)}%"></i></div>
+          <a class="btn btn-primary" href="#/s/${cont.slug}">${last ? "Davom ettirish" : "Boshlash"} ${icon("arrow-right")}</a>
+          <div class="dash-practice">
+            <a href="#/interview"><span>Intervyu savollari</span><b>${iqDone}<small> / ${iqAll.length}</small></b></a>
+            <a href="#/quiz"><span>Texnik testlar</span><b>${scoreAvg === null ? "—" : scoreAvg + "%"}<small> ${testsAll} ta test</small></b></a>
+          </div>
+        </section>
+      </div>` : ""}
+
+      <section class="lp-section" aria-label="Nimalar bor">
+        <div class="dash-tiles">
+          <a class="tile" href="#/skills"><span class="tile-ic">${icon("layers")}</span><b>${SKILLS.length}</b><h3>Skillar</h3><p>${subs.length} mavzu: tavsif, amaliy topshiriq, qabul mezonlari</p></a>
+          <a class="tile" href="#/levels"><span class="tile-ic">${icon("target")}</span><b>${CAREER_LEVELS.length}</b><h3>Darajalar xaritasi</h3><p>Junior dan Lead gacha talab qilinadigan mavzular</p></a>
+          <a class="tile" href="#/interview"><span class="tile-ic">${icon("help")}</span><b>${iqAll.length}</b><h3>Intervyu savollari</h3><p>Model javob va Senior maslahatlari bilan</p></a>
+          <a class="tile" href="#/quiz"><span class="tile-ic">${icon("sparkles")}</span><b>${testsAll}</b><h3>Texnik testlar</h3><p>A/B/C/D variantli, Senior tushuntirishi bilan</p></a>
+        </div>
       </section>
 
-      <div class="section-head" id="stack">
-        <div>
-          <span class="kicker">// ASOSIY STEK</span>
-          <h2>Texnologiyalar steki</h2>
-          <p>Yo'l xaritasida qamrab olingan asosiy texnologiyalar, vositalar va ularning zamonaviy versiyalari</p>
-        </div>
-      </div>
-      <div class="stack-grid">
-        ${TECH_STACK.map((t) => `
-          <a class="stack-card" href="#/s/${t.slug}">
-            <div>
-              <div class="stack-card-head">
-                <span class="stack-card-icon">${icon(t.icon)}</span>
-                <span class="stack-card-ver">${esc(t.ver)}</span>
-              </div>
-              <h3>${esc(t.title)}</h3>
-              <p>${esc(t.desc)}</p>
-              <div class="stack-card-tags">
-                ${t.tags.map((tag) => `<span class="stack-tag">${esc(tag)}</span>`).join("")}
-              </div>
-            </div>
-            <div class="stack-card-foot">
-              <span>Xaritada o'rganish</span>
-              <span class="stack-card-link">Ko'rish ${icon("arrow-right", "ic ic-sm")}</span>
-            </div>
-          </a>
-        `).join("")}
-      </div>
+      <section class="lp-section" aria-label="Yo'l xaritasi">
+        <div class="lp-head"><h2>16 bo'lim, bitta yo'l</h2><p>PHP va Laravel asoslaridan boshlab arxitektura va jamoa boshqaruvigacha. Har bir bekatda bir nechta skill bor.</p></div>
+        ${roadmapHtml()}
+      </section>
 
-      ${focus.length ? `
-        <div class="section-head"><div><span class="kicker">// 01</span><h2>Hozir ustida ishlayapsiz</h2><p>Learning va Practicing holatidagi mavzular</p></div></div>
-        <div class="focus-list">${focus.map((x) => `
-          <a class="focus-item" href="#/s/${x.skill.slug}/${x.id}" data-st="${statusOf(x.id)}">
-            <i class="st-dot"></i><div><div class="t">${inline(x.title)}</div><div class="s">${pad(x.skill.num)} · ${esc(x.skill.title)} · ${STATUSES[statusOf(x.id)].label}</div></div>
-          </a>`).join("")}</div>` : ""}
-
-      <div class="section-head" id="levels"><div><span class="kicker">// ${focus.length ? "02" : "01"}</span><h2>Karyera darajalari</h2><p>Junior, Middle, Senior va Lead bosqichlari bo'yicha ko'nikmalar taqsimoti</p></div></div>
-      <div class="levels-grid">${CAREER_LEVELS.map((lvl) => {
-        const lvlSubs = subs.filter((x) => levelOf(x) === lvl.id);
-        const ls = statsFor(lvlSubs);
-        return `<a class="level-card panel" href="#/levels?lvl=${lvl.id}" style="--lvl-color:${lvl.color};--lvl-bg:${lvl.bg}">
-          <div class="level-card-top">
-            <span class="level-card-icon">${icon(lvl.icon)}</span>
-            <span class="level-card-badge">${lvl.badge}</span>
-          </div>
-          <h3>${esc(lvl.name)}</h3>
-          <p>${esc(lvl.desc)}</p>
-          <div class="level-card-foot">
-            <div class="level-card-meta">
-              <span class="count">${lvlSubs.length} ta mavzu · ${ls.done} o'zlashtirildi</span>
-              <span class="pct">${pct(ls.progress)}%</span>
-            </div>
-            <div class="bar"><i style="width:${pct(ls.progress)}%"></i></div>
-          </div>
-        </a>`;
-      }).join("")}</div>
-
-      <div class="section-head" id="groups"><div><span class="kicker">// ${focus.length ? "03" : "02"}</span><h2>Bo'limlar</h2><p>${GROUPS.length} ta yo'nalish bo'yicha guruhlangan</p></div></div>
-      <div class="groups">${GROUPS.map((g, gi) => {
-        const gs = statsFor(g.items.flatMap((s) => s.subskills));
-        return `<article class="group-card panel" style="--p:${pct(gs.progress)}%">
-          <span class="card-index">${pad(gi + 1)}</span>
-          <div class="group-top">
-            <span class="group-icon">${icon(g.icon)}</span>
-            <div><h3>${esc(g.title)}</h3><div class="meta">${g.items.length} skill · ${gs.total} mavzu</div></div>
-            <span class="pct">${pct(gs.progress)}%</span>
-          </div>
-          <div class="bar"><i style="width:${pct(gs.progress)}%"></i></div>
-          <ul class="group-skills">${g.items.map((s) => `
-            <li><a href="#/s/${s.slug}"><span class="num">${pad(s.num)}</span><span class="t">${esc(s.title)}</span><span class="n">${s.subskills.length}</span></a></li>`).join("")}
-          </ul>
-        </article>`;
-      }).join("")}</div>
-
-      <aside class="note">
-        <span class="group-icon">${icon("info")}</span>
-        <div><h3>Muhim jihat</h3>
-        <p>Barcha subskill'larni Senior darajasida chuqur bilish shart emas. AWS, RabbitMQ va Microservices ko'p loyihalarda foydali, lekin ularning zarurligi vakansiya va kompaniya arxitekturasiga bog'liq. PHP, Laravel, SQL, ma'lumotlar bazasi optimizatsiyasi, API, testing, debugging, security va system design esa Senior Laravel yo'nalishining markaziy ko'nikmalaridir.</p></div>
-      </aside>`;
+      ${authed ? "" : `
+      <section class="lp-final">
+        <h2>Yo'lni bugun boshlang</h2>
+        <p>Hisob yarating: progress, intervyu va test natijalari saqlanib boradi.</p>
+        <a class="btn btn-primary btn-lg" href="#/login?signup">Hisob yaratish ${icon("arrow-right")}</a>
+      </section>`}`;
+    buildRoadmapFlow();
   }
 
   function placeholder(title, path) {
     return `<div class="placeholder">${icon("file")}<div><b>${title}</b>Bu joy tavsif uchun ajratilgan. To'ldirish: <code>${esc(path)}</code></div></div>`;
+  }
+
+  let IQ_BY_SUB = null;
+  function iqCountFor(subId) {
+    if (!IQ_BY_SUB) {
+      IQ_BY_SUB = {};
+      (window.INTERVIEW_QUESTIONS || []).forEach((q) => { if (q.subskillId) IQ_BY_SUB[q.subskillId] = (IQ_BY_SUB[q.subskillId] || 0) + 1; });
+    }
+    return IQ_BY_SUB[subId] || 0;
   }
 
   function subItem(x) {
@@ -810,8 +601,9 @@
           <div class="status-picker-wrap"><div class="field-label" id="${domId}-st">Status</div>
             <div class="status-picker" role="radiogroup" aria-labelledby="${domId}-st">
               ${STATUSES.map((s, i) => `<button role="radio" data-set="${i}" data-st="${i}" aria-checked="${i === st}" title="${s.hint}"><i class="st-dot"></i>${s.label}</button>`).join("")}
-            </div></div>
-          <div class="sub-foot"><button class="btn btn-sm" data-copy>${icon("link", "ic ic-sm")}Havolani nusxalash</button></div>
+            </div>
+            <p class="status-hints">${STATUSES.slice(1).map((s) => `<b>${s.label}</b> — ${s.hint}`).join(" · ")}</p></div>
+          <div class="sub-foot">${iqCountFor(x.id) ? `<a class="btn btn-sm" href="#/interview?sub=${esc(x.id)}">${icon("help", "ic ic-sm")}Intervyu savollari: ${iqCountFor(x.id)} ta</a>` : ""}<button class="btn btn-sm" data-copy>${icon("link", "ic ic-sm")}Havolani nusxalash</button></div>
         </div></div>
       </div>
     </li>`;
@@ -820,10 +612,10 @@
   let filter = "all";
   let levelFilter = "all";
   const FILTERS = [
-    ["all", "Hammasi"], ["todo", "Boshlanmagan"], ["wip", "Jarayonda"], ["done", "O'zlashtirilgan"],
+    ["all", "Barchasi"], ["todo", "Boshlanmagan"], ["wip", "O'rganilmoqda"], ["done", "Ishonchli"],
   ];
   const passes = (st, lvl) => {
-    const stOk = filter === "all" || (filter === "todo" && st === 0) || (filter === "wip" && (st === 1 || st === 2)) || (filter === "done" && st >= 3);
+    const stOk = filter === "all" || (filter === "todo" && st === 0) || (filter === "wip" && st === 1) || (filter === "done" && st === 2);
     const lvlOk = levelFilter === "all" || levelFilter === lvl;
     return stOk && lvlOk;
   };
@@ -949,7 +741,6 @@
   document.addEventListener("click", (e) => {
     const t = e.target;
     if (t.closest("[data-open-palette]")) { openPalette(); return; }
-    if (t.closest("[data-scroll-groups]")) { $("#groups").scrollIntoView({ behavior: "smooth" }); return; }
 
     const li = t.closest(".sub");
     if (li) {
@@ -1062,7 +853,7 @@
     }
     const quizScrollTopBtn = t.closest("[data-quiz-scroll-top]");
     if (quizScrollTopBtn) {
-      const topEl = document.querySelector(".iq-hero");
+      const topEl = document.querySelector(".page-head");
       if (topEl) topEl.scrollIntoView({ behavior: "smooth" });
       return;
     }
@@ -1161,6 +952,7 @@
       iqFilterCat = "all";
       iqFilterStatus = "all";
       iqSearchQuery = "";
+      iqSubFilter = "";
       const inp = $("#iq-search-input");
       if (inp) inp.value = "";
       $$("[data-iq-lvl]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.iqLvl === "all")));
@@ -1283,6 +1075,7 @@
   let iqFilterStatus = "all";
   let iqPracticeMode = false;
   let iqSearchQuery = "";
+  let iqSubFilter = "";
 
   const IQ_CATEGORIES = [
     { id: "all", label: "Barchasi" },
@@ -1303,7 +1096,6 @@
       masteredIq.add(id);
     }
     store.set(KEYS.questions, Array.from(masteredIq));
-    saveToLinkedFile();
     const btn = $(`[data-iq-check="${id}"]`);
     if (btn) {
       const isDone = masteredIq.has(id);
@@ -1337,10 +1129,9 @@
       toast("Sevimlilardan olib tashlandi");
     } else {
       bookmarkedIq.add(id);
-      toast("Sevimlilarga saqlashga qo'shildi ⭐");
+      toast("Saqlanganlarga qo'shildi");
     }
     store.set(KEYS.bookmarks, Array.from(bookmarkedIq));
-    saveToLinkedFile();
     const btn = $(`[data-iq-bookmark="${id}"]`);
     if (btn) {
       const isSaved = bookmarkedIq.has(id);
@@ -1370,7 +1161,8 @@
         (q.tip || "").toLowerCase().includes(iqSearchQuery) ||
         (q.categoryLabel || "").toLowerCase().includes(iqSearchQuery) ||
         (q.subskillId || "").toLowerCase().includes(iqSearchQuery);
-      return matchLvl && matchCat && matchStatus && matchSearch;
+      const matchSub = !iqSubFilter || q.subskillId === iqSubFilter;
+      return matchLvl && matchCat && matchStatus && matchSearch && matchSub;
     });
   }
 
@@ -1445,10 +1237,10 @@
               <div class="iq-title">${esc(q.title)}</div>
               <div class="iq-meta">
                 <span class="tag-cat">${esc(q.categoryLabel)}</span>
-                <span>·</span>
-                <span>ID: <code class="inline-code">#${cleanNum}</code></span>
-                ${q.subskillId ? `<span>· Mavzu: <code class="inline-code">${esc(q.subskillId)}</code></span>` : ""}
-                ${isBookmarked ? `<span style="color:#F59E0B;font-weight:600;display:inline-flex;align-items:center;gap:3px">★ Saqlangan</span>` : ""}
+                ${SUB_BY_ID[q.subskillId] ? `<span>·</span>
+                <span class="iq-sub">${esc(q.subskillId)} ${inline(SUB_BY_ID[q.subskillId].title)}</span>
+                <span class="mini-st" data-st="${statusOf(q.subskillId)}"><i class="st-dot"></i>${STATUSES[statusOf(q.subskillId)].label}</span>` : ""}
+                ${isBookmarked ? `<span style="color:var(--st-2);font-weight:600">Saqlangan</span>` : ""}
                 ${isMastered ? `<span class="tag-done" style="color:var(--accent-text);font-weight:600;display:inline-flex;align-items:center;gap:3px">${icon("check", "ic ic-sm")} O'zlashtirildi</span>` : ""}
               </div>
             </div>
@@ -1518,7 +1310,7 @@
     }
     const resetWrap = $("#iq-reset-wrap");
     if (resetWrap) {
-      const isFiltered = iqFilterLevel !== "all" || iqFilterCat !== "all" || iqFilterStatus !== "all" || !!iqSearchQuery;
+      const isFiltered = iqFilterLevel !== "all" || iqFilterCat !== "all" || iqFilterStatus !== "all" || !!iqSearchQuery || !!iqSubFilter;
       resetWrap.innerHTML = isFiltered
         ? `<button class="iq-reset-link" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button>`
         : "";
@@ -1555,52 +1347,16 @@
       ${loadErrorBlock()}
       <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Bosh sahifa</a><span class="sep">/</span><span aria-current="page">Intervyu savol-javoblari</span></nav>
       
-      <header class="iq-hero reveal">
-        <div class="iq-hero-main">
-          <div class="idx">TECHNICAL INTERVIEW PREPARATION & BENCHMARK</div>
-          <h1>Intervyu Savol-Javoblari</h1>
-          <p class="lead">
-            PHP, Laravel, MySQL, Redis, Navbatlar, Arxitektura, Xavfsizlik va DevOps bo'yicha real texnik intervyularda eng ko'p tushadigan chuqur <strong>${questions.length} ta</strong> savol, model javoblar va Senior maslahatlari.
-          </p>
+      <header class="page-head reveal">
+        <div>
+          <h1>Intervyu savol-javoblari</h1>
+          <p class="page-sub">${questions.length} ta savol · model javoblar va Senior maslahatlar</p>
         </div>
-        <div class="iq-hero-ring-wrap">
-          <div class="iq-ring" aria-label="Tayyorgarlik darajasi: ${progressPct}%">
-            <svg viewBox="0 0 100 100" width="96" height="96">
-              <circle class="track" cx="50" cy="50" r="40"></circle>
-              <circle class="val" id="iq-ring-circle" cx="50" cy="50" r="40"
-                style="stroke-dasharray: 251.3; stroke-dashoffset: ${ringOffset}"></circle>
-            </svg>
-            <div class="iq-ring-text">
-              <b id="iq-ring-pct">${progressPct}%</b>
-              <span>TAYYORLIK</span>
-            </div>
-          </div>
-          <div style="font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)">Tayyorgarlik darajasi</div>
+        <div class="page-progress" aria-label="O'zlashtirilgan savollar">
+          <div class="page-progress-num"><b id="iq-stat-done">${doneCount} <small>/ ${questions.length}</small></b><span>o'zlashtirildi</span></div>
+          <div class="bar"><i id="iq-stat-bar" style="width:${progressPct}%"></i></div>
         </div>
       </header>
-
-      <section class="iq-stats-grid reveal" aria-label="Intervyu statistikasi">
-        <div class="iq-stat-box">
-          <div class="iq-stat-label">${icon("help", "ic ic-sm")} Jami savollar</div>
-          <div class="iq-stat-num">${questions.length} <small>ta</small></div>
-          <div class="iq-stat-sub">8 ta yo'nalish bo'yicha</div>
-        </div>
-        <div class="iq-stat-box">
-          <div class="iq-stat-label">${icon("check", "ic ic-sm")} O'zlashtirildi</div>
-          <div class="iq-stat-num" id="iq-stat-done" style="color:var(--accent-text)">${doneCount} <small>/ ${questions.length}</small></div>
-          <div class="iq-stat-sub">Shaxsiy trackerda qayd etilgan</div>
-        </div>
-        <div class="iq-stat-box">
-          <div class="iq-stat-label">${icon("target", "ic ic-sm")} O'rganish kerak</div>
-          <div class="iq-stat-num" id="iq-stat-remaining">${remainingCount} <small>ta</small></div>
-          <div class="iq-stat-sub">Hali belgilanmagan savollar</div>
-        </div>
-        <div class="iq-stat-box">
-          <div class="iq-stat-label">${icon("sparkles", "ic ic-sm")} Senior & Lead</div>
-          <div class="iq-stat-num" style="color:var(--st-4)">${seniorLeadCount} <small>ta</small></div>
-          <div class="iq-stat-sub">Eng chuqur arxitektura savollari</div>
-        </div>
-      </section>
 
       <section class="iq-controls reveal" aria-label="Boshqaruv va qidiruv">
         <div class="iq-search-row">
@@ -1629,7 +1385,7 @@
                 Barchasi <span class="count-chip">${questions.length}</span>
               </button>
               <button type="button" class="iq-pill" data-iq-status="bookmarked" aria-pressed="${iqFilterStatus === "bookmarked"}">
-                ⭐ Saqlanganlar <span class="count-chip">${bookmarkedIq.size}</span>
+                Saqlanganlar <span class="count-chip">${bookmarkedIq.size}</span>
               </button>
               <button type="button" class="iq-pill" data-iq-status="mastered" aria-pressed="${iqFilterStatus === "mastered"}">
                 O'zlashtirilgan <span class="count-chip">${doneCount}</span>
@@ -1664,15 +1420,16 @@
         </div>
 
         <div class="iq-results-bar">
-          <div>Filtr bo'yicha: <strong id="iq-result-count" style="color:var(--text)">${getIqFilteredList().length} ta savol</strong> ko'rsatilmoqda</div>
+          <div>Filtr bo'yicha: <strong id="iq-result-count" style="color:var(--text)">${getIqFilteredList().length} ta savol</strong> ko'rsatilmoqda${iqSubFilter && SUB_BY_ID[iqSubFilter] ? ` · mavzu: <strong style="color:var(--text)">${esc(iqSubFilter)} ${inline(SUB_BY_ID[iqSubFilter].title)}</strong>` : ""}</div>
           <div id="iq-reset-wrap">
-            ${(iqFilterLevel !== "all" || iqFilterCat !== "all" || iqFilterStatus !== "all" || iqSearchQuery) ? `
+            ${(iqFilterLevel !== "all" || iqFilterCat !== "all" || iqFilterStatus !== "all" || iqSearchQuery || iqSubFilter) ? `
               <button class="iq-reset-link" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button>
             ` : ""}
           </div>
         </div>
       </section>
 
+      <h2 class="sr-only">Savollar ro'yxati</h2>
       <div class="iq-list reveal" id="iq-items">
         ${renderInterviewItems()}
       </div>
@@ -1701,24 +1458,24 @@ const searchInp = $("#iq-search-input");
    * Interactive Quiz & Assessment Engine (A, B, C, D Tests)
    * ------------------------------------------------------------------ */
   const QUIZ_CATEGORIES = [
-    { id: "all", label: "Barchasi", icon: "🌟" },
-    { id: "php", label: "PHP & OOP", icon: "🐘" },
-    { id: "laravel", label: "Laravel Core", icon: "⚡" },
-    { id: "eloquent", label: "Eloquent & DB", icon: "🗄️" },
-    { id: "api", label: "REST API & Auth", icon: "🌐" },
-    { id: "redis", label: "Redis & Kesh", icon: "⚡" },
-    { id: "queue", label: "Navbatlar (Queue)", icon: "📬" },
-    { id: "security", label: "Xavfsizlik", icon: "🛡️" },
-    { id: "testing", label: "Testlash (Pest/TDD)", icon: "🧪" },
-    { id: "architecture", label: "Arxitektura", icon: "🏛️" },
-    { id: "devops", label: "DevOps & Linux", icon: "🐳" }
+    { id: "all", label: "Barchasi", icon: "layers" },
+    { id: "php", label: "PHP & OOP", icon: "code" },
+    { id: "laravel", label: "Laravel Core", icon: "boxes" },
+    { id: "eloquent", label: "Eloquent & DB", icon: "database" },
+    { id: "api", label: "REST API & Auth", icon: "plug" },
+    { id: "redis", label: "Redis & Kesh", icon: "gauge" },
+    { id: "queue", label: "Navbatlar (Queue)", icon: "queue" },
+    { id: "security", label: "Xavfsizlik", icon: "shield" },
+    { id: "testing", label: "Testlash (Pest/TDD)", icon: "flask" },
+    { id: "architecture", label: "Arxitektura", icon: "layers" },
+    { id: "devops", label: "DevOps & Linux", icon: "server" }
   ];
 
   const QUIZ_LEVELS = [
-    { id: "all", label: "Barcha darajalar", icon: "⚡" },
-    { id: "junior", label: "Junior", icon: "🌱" },
-    { id: "middle", label: "Middle", icon: "🔷" },
-    { id: "senior", label: "Senior", icon: "🔥" }
+    { id: "all", label: "Barcha darajalar" },
+    { id: "junior", label: "Junior" },
+    { id: "middle", label: "Middle" },
+    { id: "senior", label: "Senior" }
   ];
 
   let quizActiveCat = "all";
@@ -1943,16 +1700,13 @@ const searchInp = $("#iq-search-input");
       <nav class="crumbs" aria-label="Breadcrumb">
         <a href="#/">Bosh sahifa</a>
         <span class="sep">/</span>
-        <span aria-current="page">Texnik Testlar (Quiz Arena)</span>
+        <span aria-current="page">Texnik testlar</span>
       </nav>
 
-      <header class="iq-hero reveal">
-        <div class="iq-hero-main">
-          <div class="qz-hero-badge">${icon("sparkles", "ic ic-sm")} INTERACTIVE DEVELOPER BENCHMARK</div>
-          <h1>Texnik Testlar (Quiz Arena)</h1>
-          <p class="lead">
-            PHP, Laravel, Eloquent, SQL, Redis, Navbatlar, Xavfsizlik va Arxitektura bo'yicha 102+ ta real intervyu testlari. Mavzu va darajani tanlang, professional arena orqali o'z bilimlaringizni sinang va Senior dasturchi tushuntirishlarini o'rganing.
-          </p>
+      <header class="page-head reveal">
+        <div>
+          <h1>Texnik testlar</h1>
+          <p class="page-sub">${allTests.length} ta test · mavzu va darajani tanlang, javobdan keyin Senior tushuntirishi ko'rsatiladi</p>
         </div>
       </header>
 
@@ -1966,7 +1720,7 @@ const searchInp = $("#iq-search-input");
             <button type="button" class="qz-topic-card ${quizActiveCat === c.id ? "active" : ""}" data-quiz-cat="${c.id}" aria-pressed="${quizActiveCat === c.id}">
               ${quizScores[c.id] ? `<span class="qz-topic-score-badge">★ ${quizScores[c.id]}%</span>` : ""}
               <div class="qz-topic-head">
-                <span class="qz-topic-icon">${c.icon}</span>
+                <span class="qz-topic-icon">${icon(c.icon)}</span>
                 <span class="qz-topic-count">${catCounts[c.id] || 0}</span>
               </div>
               <div class="qz-topic-name">${esc(c.label)}</div>
@@ -1980,7 +1734,7 @@ const searchInp = $("#iq-search-input");
         <div class="qz-levels-grid">
           ${QUIZ_LEVELS.map(lvl => `
             <button type="button" class="qz-tier-btn ${quizActiveLevel === lvl.id ? "active" : ""}" data-quiz-level="${lvl.id}" aria-pressed="${quizActiveLevel === lvl.id}">
-              <span>${lvl.icon} ${esc(lvl.label)}</span>
+              <span>${esc(lvl.label)}</span>
               <span class="iq-quiz-cat-count">${levelCounts[lvl.id] || 0}</span>
             </button>
           `).join("")}
@@ -2014,7 +1768,7 @@ const searchInp = $("#iq-search-input");
       return `
         <div class="qz-arena-card">
           <div class="qz-lobby-container">
-            <div style="font-size:48px;margin-bottom:12px">🔍</div>
+            
             <h2 class="qz-lobby-title">Mos testlar topilmadi</h2>
             <p class="qz-lobby-desc">
               Tanlangan <b>${esc(catObj ? catObj.label : quizActiveCat)}</b> mavzusi va <b>${esc(lvlObj ? lvlObj.label : quizActiveLevel)}</b> darajasi bo'yicha savollar topilmadi.
@@ -2040,27 +1794,21 @@ const searchInp = $("#iq-search-input");
     return `
       <div class="qz-arena-card">
         <div class="qz-lobby-container">
-          <div class="qz-lobby-stage-badge">
-            ${icon("zap", "ic ic-sm")} ARENA TAYYORGARLIK ZALI
-          </div>
-          <h2 class="qz-lobby-title">Bilim darajangizni sinovdan o'tkazing!</h2>
+          <h2 class="qz-lobby-title">Testga tayyormisiz?</h2>
           <p class="qz-lobby-desc">
             Har bir savol real intervyu talablari asosida tuzilgan. Javob tanlaganingizdan so'ng darhol Senior darajadagi amaliy tushuntirish va to'g'ri kod arxitekturasi ko'rsatiladi.
           </p>
 
           <div class="qz-params-bar">
             <div class="qz-param-chip">
-              <span>📂</span>
-              <span>Mavzu: <b>${esc(catObj ? (catObj.icon + " " + catObj.label) : "Barchasi")}</b></span>
+              <span>Mavzu: <b>${esc(catObj ? catObj.label : "Barchasi")}</b></span>
             </div>
             <span class="qz-param-sep">•</span>
             <div class="qz-param-chip">
-              <span>🎯</span>
-              <span>Daraja: <b>${esc(lvlObj ? (lvlObj.icon + " " + lvlObj.label) : "Barcha darajalar")}</b></span>
+              <span>Daraja: <b>${esc(lvlObj ? lvlObj.label : "Barcha darajalar")}</b></span>
             </div>
             <span class="qz-param-sep">•</span>
             <div class="qz-param-chip">
-              <span>📚</span>
               <span>Hovuzda: <b>${totalAvailable} ta</b> savol</span>
             </div>
           </div>
@@ -2078,7 +1826,7 @@ const searchInp = $("#iq-search-input");
 
           <div>
             <button type="button" class="qz-start-cta" data-quiz-start>
-              <span>⚡ Testni boshlash</span>
+              <span>Testni boshlash</span>
               <kbd class="qz-kbd-chip">Enter</kbd>
             </button>
           </div>
@@ -2123,7 +1871,7 @@ const searchInp = $("#iq-search-input");
           <div class="qz-hud-right">
             ${quizCurrentStreak >= 2 ? `
               <div class="qz-streak-pill" title="Ketma-ket to'g'ri javoblar!">
-                🔥 ${quizCurrentStreak}x Streak
+                ${quizCurrentStreak} ta ketma-ket
               </div>
             ` : ""}
             <div class="qz-score-live-pill">
@@ -2220,33 +1968,28 @@ const searchInp = $("#iq-search-input");
     const prevBest = quizScores[quizActiveCat] || 0;
     if (pctScore > prevBest) {
       quizScores[quizActiveCat] = pctScore;
-      try { localStorage.setItem("lsm:quiz_scores", JSON.stringify(quizScores)); } catch (e) {}
+      store.set(KEYS.quiz, quizScores);
     }
 
-    let emoji = "🎯";
-    let badge = "Yaxshi natija";
-    let badgeStyle = "background:rgba(59,130,246,0.15);color:#3b82f6;border:1px solid rgba(59,130,246,0.3)";
+        let badge = "Yaxshi natija";
+    let badgeStyle = "background:var(--st-1-soft);color:var(--st-1);border:1px solid var(--st-1)";
     let desc = "Siz asosiy amaliy bilimlarni yaxshi bilasiz. Ba'zi murakkab savollarda xatolar bo'ldi, Senior tushuntirishlarini o'qib chiqishni tavsiya qilamiz.";
 
     if (pctScore >= 90) {
-      emoji = "🏆";
       badge = "LEAD / SENIOR DARAJASI!";
-      badgeStyle = "background:linear-gradient(135deg, rgba(245,158,11,0.2), rgba(217,119,6,0.2));color:#f59e0b;border:1px solid rgba(245,158,11,0.4)";
+      badgeStyle = "background:var(--st-2-soft);color:var(--st-2);border:1px solid var(--st-2)";
       desc = "Mukammal va yuksak natija! Ushbu mavzudagi chuqur va nozik arxitektura jihatlarini to'liq o'zlashtirgansiz.";
     } else if (pctScore >= 70) {
-      emoji = "⭐";
       badge = "STRONG MIDDLE DARAJASI";
-      badgeStyle = "background:linear-gradient(135deg, rgba(34,197,94,0.18), rgba(16,185,129,0.18));color:#22c55e;border:1px solid rgba(34,197,94,0.35)";
+      badgeStyle = "background:var(--accent-soft);color:var(--accent-text);border:1px solid var(--accent)";
       desc = "Mustahkam amaliy bilim! Bir nechta kam uchraydigan holatlarni qayta ko'rib chiqsangiz, har qanday texnik intervyudan muammosiz o'tasiz.";
     } else if (pctScore >= 50) {
-      emoji = "📚";
       badge = "JUNIOR / PRE-MIDDLE";
-      badgeStyle = "background:rgba(59,130,246,0.15);color:#3b82f6;border:1px solid rgba(59,130,246,0.3)";
+      badgeStyle = "background:var(--st-1-soft);color:var(--st-1);border:1px solid var(--st-1)";
       desc = "Qoniqarli natija. Ushbu mavzudagi tavsiya etilgan resurslar va savol-javoblarni qayta o'qib chiqishni maslahat beramiz.";
     } else {
-      emoji = "💡";
       badge = "BOSHLANG'ICH DARAJA";
-      badgeStyle = "background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3)";
+      badgeStyle = "background:var(--danger-soft);color:var(--danger);border:1px solid var(--danger)";
       desc = "Ushbu yo'nalish bo'yicha nazariy va amaliy bilimlarni kuchaytirish zarur. Yo'l xaritasi bo'yicha ketma-ket o'rganing.";
     }
 
@@ -2254,7 +1997,7 @@ const searchInp = $("#iq-search-input");
     const radius = 64;
     const circumference = 2 * Math.PI * radius; // ~402.12
     const strokeDashoffset = circumference - (pctScore / 100) * circumference;
-    const strokeColor = pctScore >= 90 ? "#f59e0b" : (pctScore >= 70 ? "#22c55e" : (pctScore >= 50 ? "#3b82f6" : "#ef4444"));
+    const strokeColor = pctScore >= 90 ? "var(--st-2)" : (pctScore >= 70 ? "var(--accent)" : (pctScore >= 50 ? "var(--st-1)" : "var(--danger)"));
 
     return `
       <div class="qz-arena-card">
@@ -2273,23 +2016,23 @@ const searchInp = $("#iq-search-input");
 
           <div>
             <span class="qz-rank-badge" style="${badgeStyle}">
-              ${emoji} ${badge}
+              ${badge}
             </span>
           </div>
           <p class="qz-results-desc">${desc}</p>
 
           <div class="qz-stats-grid">
             <div class="qz-stat-card">
-              <div class="qz-stat-val" style="color:#22c55e">✓ ${rightCount}</div>
+              <div class="qz-stat-val" style="color:var(--accent-text)">✓ ${rightCount}</div>
               <div class="qz-stat-lbl">To'g'ri javoblar</div>
             </div>
             <div class="qz-stat-card">
-              <div class="qz-stat-val" style="color:#ef4444">✕ ${wrongCount}</div>
+              <div class="qz-stat-val" style="color:var(--danger)">✕ ${wrongCount}</div>
               <div class="qz-stat-lbl">Xatolar</div>
             </div>
             <div class="qz-stat-card">
-              <div class="qz-stat-val" style="color:#f97316">🔥 ${quizMaxStreak}x</div>
-              <div class="qz-stat-lbl">Maksimal Streak</div>
+              <div class="qz-stat-val" style="color:var(--st-2)">${quizMaxStreak} ta</div>
+              <div class="qz-stat-lbl">Eng uzun ketma-ketlik</div>
             </div>
           </div>
 
@@ -2351,7 +2094,7 @@ const searchInp = $("#iq-search-input");
 
       // Filtr nomini aniqlash
       let filterDesc = [];
-      if (iqFilterStatus === "bookmarked") filterDesc.push("⭐ Saqlanganlar");
+      if (iqFilterStatus === "bookmarked") filterDesc.push("Saqlanganlar");
       else if (iqFilterStatus === "mastered") filterDesc.push("O'zlashtirilgan");
       else if (iqFilterStatus === "unmastered") filterDesc.push("O'rganish kerak");
 
@@ -2369,10 +2112,10 @@ const searchInp = $("#iq-search-input");
       if (pool.length <= 5) {
         countOptions.push({ count: pool.length, label: `Barchasi (${pool.length} ta)` });
       } else {
-        countOptions.push({ count: 5, label: "⚡ 5 ta (Tezkor)" });
-        if (pool.length >= 10) countOptions.push({ count: 10, label: "🎯 10 ta (Standart)" });
-        if (pool.length >= 20) countOptions.push({ count: 20, label: "🏆 20 ta (Katta)" });
-        countOptions.push({ count: pool.length, label: `♾️ Barchasi (${pool.length} ta)` });
+        countOptions.push({ count: 5, label: "5 ta (Tezkor)" });
+        if (pool.length >= 10) countOptions.push({ count: 10, label: "10 ta (Standart)" });
+        if (pool.length >= 20) countOptions.push({ count: 20, label: "20 ta (Katta)" });
+        countOptions.push({ count: pool.length, label: `Barchasi (${pool.length} ta)` });
       }
 
       mockSelectedCount = countOptions.some(o => o.count === 10) ? 10 : countOptions[0].count;
@@ -2413,7 +2156,7 @@ const searchInp = $("#iq-search-input");
 
           <div style="display:flex;justify-content:flex-end;gap:10px">
             <button class="btn" data-mock-close>Bekor qilish</button>
-            <button class="btn btn-primary" data-mock-start>Imtihonni boshlash 🚀</button>
+            <button class="btn btn-primary" data-mock-start>Imtihonni boshlash</button>
           </div>
         </div>
       `;
@@ -2514,15 +2257,15 @@ const searchInp = $("#iq-search-input");
       <div style="text-align:center;font:600 12px var(--mono);color:var(--text-3);text-transform:uppercase">O'z javobingizni xolisona baholang:</div>
       <div class="mock-eval-grid">
         <button class="mock-eval-btn good" data-mock-eval="10">
-          <span>🟢 To'liq bildim</span>
+          <span><i class="eval-dot ok"></i>To'liq bildim</span>
           <small>+10 ball</small>
         </button>
         <button class="mock-eval-btn mid" data-mock-eval="5">
-          <span>🟡 Qisman bildim</span>
+          <span><i class="eval-dot mid"></i>Qisman bildim</span>
           <small>+5 ball</small>
         </button>
         <button class="mock-eval-btn bad" data-mock-eval="0">
-          <span>🔴 Bilmadim</span>
+          <span><i class="eval-dot bad"></i>Bilmadim</span>
           <small>0 ball</small>
         </button>
       </div>
@@ -2580,10 +2323,10 @@ const searchInp = $("#iq-search-input");
                 `;
               }).join("")}
             </div>
-          ` : `<p style="color:var(--accent-text);font-weight:600">Barcha savollarga a'lo darajada javob berdingiz! 🏆</p>`}
+          ` : `<p style="color:var(--accent-text);font-weight:600">Barcha savollarga a'lo darajada javob berdingiz!</p>`}
 
           <div style="display:flex;justify-content:center;gap:12px;margin-top:20px">
-            <button class="btn btn-primary" data-mock-restart>Qayta topshirish 🔄</button>
+            <button class="btn btn-primary" data-mock-restart>Qayta topshirish</button>
             <button class="btn" data-mock-close>Yopish</button>
           </div>
         </div>
@@ -2609,31 +2352,57 @@ const searchInp = $("#iq-search-input");
     document.body.classList.remove("nav-open");
     $("#menu-btn").setAttribute("aria-expanded", "false");
 
+    document.body.dataset.auth = currentUser ? "in" : "out";
+    const mLogin = hash.match(/^#\/login(?:\?(.*))?$/);
+    const isHome = hash === "#/" || hash === "#" || hash === "";
+    if (mLogin) {
+      if (currentUser) { location.replace("#/"); return; }
+      authMode = /(?:^|&)signup\b/.test(mLogin[1] || "") ? "signup" : "login";
+      document.body.dataset.section = "auth";
+      document.title = "Kirish · Laravel Skill Map";
+      renderAuth();
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (!currentUser && !isHome) { location.replace("#/login"); return; }
+
+    if (hash === "#/skills") {
+      // "Skillar" bo'limi oxirgi ochilgan (yoki birinchi) skill'dan boshlanadi
+      const s = BY_SLUG[store.get(KEYS.last, "")] || SKILLS[0];
+      if (s) { location.replace(`#/s/${s.slug}`); return; }
+    }
+
     if (m && BY_SLUG[m[1]]) {
       const s = BY_SLUG[m[1]];
       document.title = `${s.title} · Laravel Skill Map`;
       renderSkill(s, m[2]);
-      markActive(s.slug, false, false);
+      markActive("skills", s.slug);
       if (!m[2]) window.scrollTo(0, 0);
     } else if (mLevels) {
       document.title = "Darajalar xaritasi · Laravel Skill Map";
       renderLevels(mLevels[1] || "junior");
-      markActive(null, true, false);
+      markActive("levels");
       window.scrollTo(0, 0);
     } else if (mInterview) {
       document.title = "Intervyu Savol-Javoblari · Laravel Skill Map";
+      iqSubFilter = ((mInterview[1] || "").match(/(?:^|&)sub=([\d.]+)/) || [])[1] || "";
       renderInterview();
-      markActive(null, false, true);
+      markActive("interview");
+      window.scrollTo(0, 0);
+    } else if (hash === "#/profile") {
+      document.title = "Profil · Laravel Skill Map";
+      renderProfile();
+      markActive("profile");
       window.scrollTo(0, 0);
     } else if (mQuiz) {
-      document.title = "Texnik Testlar (Quiz) — Laravel Skill Map";
+      document.title = "Texnik testlar · Laravel Skill Map";
       renderQuizPage();
-      markActive(null, false, false, true);
+      markActive("quiz");
       window.scrollTo(0, 0);
     } else {
       document.title = "Laravel Skill Map";
       renderHome();
-      markActive(null, false, false);
+      markActive("home");
       window.scrollTo(0, 0);
     }
     view().focus({ preventScroll: true });
@@ -2736,7 +2505,6 @@ const searchInp = $("#iq-search-input");
   }
 
   function bindPalette() {
-    $("#search-trigger").addEventListener("click", openPalette);
     palInput().addEventListener("input", renderPalette);
     palInput().addEventListener("keydown", (e) => {
       if (e.key === "ArrowDown") { e.preventDefault(); moveSel(1); }
@@ -2782,10 +2550,7 @@ const searchInp = $("#iq-search-input");
     ta.remove();
   }
 
-  function setMenu(open) {
-    $("#more-menu").classList.toggle("open", open);
-    $("#more-btn").setAttribute("aria-expanded", String(open));
-  }
+  function setMenu() { /* ⋯ menyu olib tashlandi: amallar profil sahifasida */ }
 
   function bindChrome() {
     $("#theme-btn").addEventListener("click", () => {
@@ -2802,89 +2567,8 @@ const searchInp = $("#iq-search-input");
     });
     $("#scrim").addEventListener("click", () => { document.body.classList.remove("nav-open"); $("#menu-btn").setAttribute("aria-expanded", "false"); });
 
-    $("#more-btn").addEventListener("click", (e) => { e.stopPropagation(); setMenu(!$("#more-menu").classList.contains("open")); });
-    document.addEventListener("click", (e) => { if (!e.target.closest(".menu-wrap")) setMenu(false); });
-
-    $("#more-menu").addEventListener("click", (e) => {
-      const a = e.target.closest("[data-action]");
-      if (!a) return;
-      setMenu(false);
-      if (a.dataset.action === "link-file") {
-        if (activeFileHandle) {
-          saveToLinkedFile();
-          toast("progress.json fayliga saqlandi");
-        } else {
-          (async () => {
-            const savedHandle = await idb.get("progressHandle");
-            if (savedHandle) {
-              try {
-                const perm = await savedHandle.requestPermission({ mode: "readwrite" });
-                if (perm === "granted") {
-                  activeFileHandle = savedHandle;
-                  const file = await savedHandle.getFile();
-                  updateSyncUI(true, file.name);
-                  await saveToLinkedFile();
-                  toast(`"${file.name}" bilan aloqa tiklandi!`);
-                  return;
-                }
-              } catch (e) {}
-            }
-            linkProgressFile();
-          })();
-        }
-      }
-      if (a.dataset.action === "unlink-file") {
-        unlinkProgressFile();
-      }
-      if (a.dataset.action === "export") {
-        const payload = {
-          app: "laravel-skill-map",
-          version: 1,
-          exportedAt: new Date().toISOString(),
-          progress,
-          questions: Array.from(masteredIq),
-          bookmarks: Array.from(bookmarkedIq)
-        };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const link = Object.assign(document.createElement("a"), { href: url, download: `skill-progress-${new Date().toISOString().slice(0, 10)}.json` });
-        document.body.appendChild(link); link.click(); link.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        toast("Progress eksport qilindi");
-      }
-      if (a.dataset.action === "reset") {
-        if (!confirm("Barcha progress o'chiriladi. Davom etasizmi?")) return;
-        progress = {}; store.set(KEYS.progress, progress);
-        masteredIq.clear(); store.set(KEYS.questions, []);
-        bookmarkedIq.clear(); store.set(KEYS.bookmarks, []);
-        saveToLinkedFile();
-        route(); updateSidebarProgress(); toast("Progress tozalandi");
-      }
-    });
-    $("#more-menu label").addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("#import-input").click(); } });
-    $("#import-input").addEventListener("change", async (e) => {
-      const file = e.target.files[0];
-      e.target.value = "";
-      setMenu(false);
-      if (!file) return;
-      try {
-        const data = JSON.parse(await file.text());
-        const src = data && typeof data.progress === "object" ? data.progress : data;
-        const clean = {};
-        Object.entries(src || {}).forEach(([k, v]) => { if (SUB_BY_ID[k] && Number.isInteger(v) && v > 0 && v <= 4) clean[k] = v; });
-        progress = clean; store.set(KEYS.progress, progress);
-        if (Array.isArray(data.questions)) {
-          masteredIq = new Set(data.questions);
-          store.set(KEYS.questions, data.questions);
-        }
-        if (Array.isArray(data.bookmarks)) {
-          bookmarkedIq = new Set(data.bookmarks);
-          store.set(KEYS.bookmarks, data.bookmarks);
-        }
-        saveToLinkedFile();
-        route(); updateSidebarProgress();
-        toast(`${Object.keys(clean).length} ta mavzu holati import qilindi`);
-      } catch { toast("JSON faylni o'qib bo'lmadi"); }
+    document.addEventListener("click", (e) => {
+      if (e.target.closest('[data-action="logout"]')) logout();
     });
 
     document.addEventListener("keydown", (e) => {
@@ -2930,12 +2614,10 @@ const searchInp = $("#iq-search-input");
         }
       }
 
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); pal().classList.contains("open") ? closePalette() : openPalette(); return; }
-      if (e.key === "/" && !typing) { e.preventDefault(); openPalette(); return; }
+      if (e.key === "/" && !typing && currentUser) { e.preventDefault(); openPalette(); return; }
       if (e.key === "Escape") {
         if ($("#mock-overlay")) { closeMockModal(); return; }
         if (pal().classList.contains("open")) closePalette();
-        else if ($("#more-menu").classList.contains("open")) { setMenu(false); $("#more-btn").focus(); }
         else if (document.body.classList.contains("nav-open")) { document.body.classList.remove("nav-open"); $("#menu-btn").setAttribute("aria-expanded", "false"); }
       }
       if (e.key === "Tab" && pal().classList.contains("open")) {
@@ -2950,12 +2632,368 @@ const searchInp = $("#iq-search-input");
   }
 
   /* ------------------------------------------------------------------ *
+   * Accounts: mahalliy baza (IndexedDB). Email + parol (PBKDF2), har bir hisobga
+   * alohida progress, intervyu, saqlanganlar va test natijalari.
+   * ------------------------------------------------------------------ */
+  const USER_KEYS = { progress: KEYS.progress, questions: KEYS.questions, bookmarks: KEYS.bookmarks, quiz: KEYS.quiz, last: KEYS.last };
+  const USER_KEY_SET = new Set(Object.values(USER_KEYS));
+  let authMode = "login";
+
+  const udb = {
+    open() {
+      return new Promise((res, rej) => {
+        const req = indexedDB.open("lsm_accounts", 1);
+        req.onupgradeneeded = () => {
+          req.result.createObjectStore("users", { keyPath: "email" });
+          req.result.createObjectStore("data", { keyPath: "email" });
+        };
+        req.onsuccess = () => res(req.result);
+        req.onerror = () => rej(req.error);
+      });
+    },
+    async get(storeName, key) {
+      const db = await this.open();
+      return new Promise((res, rej) => {
+        const req = db.transaction(storeName, "readonly").objectStore(storeName).get(key);
+        req.onsuccess = () => res(req.result || null);
+        req.onerror = () => rej(req.error);
+      });
+    },
+    async del(storeName, key) {
+      const db = await this.open();
+      return new Promise((res, rej) => {
+        const tx = db.transaction(storeName, "readwrite");
+        tx.objectStore(storeName).delete(key);
+        tx.oncomplete = () => res();
+        tx.onerror = () => rej(tx.error);
+      });
+    },
+    async put(storeName, value) {
+      const db = await this.open();
+      return new Promise((res, rej) => {
+        const tx = db.transaction(storeName, "readwrite");
+        tx.objectStore(storeName).put(value);
+        tx.oncomplete = () => res();
+        tx.onerror = () => rej(tx.error);
+      });
+    },
+  };
+
+  const b64 = (bytes) => btoa(String.fromCharCode(...bytes));
+  const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  const normEmail = (e) => String(e || "").trim().toLowerCase();
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+  async function hashPassword(password, salt) {
+    if (!window.crypto || !crypto.subtle) throw new Error("Brauzer parolni xavfsiz hash qila olmaydi (crypto.subtle yo'q).");
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+    const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: 150000 }, key, 256);
+    return b64(new Uint8Array(bits));
+  }
+
+  function userSnapshot() {
+    return {
+      progress: store.get(KEYS.progress, {}),
+      questions: store.get(KEYS.questions, []),
+      bookmarks: store.get(KEYS.bookmarks, []),
+      quiz: store.get(KEYS.quiz, {}),
+      last: store.get(KEYS.last, ""),
+    };
+  }
+  async function saveUserData() {
+    if (!currentUser) return;
+    clearTimeout(userSaveTimer); userSaveTimer = 0;
+    try { await udb.put("data", { email: currentUser, ...userSnapshot(), updatedAt: Date.now() }); } catch (e) { console.warn("Hisob ma'lumotini saqlashda xato:", e); }
+  }
+  function onUserKeyChanged(key) {
+    if (!currentUser || !USER_KEY_SET.has(key)) return;
+    clearTimeout(userSaveTimer);
+    userSaveTimer = setTimeout(saveUserData, 300);
+  }
+  function loadUserDataIntoStore(data) {
+    const d = data || {};
+    localStorage.setItem(KEYS.progress, JSON.stringify(d.progress || {}));
+    localStorage.setItem(KEYS.questions, JSON.stringify(d.questions || []));
+    localStorage.setItem(KEYS.bookmarks, JSON.stringify(d.bookmarks || []));
+    localStorage.setItem(KEYS.quiz, JSON.stringify(d.quiz || {}));
+    localStorage.setItem(KEYS.last, JSON.stringify(d.last || ""));
+    localStorage.setItem(KEYS.progressV, JSON.stringify(PROGRESS_VERSION));
+  }
+  function reloadState() {
+    progress = store.get(KEYS.progress, {});
+    if (typeof progress !== "object" || progress === null) progress = {};
+    masteredIq = new Set(store.get(KEYS.questions, []));
+    bookmarkedIq = new Set(store.get(KEYS.bookmarks, []));
+    quizScores = store.get(KEYS.quiz, {}) || {};
+  }
+  function updateUserUI() {
+    document.body.dataset.auth = currentUser ? "in" : "out";
+    const ini = $("#profile-initial");
+    if (ini) ini.textContent = currentUser ? currentUser[0].toUpperCase() : "?";
+    const pb = $("#profile-btn");
+    if (pb) pb.title = currentUser ? `Profil: ${currentUser}` : "Profil";
+  }
+
+  async function startSession(email, data) {
+    currentUser = email;
+    try { localStorage.setItem(KEYS.session, JSON.stringify(email)); } catch (e) {}
+    loadUserDataIntoStore(data);
+    reloadState();
+    updateUserUI();
+    updateSidebarProgress();
+  }
+
+  async function restoreSession() {
+    let email = null;
+    try { email = JSON.parse(localStorage.getItem(KEYS.session) || "null"); } catch (e) {}
+    if (!email) { updateUserUI(); return; }
+    try {
+      const user = await udb.get("users", email);
+      if (!user) throw new Error("hisob topilmadi");
+      currentUser = email;
+      loadUserDataIntoStore(await udb.get("data", email));
+      reloadState();
+    } catch (e) {
+      currentUser = null;
+      try { localStorage.removeItem(KEYS.session); } catch (err) {}
+    }
+    updateUserUI();
+  }
+
+  async function signup(email, password) {
+    email = normEmail(email);
+    if (await udb.get("users", email)) throw new Error("Bu email allaqachon ro'yxatdan o'tgan. Kirish bo'limidan foydalaning.");
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const hash = await hashPassword(password, salt);
+    await udb.put("users", { email, salt: b64(salt), hash, iterations: 150000, createdAt: Date.now() });
+    // mavjud (mehmon) progress yangi hisobga ko'chiriladi
+    const adopt = { email, ...userSnapshot(), updatedAt: Date.now() };
+    await udb.put("data", adopt);
+    await startSession(email, adopt);
+  }
+
+  async function login(email, password) {
+    email = normEmail(email);
+    const user = await udb.get("users", email);
+    const fail = () => new Error("Email yoki parol noto'g'ri.");
+    if (!user) { await new Promise((r) => setTimeout(r, 400)); throw fail(); }
+    if (!(await verifyPassword(user, password))) { await new Promise((r) => setTimeout(r, 400)); throw fail(); }
+    await startSession(email, await udb.get("data", email));
+  }
+
+  async function verifyPassword(user, password) {
+    const hash = await hashPassword(password, unb64(user.salt));
+    let diff = hash.length ^ user.hash.length;
+    for (let i = 0; i < hash.length; i++) diff |= hash.charCodeAt(i) ^ (user.hash.charCodeAt(i) || 0);
+    return diff === 0;
+  }
+
+  async function changePassword(current, next) {
+    const user = await udb.get("users", currentUser);
+    if (!user || !(await verifyPassword(user, current))) { await new Promise((r) => setTimeout(r, 400)); throw new Error("Joriy parol noto'g'ri."); }
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    await udb.put("users", { ...user, salt: b64(salt), hash: await hashPassword(next, salt), updatedAt: Date.now() });
+  }
+
+  async function deleteAccount(password) {
+    const email = currentUser;
+    const user = await udb.get("users", email);
+    if (!user || !(await verifyPassword(user, password))) { await new Promise((r) => setTimeout(r, 400)); throw new Error("Parol noto'g'ri."); }
+    clearTimeout(userSaveTimer); userSaveTimer = 0;
+    currentUser = null;
+    await udb.del("users", email);
+    await udb.del("data", email);
+    try { localStorage.removeItem(KEYS.session); } catch (e) {}
+    Object.values(USER_KEYS).forEach((k) => { try { localStorage.removeItem(k); } catch (e) {} });
+    reloadState();
+    updateUserUI();
+  }
+
+  async function logout() {
+    await saveUserData();
+    currentUser = null;
+    try { localStorage.removeItem(KEYS.session); } catch (e) {}
+    Object.values(USER_KEYS).forEach((k) => { try { localStorage.removeItem(k); } catch (e) {} });
+    reloadState();
+    setMenu(false);
+    updateUserUI();
+    location.hash = "#/";
+    route();
+  }
+
+  const pwInput = (name, autocomplete, placeholder = "") =>
+    `<span class="pw-wrap"><input type="password" name="${name}" autocomplete="${autocomplete}" ${placeholder ? `placeholder="${placeholder}" ` : ""}required /><button type="button" class="pw-toggle" data-pw-toggle aria-label="Parolni ko'rsatish" aria-pressed="false">${icon("eye")}</button></span>`;
+
+  function renderAuth() {
+    const signupMode = authMode === "signup";
+    view().innerHTML = `
+      <section class="auth reveal">
+        <div class="auth-card">
+          <a class="auth-back" href="#/">${icon("arrow-left", "ic ic-sm")} Bosh sahifa</a>
+          <span class="brand-mark">${icon("logo")}</span>
+          <h1>${signupMode ? "Hisob yaratish" : "Kirish"}</h1>
+          <div class="auth-tabs" role="tablist">
+            <button type="button" role="tab" data-auth-tab="login" aria-selected="${!signupMode}">Kirish</button>
+            <button type="button" role="tab" data-auth-tab="signup" aria-selected="${signupMode}">Ro'yxatdan o'tish</button>
+          </div>
+          <form id="auth-form" novalidate>
+            <label class="field"><span>Email</span>
+              <input type="email" name="email" autocomplete="email" placeholder="nom@gmail.com" required />
+            </label>
+            <label class="field"><span>Parol</span>
+              ${pwInput("password", signupMode ? "new-password" : "current-password", signupMode ? "Kamida 8 ta belgi" : "Parol")}
+            </label>
+            ${signupMode ? `<label class="field"><span>Parolni takrorlang</span>${pwInput("confirm", "new-password")}</label>` : ""}
+            <p class="auth-error" id="auth-error" role="alert"></p>
+            <button class="btn btn-primary btn-lg auth-submit" type="submit">${signupMode ? "Hisob yaratish" : "Kirish"}</button>
+          </form>
+        </div>
+      </section>`;
+    const first = $("#auth-form input"); if (first) first.focus({ preventScroll: true });
+  }
+
+  /* ---------------- Profil ---------------- */
+  function renderProfile() {
+    const subs = allSubs();
+    const st = statsFor(subs);
+    const iqAll = window.INTERVIEW_QUESTIONS || [];
+    const iqDone = iqAll.filter((q) => masteredIq.has(q.id)).length;
+    const scores = Object.values(quizScores || {}).filter((v) => Number.isFinite(v));
+    const scoreAvg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+
+    view().innerHTML = `
+      <section class="profile reveal">
+        <header class="pf-head">
+          <span class="pf-avatar" aria-hidden="true">${esc(currentUser[0].toUpperCase())}</span>
+          <div class="pf-id"><h1>${esc(currentUser)}</h1><p id="pf-since"> </p></div>
+          <button class="btn" data-action="logout">${icon("enter", "ic ic-sm")} Chiqish</button>
+        </header>
+
+        <ul class="pf-stats">
+          <li><b>${pct(st.progress)}<small>%</small></b><span>umumiy progress</span></li>
+          <li><b>${st.done}<small> / ${st.total}</small></b><span>ishonchli mavzu</span></li>
+          <li><b>${iqDone}<small> / ${iqAll.length}</small></b><span>o'zlashtirilgan savol</span></li>
+          <li><b>${scoreAvg === null ? "—" : scoreAvg + "%"}</b><span>o'rtacha test natijasi</span></li>
+        </ul>
+
+        <div class="pf-grid">
+          <section class="pf-card">
+            <h2>Parolni o'zgartirish</h2>
+            <form id="pw-form" novalidate>
+              <label class="field"><span>Joriy parol</span>${pwInput("current", "current-password")}</label>
+              <label class="field"><span>Yangi parol</span>${pwInput("next", "new-password", "Kamida 8 ta belgi")}</label>
+              <label class="field"><span>Yangi parolni takrorlang</span>${pwInput("confirm", "new-password")}</label>
+              <p class="auth-error pf-msg" role="alert"></p>
+              <button class="btn btn-primary" type="submit">Parolni yangilash</button>
+            </form>
+          </section>
+
+          <section class="pf-card pf-danger">
+            <h2>Hisobni o'chirish</h2>
+            <p>Hisob, progress, intervyu belgilari va test natijalari butunlay o'chadi. Qaytarib bo'lmaydi.</p>
+            <button class="btn pf-del-btn" type="button" data-del-toggle>${icon("trash", "ic ic-sm")} Hisobni o'chirish</button>
+            <form id="del-form" novalidate hidden>
+              <label class="field"><span>Tasdiqlash uchun parolni kiriting</span>${pwInput("password", "current-password")}</label>
+              <p class="auth-error pf-msg" role="alert"></p>
+              <div class="pf-del-row">
+                <button class="btn pf-del-btn pf-del-confirm" type="submit">Ha, butunlay o'chirish</button>
+                <button class="btn" type="button" data-del-toggle>Bekor qilish</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>`;
+    udb.get("users", currentUser).then((u) => {
+      const el = $("#pf-since");
+      if (el && u) el.textContent = `Hisob yaratilgan: ${new Date(u.createdAt).toISOString().slice(0, 10)}`;
+    }).catch(() => {});
+  }
+
+  document.addEventListener("click", (e) => {
+    const eye = e.target.closest("[data-pw-toggle]");
+    if (eye) {
+      const input = eye.parentElement.querySelector("input");
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      eye.setAttribute("aria-pressed", String(show));
+      eye.setAttribute("aria-label", show ? "Parolni yashirish" : "Parolni ko'rsatish");
+      eye.innerHTML = icon(show ? "eye-off" : "eye");
+      input.focus({ preventScroll: true });
+      return;
+    }
+    const del = e.target.closest("[data-del-toggle]");
+    if (del) {
+      const f = $("#del-form");
+      f.hidden = !f.hidden;
+      $(".pf-del-btn[data-del-toggle]").hidden = !f.hidden;
+      if (!f.hidden) f.password.focus({ preventScroll: true });
+      return;
+    }
+    const tab = e.target.closest("[data-auth-tab]");
+    if (tab && !currentUser) { authMode = tab.dataset.authTab; renderAuth(); }
+  });
+  document.addEventListener("submit", async (e) => {
+    if (e.target.id !== "auth-form") return;
+    e.preventDefault();
+    const f = e.target, err = $("#auth-error"), btn = $(".auth-submit", f);
+    const email = f.email.value, password = f.password.value;
+    const show = (msg) => { err.textContent = msg; };
+    show("");
+    if (!EMAIL_RE.test(normEmail(email))) return show("To'g'ri email kiriting (masalan: nom@gmail.com).");
+    if (authMode === "signup") {
+      if (password.length < 8) return show("Parol kamida 8 ta belgidan iborat bo'lsin.");
+      if (password !== f.confirm.value) return show("Parollar bir xil emas.");
+    } else if (!password) return show("Parolni kiriting.");
+    btn.disabled = true; btn.textContent = "Kuting…";
+    try {
+      await (authMode === "signup" ? signup(email, password) : login(email, password));
+      location.hash = "#/";
+      route();
+      toast(authMode === "signup" ? "Hisob yaratildi" : "Xush kelibsiz");
+    } catch (ex) {
+      show(ex.message || "Xatolik yuz berdi.");
+      btn.disabled = false; btn.textContent = authMode === "signup" ? "Hisob yaratish" : "Kirish";
+    }
+  });
+  document.addEventListener("submit", async (e) => {
+    const id = e.target.id;
+    if (id !== "pw-form" && id !== "del-form") return;
+    e.preventDefault();
+    const f = e.target, msg = $(".pf-msg", f), btn = $("button[type=submit]", f);
+    const show = (m) => { msg.textContent = m; };
+    show("");
+    if (id === "pw-form") {
+      if (!f.current.value) return show("Joriy parolni kiriting.");
+      if (f.next.value.length < 8) return show("Yangi parol kamida 8 ta belgidan iborat bo'lsin.");
+      if (f.next.value !== f.confirm.value) return show("Yangi parollar bir xil emas.");
+      if (f.next.value === f.current.value) return show("Yangi parol joriy paroldan farq qilsin.");
+    } else if (!f.password.value) return show("Parolni kiriting.");
+    btn.disabled = true;
+    try {
+      if (id === "pw-form") {
+        await changePassword(f.current.value, f.next.value);
+        f.reset();
+        $$(".pw-toggle[aria-pressed=true]", f).forEach((b) => b.click());
+        toast("Parol yangilandi");
+      } else {
+        await deleteAccount(f.password.value);
+        location.hash = "#/";
+        route();
+        toast("Hisob o'chirildi");
+        return;
+      }
+    } catch (ex) { show(ex.message || "Xatolik yuz berdi."); }
+    btn.disabled = false;
+  });
+  window.addEventListener("pagehide", () => { if (currentUser) saveUserData(); });
+  document.addEventListener("visibilitychange", () => { if (document.hidden && currentUser) saveUserData(); });
+
+  /* ------------------------------------------------------------------ *
    * Boot
    * ------------------------------------------------------------------ */
   bindChrome();
   bindPalette();
-  checkExistingHandle();
-  loadData().then(() => {
+  Promise.all([loadData(), restoreSession()]).then(() => {
     buildModel();
     buildIndex();
     renderSidebar();
