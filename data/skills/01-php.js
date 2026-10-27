@@ -9,6 +9,112 @@ registerSkill({
   "description": "PHP — Laravel poydevori. Senior darajada tilni faqat \"yozish\" emas, balki **tiplar tizimi**, xotira modeli (zval, refcount, GC), xatolarni boshqarish, xavfsizlik va runtime (PHP-FPM, OPcache, Octane) xatti-harakatini chuqur tushunish talab qilinadi. Framework'dagi ko'p \"sehr\" aslida Reflection, magic method va closure imkoniyatlariga tayanadi. Bo'lim PHP 8.5 gacha yangilangan.",
   "subskills": [
     {
+      "id": "1.42",
+      "title": "PHP nima (Home)",
+      "description": [
+        "PHP — server tomonida ishlaydigan, ochiq manbali skript tili: brauzer so'raydi, server kodni bajaradi va tayyor HTML/JSON qaytaradi. 1994 yilda Rasmus Lerdorf yaratgan, nomi **PHP: Hypertext Preprocessor**."
+      ],
+      "priority": "core",
+      "level": "Foundation",
+      "practicalTask": "PHP'ning so'rov-javob modelini o'z so'zingiz bilan chizma ko'rinishida tushuntiring va `index.php` yarating.",
+      "acceptanceCriteria": [
+        "PHP server tomonida ishlashini tushuntira oladi",
+        "PHP qayerlarda ishlatilishini sanay oladi",
+        "So'rov qanday yurishini (brauzer, server, PHP, javob) aytib bera oladi"
+      ],
+      "prerequisites": []
+    },
+    {
+      "id": "1.43",
+      "title": "PHP Intro: nimalar qila oladi",
+      "description": [
+        "PHP dinamik sahifa yaratadi, fayllar, forma, cookie, sessiya va ma'lumotlar bazasi bilan ishlaydi, kirishni nazorat qiladi, HTML/JSON chiqaradi va CLI'da ham ishlaydi."
+      ],
+      "priority": "core",
+      "level": "Foundation",
+      "practicalTask": "Forma qabul qilib, natijani faylga yozadigan va JSON qaytaradigan 3 ta kichik skript yozing.",
+      "acceptanceCriteria": [
+        "PHP imkoniyatlarini sanay oladi",
+        "Forma, fayl va JSON bilan oddiy skript yoza oladi",
+        "Web va CLI rejimlarini farqlay oladi"
+      ],
+      "prerequisites": [
+        "1.42"
+      ]
+    },
+    {
+      "id": "1.44",
+      "title": "PHP Install: o'rnatish va muhit",
+      "description": [
+        "PHP'ni XAMPP/Laragon/Herd, Linux paketi yoki Docker orqali o'rnatish; `php -v`, `php --ini`, `php -S` dev-server va Composer."
+      ],
+      "priority": "core",
+      "level": "Foundation",
+      "practicalTask": "Docker yoki lokal PHP bilan `php -S` serverini ishga tushiring va `phpinfo()` sahifasini oching.",
+      "acceptanceCriteria": [
+        "PHP versiyasi va kengaytmalarini tekshira oladi",
+        "Dev-server ishga tushira oladi",
+        "php.ini joyini topa oladi"
+      ],
+      "prerequisites": [
+        "1.42"
+      ]
+    },
+    {
+      "id": "1.45",
+      "title": "PHP Syntax",
+      "description": [
+        "PHP skripti `<?php` bilan boshlanadi, ifodalar `;` bilan tugaydi; o'zgaruvchilar harfga sezgir, kalit so'z va funksiya nomlari esa sezgir emas."
+      ],
+      "priority": "core",
+      "level": "Foundation",
+      "practicalTask": "HTML ichiga PHP bloklarini joylashtirib, ro'yxatni `foreach` bilan chiqaradigan sahifa yozing.",
+      "acceptanceCriteria": [
+        "PHP teglari va `;` qoidasini biladi",
+        "Case sensitivity qoidalarini biladi",
+        "Parse xatosini qator raqami bo'yicha topa oladi"
+      ],
+      "prerequisites": [
+        "1.44"
+      ]
+    },
+    {
+      "id": "1.46",
+      "title": "PHP Comments",
+      "description": [
+        "Bir qatorli izohlar `//` va `#`, ularning ahamiyati va yaxshi izoh yozish qoidalari; `#[` — attribute, izoh emas."
+      ],
+      "priority": "important",
+      "level": "Foundation",
+      "practicalTask": "Berilgan koddagi foydasiz izohlarni 'nima uchun' izohlariga almashtiring.",
+      "acceptanceCriteria": [
+        "Izoh turlarini biladi",
+        "`#[` va `#` farqini biladi",
+        "Yaxshi izoh qoidalarini qo'llay oladi"
+      ],
+      "prerequisites": [
+        "1.45"
+      ]
+    },
+    {
+      "id": "1.47",
+      "title": "PHP Multiline Comments",
+      "description": [
+        "Ko'p qatorli `/* */` izohlar, ichma-ich izoh yo'qligi va hujjat izohlari (`/** */` docblock) bilan `@param`/`@return`."
+      ],
+      "priority": "important",
+      "level": "Foundation",
+      "practicalTask": "Funksiyaga to'liq docblock yozing va PHPStan bilan tekshiring.",
+      "acceptanceCriteria": [
+        "`/* */` cheklovini biladi",
+        "DocBlock teglarini ishlata oladi",
+        "Docblock va tip e'loni o'rtasidagi farqni biladi"
+      ],
+      "prerequisites": [
+        "1.46"
+      ]
+    },
+    {
       "id": "1.1",
       "title": "Syntax va language fundamentals",
       "description": [
@@ -411,6 +517,241 @@ registerSkill({
       ],
       "prerequisites": [
         "7.6"
+      ]
+    },
+    {
+      "id": "1.48",
+      "title": "PHP Date and Time",
+      "description": [
+        "`date()`, `time()`, `mktime()`, `strtotime()`, `checkdate()`, format harflari va timezone sozlash; `DateTime` ga kirish."
+      ],
+      "priority": "important",
+      "level": "Junior",
+      "practicalTask": "Kishining yoshini va keyingi tug'ilgan kunigacha qolgan kunlarni hisoblaydigan funksiya yozing.",
+      "acceptanceCriteria": [
+        "Format harflarini to'g'ri ishlata oladi",
+        "Timezone sozlay oladi",
+        "`strtotime` xatosini (`false`) tekshiradi"
+      ],
+      "prerequisites": [
+        "1.45"
+      ]
+    },
+    {
+      "id": "1.49",
+      "title": "PHP Include",
+      "description": [
+        "`include`, `require`, `_once` shakllari, `__DIR__` bilan yo'l, qiymat qaytaruvchi fayllar va LFI xavfi."
+      ],
+      "priority": "core",
+      "level": "Junior",
+      "practicalTask": "Header/footer bo'laklari va `config.php` bilan oddiy shablon tuzing.",
+      "acceptanceCriteria": [
+        "include va require farqini biladi",
+        "`__DIR__` bilan yo'l bera oladi",
+        "LFI xavfini va oq ro'yxatni biladi"
+      ],
+      "prerequisites": [
+        "1.45"
+      ]
+    },
+    {
+      "id": "1.50",
+      "title": "PHP File Handling",
+      "description": [
+        "Fayl funksiyalari (`file_exists`, `filesize`, `readfile`, `unlink`), `fopen` rejimlari, ruxsatlar va path traversal xavfi."
+      ],
+      "priority": "core",
+      "level": "Junior",
+      "practicalTask": "Berilgan papkadagi fayllar ro'yxatini xavfsiz ko'rsatadigan skript yozing.",
+      "acceptanceCriteria": [
+        "fopen rejimlarini biladi",
+        "Ruxsat va path traversal xavfini biladi",
+        "Fayl mavjudligini tekshirib ishlaydi"
+      ],
+      "prerequisites": [
+        "1.49"
+      ]
+    },
+    {
+      "id": "1.51",
+      "title": "PHP File Open/Read",
+      "description": [
+        "`fopen`, `fgets`, `fread`, `feof`, `file_get_contents`, `file()`, `fgetcsv`; katta faylni qator-qator o'qish."
+      ],
+      "priority": "core",
+      "level": "Junior",
+      "practicalTask": "CSV fayldan foydalanuvchilarni o'qib, massivga yig'adigan skript yozing.",
+      "acceptanceCriteria": [
+        "Katta faylni stream bilan o'qiy oladi",
+        "fclose'ni unutmaydi",
+        "CSV'ni `fgetcsv` bilan o'qiy oladi"
+      ],
+      "prerequisites": [
+        "1.50"
+      ]
+    },
+    {
+      "id": "1.52",
+      "title": "PHP File Create/Write",
+      "description": [
+        "`fopen` `w/a/x/c` rejimlari, `fwrite`, `file_put_contents` (`FILE_APPEND`, `LOCK_EX`), atomik yozish va log yozish."
+      ],
+      "priority": "core",
+      "level": "Junior",
+      "practicalTask": "Qulf bilan ishlaydigan oddiy log yozuvchi funksiya tuzing.",
+      "acceptanceCriteria": [
+        "Rejimlar farqini biladi",
+        "LOCK_EX ni ishlata oladi",
+        "Atomik yozish g'oyasini tushuntira oladi"
+      ],
+      "prerequisites": [
+        "1.51"
+      ]
+    },
+    {
+      "id": "1.53",
+      "title": "PHP File Upload",
+      "description": [
+        "HTML forma `multipart/form-data`, `$_FILES`, `move_uploaded_file`, xato kodlari, hajm/MIME/kengaytma tekshiruvi va xavfsiz saqlash."
+      ],
+      "priority": "important",
+      "level": "Junior",
+      "practicalTask": "Rasm yuklash formasi yozing: hajm, MIME va noyob nom tekshiruvi bilan.",
+      "acceptanceCriteria": [
+        "`$_FILES` tuzilishini biladi",
+        "Haqiqiy MIME (`finfo`) tekshira oladi",
+        "Yuklash xavfsizligini biladi"
+      ],
+      "prerequisites": [
+        "1.52",
+        "1.49"
+      ]
+    },
+    {
+      "id": "1.54",
+      "title": "PHP Cookies",
+      "description": [
+        "`setcookie` (expires, path, secure, httponly, samesite), `$_COOKIE`, cookie o'chirish va xavfsizlik qoidalari."
+      ],
+      "priority": "important",
+      "level": "Junior",
+      "practicalTask": "Til tanlovini cookie'da saqlaydigan kichik funksiya yozing.",
+      "acceptanceCriteria": [
+        "Cookie atributlarini biladi",
+        "Cookie keyingi so'rovda ko'rinishini biladi",
+        "Cookie'ga maxfiy ma'lumot yozmaydi"
+      ],
+      "prerequisites": [
+        "1.45"
+      ]
+    },
+    {
+      "id": "1.55",
+      "title": "PHP Sessions",
+      "description": [
+        "`session_start`, `$_SESSION`, sessiya ID cookie'si, `session_regenerate_id`, logout, xavfsizlik sozlamalari va qulflash."
+      ],
+      "priority": "core",
+      "level": "Junior",
+      "practicalTask": "Login/logout va himoyalangan sahifa bilan sessiya asosidagi oddiy autentifikatsiya yozing.",
+      "acceptanceCriteria": [
+        "Session va cookie farqini biladi",
+        "Session fixation himoyasini qo'llaydi",
+        "Logout'ni to'g'ri bajaradi"
+      ],
+      "prerequisites": [
+        "1.54"
+      ]
+    },
+    {
+      "id": "1.56",
+      "title": "PHP Filters",
+      "description": [
+        "`filter_var`, `filter_input`, `FILTER_VALIDATE_*` va `FILTER_SANITIZE_*`; validatsiya va sanitizatsiya farqi."
+      ],
+      "priority": "important",
+      "level": "Junior",
+      "practicalTask": "Email, yosh va URL ni filtrlar bilan tekshiradigan forma yozing.",
+      "acceptanceCriteria": [
+        "Validatsiya va sanitizatsiya farqini biladi",
+        "`false` va `0` ni adashtirmaydi",
+        "FILTER_SANITIZE_STRING eskirganini biladi"
+      ],
+      "prerequisites": [
+        "1.45"
+      ]
+    },
+    {
+      "id": "1.57",
+      "title": "PHP Filters Advanced",
+      "description": [
+        "Filter `options` va `flags`, `FILTER_CALLBACK`, `filter_var_array`, `filter_input_array`, IP oralig'i flaglari."
+      ],
+      "priority": "optional",
+      "level": "Junior",
+      "practicalTask": "Forma maydonlarini `filter_var_array` bilan bir chaqiruvda tekshiring.",
+      "acceptanceCriteria": [
+        "Options va flags'ni ishlata oladi",
+        "filter_var_array'ni qo'llay oladi",
+        "FILTER_FLAG_NO_PRIV_RANGE ni biladi"
+      ],
+      "prerequisites": [
+        "1.56"
+      ]
+    },
+    {
+      "id": "1.58",
+      "title": "PHP Callback Functions",
+      "description": [
+        "Callable turlari (satr, massiv, closure, first-class callable), `array_map/filter/usort`, `call_user_func`, `is_callable`."
+      ],
+      "priority": "important",
+      "level": "Junior",
+      "practicalTask": "`callable` qabul qiluvchi o'z `transform()` funksiyangizni yozing va 4 turdagi callable bilan sinang.",
+      "acceptanceCriteria": [
+        "Callable turlarini sanay oladi",
+        "Ichki funksiyalarda callback ishlata oladi",
+        "`callable` tipini to'g'ri qo'llaydi"
+      ],
+      "prerequisites": [
+        "1.8"
+      ]
+    },
+    {
+      "id": "1.59",
+      "title": "PHP JSON",
+      "description": [
+        "`json_encode`, `json_decode`, bayroqlar (`JSON_PRETTY_PRINT`, `JSON_UNESCAPED_UNICODE`, `JSON_THROW_ON_ERROR`), `JsonSerializable` va API javobi."
+      ],
+      "priority": "core",
+      "level": "Junior",
+      "practicalTask": "JSON qabul qilib, JSON javob qaytaradigan oddiy endpoint yozing.",
+      "acceptanceCriteria": [
+        "Encode/decode'ni xatolar bilan ishlata oladi",
+        "JsonSerializable'ni biladi",
+        "JSON cheklovlarini (katta son, UTF-8) biladi"
+      ],
+      "prerequisites": [
+        "1.28"
+      ]
+    },
+    {
+      "id": "1.60",
+      "title": "PHP Exceptions",
+      "description": [
+        "`try/catch/finally`, `throw`, exception metodlari, o'z istisnolari, ko'p turni ushlash, `previous` va `set_exception_handler`."
+      ],
+      "priority": "core",
+      "level": "Junior",
+      "practicalTask": "Fayl import qiluvchi funksiyada o'z istisnolari bilan xatolarni boshqaring.",
+      "acceptanceCriteria": [
+        "try/catch/finally'ni to'g'ri ishlatadi",
+        "O'z istisnolarini yaratadi",
+        "Error va Exception farqini biladi"
+      ],
+      "prerequisites": [
+        "1.45"
       ]
     },
     {
