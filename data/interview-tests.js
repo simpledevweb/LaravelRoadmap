@@ -10,22 +10,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "true, chunki 'admin' satri son bilan solishtirilganda 0 ga aylanadi"
-      },
-      {
-        "key": "B",
         "text": "false, chunki PHP 8 da son satrga o'giriladi ('0' == 'admin')"
       },
       {
+        "key": "B",
+        "text": "TypeError tashlaydi, chunki PHP 8 da son va satrni == bilan solishtirish taqiqlangan"
+      },
+      {
         "key": "C",
-        "text": "Fatal Error: Type mismatch"
+        "text": "true, chunki PHP 8 da ham 'admin' satri songa o'girilganda 0 ga teng bo'ladi"
       },
       {
         "key": "D",
-        "text": "null va E_WARNING ogohlantirishi"
+        "text": "null qaytaradi, chunki raqamli bo'lmagan satr bilan solishtirishda natija aniqlanmagan"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "PHP 8 da Type Juggling mantiqi o'zgardi: son bilan raqamli bo'lmagan satr solishtirilganda endi son satrga o'giriladi ('0' == 'admin' -> false). PHP 7 da esa satr 0 ga aylanib true berar edi.",
     "level": "junior"
   },
@@ -37,22 +37,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Barcha qatorlarni diskda vaqtinchalik SQLite faylga yozib qo'yadi"
+        "text": "Ma'lumotlarni sikl boshlanishida bir marta siqib xotirada saqlaydi va har safar to'liq ochadi"
       },
       {
         "key": "B",
-        "text": "Faylni siqib (gzip qilib) xotirada saqlaydi"
+        "text": "Barcha qatorlarni oldindan bitta massivga yig'ib, keyin ularni parallel oqimlarda qayta ishlaydi"
       },
       {
         "key": "C",
-        "text": "Butun to'plamni RAM ga yuklamaydi, har bir qatorni navbati bilan xotiraga olib qayta ishlaydi"
+        "text": "Natijalarni diskdagi vaqtinchalik faylga yozib, qayta ishlashni to'liq operativ xotirasiz bajaradi"
       },
       {
         "key": "D",
-        "text": "PHP-FPM xotira limitini avtomatik ravishda 2 barobar oshiradi"
+        "text": "Butun to'plamni RAM ga yuklamaydi, har bir qatorni navbati bilan xotiraga olib qayta ishlaydi"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "Generatorlar massiv kabi butun ma'lumotlar to'plamini RAM ga yuklamaydi, balki faqat joriy bitta elementni ushlab, qolganlarini navbati bilan generatsiya qiladi. Bu 100MB+ fayllarni 5MB RAM bilan o'qish imkonini beradi.",
     "level": "middle"
   },
@@ -64,22 +64,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "self:: voris sinfni oladi, static:: esa metod yozilgan dastlabki sinfni ko'rsatadi"
-      },
-      {
-        "key": "B",
         "text": "static:: runtime da chaqirilgan yakuniy voris sinfni ko'rsatadi, self:: esa metod jismonan qaysi sinfda yozilgan bo'lsa o'shani oladi"
       },
       {
+        "key": "B",
+        "text": "static:: faqat final sinflarda ishlaydi, self:: esa abstract va interfeys metodlarida qo'llaniladi"
+      },
+      {
         "key": "C",
-        "text": "Ikkalasi mutlaqo bir xil ishlaydi, static:: faqat PHP 8 da qo'shilgan yangi sinonim"
+        "text": "Ikkalasi bir xil ishlaydi, faqat static:: statik xususiyatlar bilan, self:: esa oddiy metodlar bilan ishlatiladi (merosda farq bermaydi)"
       },
       {
         "key": "D",
-        "text": "self:: static xususiyatlar uchun, static:: esa oddiy metodlar uchun ishlatiladi"
+        "text": "self:: runtime da chaqirilgan voris sinfni ko'rsatadi, static:: esa metod yozilgan sinfga qat'iy bog'lanadi"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "self:: compile-time da metod qaysi sinf ichida e'lon qilingan bo'lsa o'sha sinfga qat'iy bog'lanadi. static:: esa runtime da metodni qaysi voris sinf chaqirayotgan bo'lsa, o'shani dinamik aniqlaydi (Late Static Binding).",
     "level": "middle"
   },
@@ -91,22 +91,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "WeakMap kalit sifatida faqat sonli satrlarni qabul qiladi"
+        "text": "WeakMap kalit ob'ektni clone qilib saqlaydi, shuning uchun asl ob'ekt o'zgarsa xaritadagi nusxa o'zgarmaydi"
       },
       {
         "key": "B",
-        "text": "WeakMap dagi ob'ektga boshqa joyda havola qolmasa, Garbage Collector uni o'chirganda xaritadan ham avtomatik o'chadi"
+        "text": "SplObjectStorage dagi ob'ektlarni GC o'chiradi, WeakMap esa ularni dastur oxirigacha ushlab turadi"
       },
       {
         "key": "C",
-        "text": "WeakMap xotirada saqlanmaydi, diskdagi kesh fayliga yoziladi"
+        "text": "WeakMap faqat string kalitlarni qabul qiladi, SplObjectStorage esa har qanday tipdagi kalitni saqlay oladi"
       },
       {
         "key": "D",
-        "text": "SplObjectStorage dan farqli o'laroq unga foreach ishlatib bo'lmaydi"
+        "text": "WeakMap dagi ob'ektga boshqa joyda havola qolmasa, Garbage Collector uni o'chirganda xaritadan ham avtomatik o'chadi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "WeakMap ob'ektlarga 'kuchsiz havola' (weak reference) bilan bog'lanadi. Agar ob'ekt tashqi kodda yo'q qilinsa, Garbage Collector uni tozalaydi va WeakMap dan ham avtomatik o'chadi. Bu Memory Leak'larning oldini oladi.",
     "level": "senior"
   },
@@ -118,22 +118,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "$b = $a; tenglashtirilgan zahoti darhol xotiradan yangi joy olinadi"
+        "text": "Massiv o'zgaruvchiga o'zlashtirilgan zahoti ($b = $a), nusxa yaratilishi bilan to'liq nusxa ajratiladi"
       },
       {
         "key": "B",
-        "text": "Hech qachon yangi xotira ajratilmaydi, ikkalasi hamisha bir xil bo'ladi"
+        "text": "Massiv elementlari o'qilganda (foreach yoki indeks orqali), chunki PHP har safar o'qish uchun nusxa tayyorlaydi"
       },
       {
         "key": "C",
-        "text": "Faqatgina nusxalangan massivlardan biriga yangi element qo'shilganda yoki qiymat o'zgartirilganda (yozish sodir bo'lganda)"
+        "text": "Massiv funksiyaga argument sifatida uzatilganda har doim yangi xotira ajratiladi, o'zgartirilgan bo'lmasa ham"
       },
       {
         "key": "D",
-        "text": "Funksiya o'z ishini yakunlaganda"
+        "text": "Faqatgina nusxalangan massivlardan biriga yangi element qo'shilganda yoki qiymat o'zgartirilganda (yozish sodir bo'lganda)"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "COW (Copy-on-Write) printsipiga ko'ra, $b = $a qilinganda ikkala o'zgaruvchi bitta xotira manziliga ko'rsatib turadi. Faqat ulardan biriga yozish (modifikatsiya) amalga oshirilgandagina PHP xotirada alohida nusxa yaratadi.",
     "level": "middle"
   },
@@ -146,22 +146,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat fayllarni diskda shifrlash uchun ishlatiladi"
+        "text": "`json_validate()` obyektlarni massivga emas, stdClass'ga aylantirib saqlaydi, bu esa assotsiativ massivga qaraganda kamroq xotira oladi, shu sabab katta JSON larda ham tez ishlaydi"
       },
       {
         "key": "B",
-        "text": "`json_validate()` satrni faqat sintaktik tahlil qiladi va xotirada hech qanday PHP massiv yoki obyekt daraxtini (zval) yaratmaydi, natijada katta JSON ma'lumotlarda O(1) minimal xotira sarflaydi"
+        "text": "`json_validate()` natijani keshlab qo'yadi, shu sabab keyingi `json_decode()` chaqiruvi xotira sarflamay, birdan ishlaydi"
       },
       {
         "key": "C",
-        "text": "`json_validate()` noto'g'ri JSON kelganda darhol fatal xatolik tashlaydi"
+        "text": "`json_validate()` JSON'ni faqat 1 MB bo'laklarga bo'lib o'qiydi, shu tufayli har qanday hajm bir xil tezlikda tekshiriladi"
       },
       {
         "key": "D",
-        "text": "Ular o'rtasida farq yo'q, faqat funksiya nomi o'zgargan"
+        "text": "`json_validate()` satrni faqat sintaktik tahlil qiladi va xotirada hech qanday PHP massiv yoki obyekt daraxtini (zval) yaratmaydi, natijada katta JSON ma'lumotlarda O(1) minimal xotira sarflaydi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Ilgari JSON validligini tekshirish uchun json_decode($string) qilinardi, bu esa gigabaytlab xotira yeb qo'yishi mumkin edi. PHP 8.3 da kiritilgan json_validate() hech qanday xotira ajratmasdan faqat C darajasida JSON sintaksisini juda tez tekshiradi."
   },
   {
@@ -172,22 +172,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Traitlar o'rnini"
+        "text": "Interfeys konstantalari orqali berilgan sinf metama'lumotlarining (masalan, const ROUTE = '/api')"
       },
       {
         "key": "B",
-        "text": "Sinflardagi construct metodlarining o'rnini"
+        "text": "Trait'lar yordamida sinfga qo'shiladigan yordamchi metodlar mexanizmining"
       },
       {
         "key": "C",
-        "text": "DocBlock izohlaridagi norasmiy annotatsiyalarning (masalan, /** @Route('/api') */)"
+        "text": "`@deprecated` va `@todo` kabi kod tahlilchilari uchun mo'ljallangan izohlar tizimining"
       },
       {
         "key": "D",
-        "text": "Interface larning"
+        "text": "DocBlock izohlaridagi norasmiy annotatsiyalarning (masalan, /** @Route('/api') */)"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "PHP 8 Attributes matnli DocBlock izohlari o'rniga kelgan birinchi toifali (first-class) tildagi metama'lumotlar tizimidir. Ular Reflection API orqali tez, xatosiz va tiplashtirilgan holda o'qiladi.",
     "level": "senior"
   },
@@ -199,22 +199,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "false, chunki satr ichida belgi mavjud"
+        "text": "false, chunki empty() faqat null qiymatni bo'sh deydi"
       },
       {
         "key": "B",
-        "text": "true, chunki '0' satri falsy qiymat hisoblanadi"
+        "text": "TypeError, chunki empty() satrlar bilan ishlamaydi"
       },
       {
         "key": "C",
-        "text": "TypeError xatosi"
+        "text": "false, chunki '0' bo'sh bo'lmagan satr hisoblanadi"
       },
       {
         "key": "D",
-        "text": "null"
+        "text": "true, chunki '0' satri falsy qiymat hisoblanadi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "PHP da empty() funksiyasi '' (bo'sh satr), 0, null, false, [] bilan bir qatorda '0' (string nol) uchun ham true qaytaradi. Bu ko'pincha mahsulot soni 0 bo'lganda xatolarga sabab bo'ladi.",
     "level": "junior"
   },
@@ -227,22 +227,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Constructor argumentlariga ko'rinish modifikatori (public/protected/private) berilsa, PHP xususiyatni avtomatik e'lon qiladi va qiymatini o'zlashtiradi"
+        "text": "Sintaksis faqat `readonly` xususiyatlar bilan ishlaydi, oddiy public yoki private xususiyatlar uchun qo'llab-quvvatlanmaydi"
       },
       {
         "key": "B",
-        "text": "U faqat private xususiyatlar uchun ishlaydi, public yoki protected xususiyatlar uchun ishlamaydi"
+        "text": "Promotion faqat abstract klasslarda ishlaydi va xususiyatlarni avtomatik static deb e'lon qiladi"
       },
       {
         "key": "C",
-        "text": "Bu sintaksis abstract klasslarda va interfeyslarda ham ishlatilishi shart"
+        "text": "Constructor argumentlariga ko'rinish modifikatori (public/protected/private) berilsa, PHP xususiyatni avtomatik e'lon qiladi va qiymatini o'zlashtiradi"
       },
       {
         "key": "D",
-        "text": "Promotion ishlatilganda konstruktor tanasida (body) hech qanday boshqa kod yozish mumkin emas"
+        "text": "Constructor argumentiga `public` yozilsa, xususiyat e'lon qilinadi, lekin qiymatni konstruktor ichida `$this->x = $x` bilan qo'lda berish majburiy"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "PHP 8.0 Constructor Property Promotion orqali argument oldiga public, protected yoki private qo'yilganda, xususiyat klass sathida avtomatik ravishda e'lon qilinadi va kelgan argument qiymati unga beriladi. Bu ortiqcha boilerplate kodni (property e'lon qilish va $this->x = $x yozishni) yo'qotadi."
   },
   {
@@ -254,22 +254,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Butun loyihaning barcha fayllariga global ta'sir qiladi"
+        "text": "Butun loyiha bo'ylab, ya'ni barcha include qilingan fayllardagi funksiya chaqiruvlariga qat'iy tip tekshiruvini qo'llaydi"
       },
       {
         "key": "B",
-        "text": "Faqat ushbu direktiva yozilgan faylning ichidagi funksiya chaqiruvlariga (caller file) qat'iy tip tekshiruvini qo'llaydi"
+        "text": "Faqat funksiya e'lon qilingan (callee) fayldagi parametr tiplarini qat'iy tekshiradi, chaqiruvchi faylga ta'sir qilmaydi"
       },
       {
         "key": "C",
-        "text": "Faqat klass metodlariga ta'sir qiladi, oddiy funksiyalarga ta'sir qilmaydi"
+        "text": "Faqat ushbu direktiva yozilgan faylning ichidagi funksiya chaqiruvlariga (caller file) qat'iy tip tekshiruvini qo'llaydi"
       },
       {
         "key": "D",
-        "text": "PHP runtime da xotirani 2 baravar tejash rejimini yoqadi"
+        "text": "Faqat qaytariladigan qiymat tiplariga ta'sir qiladi, argument tiplari esa avvalgidek avtomatik o'giriladi"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "declare(strict_types=1); fayl darajasida (file-level) ishlaydi va faqat shu fayldan turib amalga oshirilgan funksiya yoki metod chaqiruvlariga ta'sir qiladi. Ya'ni tekshiruv funksiya e'lon qilingan faylda emas, aynan chaqiruvchi faylda yoqilgan bo'lishi kerak."
   },
   {
@@ -281,7 +281,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "match faqat sonlarni solishtiradi, switch esa satrlarni solishtiradi"
+        "text": "match bir nechta shartni vergul bilan yozishga ruxsat bermaydi, switch esa bunga imkon beradi"
       },
       {
         "key": "B",
@@ -289,11 +289,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "switch doimo tezroq ishlaydi, chunki match JIT tomonidan optimizatsiya qilinmaydi"
+        "text": "match faqat butun sonlar bilan ishlaydi, switch esa har qanday tipdagi qiymatlarni solishtira oladi"
       },
       {
         "key": "D",
-        "text": "match da default holatini ko'rsatish mumkin emas, switch da esa mumkin"
+        "text": "match loose (==) tekshiruv ishlatadi, qiymat qaytarmaydi va har bir tarmoq oxirida break talab qiladi"
       }
     ],
     "correct": "B",
@@ -308,22 +308,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Readonly property faqat bitta marta initsializatsiya qilinadi va unga doimo tip (type) ko'rsatilishi shart"
+        "text": "Readonly property faqat statik xususiyatlar uchun ishlaydi va uning boshlang'ich qiymati e'lon paytida berilishi shart"
       },
       {
         "key": "B",
-        "text": "Readonly property ga boshlang'ich qiymatni to'g'ridan-to'g'ri klassda belgilash mumkin: public readonly int $id = 1;"
+        "text": "Readonly property faqat bitta marta initsializatsiya qilinadi va unga doimo tip (type) ko'rsatilishi shart"
       },
       {
         "key": "C",
-        "text": "Readonly property qiymatini klass tashqarisidan istalgan paytda o'zgartirish mumkin"
+        "text": "Readonly property tipsiz e'lon qilinishi mumkin va qiymatini sinf ichidagi istalgan metodda qayta o'zgartirsa bo'ladi"
       },
       {
         "key": "D",
-        "text": "Readonly property larni private qilib e'lon qilib bo'lmaydi"
+        "text": "Readonly property'ga sinfdan tashqarida, faqat public bo'lsa qiymat berish mumkin, ichkarida esa taqiqlangan"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Readonly xususiyatlar tipi ko'rsatilgan (typed) bo'lishi shart va ular faqat bir marta o'z klassi doirasida initsializatsiya qilinadi. Boshlang'ich qiymat bilan e'lon qilish mumkin emas, chunki bu holda uning qiymatini konstruktorda ham o'zgartirib bo'lmay qolardi."
   },
   {
@@ -335,22 +335,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Backed enumlar faqat `int` yoki `string` tipidagi qiymatlarga ega bo'lishi mumkin"
+        "text": "Backed enum interfeysni implement qila olmaydi va unda konstantalar e'lon qilib bo'lmaydi"
       },
       {
         "key": "B",
-        "text": "Enum holatlariga (cases) float yoki array qiymatlarni ham biriktirish mumkin"
+        "text": "Backed enumlar `float` va `bool` qiymatlarni ham qabul qiladi, lekin metodlarga ega bo'la olmaydi"
       },
       {
         "key": "C",
-        "text": "Enum klass bo'lmagani uchun unda metodlar va interfeyslar ishlatib bo'lmaydi"
+        "text": "Backed enumlar faqat `int` yoki `string` tipidagi qiymatlarga ega bo'lishi mumkin"
       },
       {
         "key": "D",
-        "text": "Status::from('invalid') mavjud bo'lmagan qiymat uchun null qaytaradi"
+        "text": "Backed enum qiymatlari har bir case uchun bir xil bo'lishi mumkin va `new` operatori bilan yaratiladi"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "PHP da Backed Enum lar faqat int yoki string tipidagi qiymat (scalar value) qabul qila oladi. Undan tashqari enumlar metodlarga ega bo'lishi va interfeyslarni implement qilishi mumkin. from() metodi topilmasa ValueError tashlaydi, tryFrom() esa null qaytaradi."
   },
   {
@@ -362,7 +362,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Ko'p oqimli (multi-threading) parallel hisoblashlarni CPU yadrolariga taqsimlash"
+        "text": "Alohida PHP jarayonlarini (fork) yaratib, ular o'rtasida xotirani avtomatik ulashadigan multiprocessing tizimi"
       },
       {
         "key": "B",
@@ -370,11 +370,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Fayllarni siqish (zip/gzip) jarayonini tezlashtiruvchi C darajasidagi kengaytma"
+        "text": "Faqat generator funksiyalar ichida ishlaydi va yield orqali qiymat qaytaradigan stacksiz (stackless) korutinalarni ta'minlaydi (faqat CLI rejimida)"
       },
       {
         "key": "D",
-        "text": "SQL so'rovlarini avtomatik keshlovchi ichki PHP xotira mexanizmi"
+        "text": "Operatsion tizim darajasidagi parallel oqimlar (threads) bo'lib, bir vaqtda bir nechta CPU yadrosida kodni bajaradi"
       }
     ],
     "correct": "B",
@@ -393,15 +393,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Faqat database so'rovlarida null qiymatlarni 0 ga almashtiradi"
+        "text": "Agar zanjirdagi obyekt null bo'lsa, undagi metodni chaqirmasdan bo'sh satr ('') qaytaradi va xatolik ham chiqarmaydi"
       },
       {
         "key": "C",
-        "text": "Obyektning barcha private xususiyatlarini avtomatik null ga tenglashtiradi"
+        "text": "Obyektning xususiyatiga faqat o'qish uchun kirishga ruxsat beradi, yozishga urinilsa Error tashlaydi"
       },
       {
         "key": "D",
-        "text": "Tenglikni tekshirish uchun `=== null` o'rniga ishlatiladi"
+        "text": "Qiymat null bo'lsa, uni berilgan standart qiymat bilan almashtiradi (`??` kabi), obyekt bo'lsa metodni chaqiradi"
       }
     ],
     "correct": "A",
@@ -416,22 +416,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Anonim funksiyani ma'lum bir obyekt doirasiga ($this) va klass scope'iga bog'lab, hatto private a'zolariga kirish imkonini beradi"
+        "text": "Anonim funksiyaning natijasini keshlab, keyingi chaqiruvlarda qayta hisoblamasdan qaytarishni ta'minlaydi"
       },
       {
         "key": "B",
-        "text": "Faqat ma'lumotlar bazasi tranzaksiyalarini commit qilish uchun"
+        "text": "Anonim funksiyani boshqa PHP jarayoniga (process) bog'lab, uni parallel ravishda ishga tushirish imkonini beradi (alohida jarayonda)"
       },
       {
         "key": "C",
-        "text": "Funksiyani JSON formatiga serializatsiya qilish uchun"
+        "text": "Funksiya argumentlarini oldindan belgilab, qisman qo'llangan (partial application) yangi callable qaytaradi"
       },
       {
         "key": "D",
-        "text": "Closure ni global o'zgaruvchiga aylantirish uchun"
+        "text": "Anonim funksiyani ma'lum bir obyekt doirasiga ($this) va klass scope'iga bog'lab, hatto private a'zolariga kirish imkonini beradi"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Closure::bind() yoki $closure->bindTo($newthis, $newscope) anonim funksiyaning ijro doirasi ($this) va ko'rinish chegarasini (scope) o'zgartiradi. Agar scope sifatida klass nomi yoki uning obyekti berilsa, ushbu closure obyektning private va protected xususiyatlarini to'g'ridan-to'g'ri o'qiy oladi yoki o'zgartira oladi."
   },
   {
@@ -443,22 +443,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`override`"
+        "text": "`use` va `extends`"
       },
       {
         "key": "B",
-        "text": "`insteadof` va `as`"
+        "text": "`parent` va `self`"
       },
       {
         "key": "C",
-        "text": "`resolve`"
+        "text": "`insteadof` va `as`"
       },
       {
         "key": "D",
-        "text": "`implements`"
+        "text": "`final` va `static`"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Agar ikkita Trait da bir xil nomli metod bo'lsa, PHP fatal error beradi. Buni bartaraf qilish uchun use TraitA, TraitB { TraitA::method insteadof TraitB; TraitB::method as aliasMethod; } sintaksisi qo'llaniladi."
   },
   {
@@ -474,15 +474,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Parametrlar ham, qaytarish tipi ham faqat aynan bir xil bo'lishi shart"
+        "text": "Parametrlar covariant (torroq yoki teng), qaytarish tipi contravariant (kengroq yoki teng) bo'lishi kerak"
       },
       {
         "key": "C",
-        "text": "Parametrlar covariant, qaytarish tipi esa contravariant bo'lishi lozim"
+        "text": "Parametrlar ham, qaytarish tipi ham ota klassdagi bilan aynan bir xil bo'lishi shart, o'zgartirib bo'lmaydi"
       },
       {
         "key": "D",
-        "text": "Bola klass xohlagan tipni qabul qilib, xohlagan tipni qaytarishi mumkin"
+        "text": "Parametrlar ham, qaytarish tipi ham covariant (torroq) bo'lishi kerak, chunki bola klass ixtisoslashgan"
       }
     ],
     "correct": "A",
@@ -497,22 +497,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Obyekt funksiya kabi chaqirilganda ($obj()) avtomatik ishga tushadi"
+        "text": "Mavjud bo'lmagan metod chaqirilganda xatoning o'rniga ishga tushadi"
       },
       {
         "key": "B",
-        "text": "Obyekt echo yoki print qilinganda string qaytaradi"
+        "text": "Obyekt yaratilgandan so'ng, konstruktordan keyin darhol ishga tushadi"
       },
       {
         "key": "C",
-        "text": "Mavjud bo'lmagan statik metod chaqirilganda ishlaydi"
+        "text": "Obyekt funksiya kabi chaqirilganda ($obj()) avtomatik ishga tushadi"
       },
       {
         "key": "D",
-        "text": "Obyekt xotiradan o'chirilayotganda chaqiriladi"
+        "text": "Obyekt string sifatida chiqarilganda (echo $obj) avtomatik chaqiriladi"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Agar klass ichida __invoke() metodi yozilsa, ushbu klass instansiyasi 'callable' ga aylanadi va uni xuddi oddiy funksiya kabi $instance($args) ko'rinishida chaqirish mumkin (Single Action Controller yoki Invokable Command larda keng qo'llaniladi)."
   },
   {
@@ -524,22 +524,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "PHP da faqat Reference Counting ishlatiladi, shuning uchun aylanma bog'liqlikdagi obyektlar hech qachon tozalanmaydi"
+        "text": "Reference counting yetarli: refcount nolga tushmasa ham skript tugaganda OS xotirani o'zi tozalaydi, shuning uchun sikllar alohida hal qilinmaydi"
       },
       {
         "key": "B",
-        "text": "Concurrent Cycle Collection algoritmi orqali zval ranglari (binafsha, kulrang, qora, oq) bo'yicha tahlil qilinib, sikllar aniqlanadi va xotira bo'shatiladi"
+        "text": "Mark-and-Sweep algoritmi bilan butun heap har so'rov oxirida to'liq skanerlanib, erishib bo'lmaydigan ob'ektlar o'chiriladi"
       },
       {
         "key": "C",
-        "text": "Har bir so'rov (request) tugashida butun server o'chirib yoqiladi"
+        "text": "Concurrent Cycle Collection algoritmi orqali zval ranglari (binafsha, kulrang, qora, oq) bo'yicha tahlil qilinib, sikllar aniqlanadi va xotira bo'shatiladi"
       },
       {
         "key": "D",
-        "text": "Aylanma bog'liqlik vujudga kelganda PHP darhol Fatal Memory Error beradi"
+        "text": "Har bir ob'ekt yaratilganda PHP uni alohida oqimdagi (thread) kuzatuvchiga ulaydi va u sikllarni real vaqtda uzib turadi"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "PHP 5.3 dan boshlab Goldman va Bacon tomonidan ishlab chiqilgan Cyclic Garbage Collector qo'llaniladi. U refcount kamayganda ehtimoliy sikllarni 'binafsha' buferga joylaydi va bufer to'lganda (10,000 ta ob'ekt) simulyatsiya orqali sikllarni aniqlab (oq tugunlarni) xotiradan tozalaydi."
   },
   {
@@ -555,15 +555,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Klass obyekti yaratilishini taqiqlab, faqat statik metodlarni qoldirish uchun"
+        "text": "Klass yoki metodning xotirada faqat bitta nusxada yaratilishini (Singleton) ta'minlash uchun"
       },
       {
         "key": "C",
-        "text": "Klass ichidagi barcha o'zgaruvchilarni o'zgarmas (const) qilish uchun"
+        "text": "Metodni faqat o'z klassi ichidan chaqirishga ruxsat berib, tashqi kod uchun ko'rinmas qilish uchun"
       },
       {
         "key": "D",
-        "text": "Faylni interpretatsiyadan to'xtatish uchun"
+        "text": "Klass nusxasini yaratishni taqiqlab, faqat statik metodlar orqali foydalanishga ruxsat berish uchun"
       }
     ],
     "correct": "A",
@@ -578,22 +578,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`new class { ... }` orqali bir martalik sodda obyektlar yaratish mumkin bo'lib, u interfeyslarni implement qilishi va boshqa klasslardan meros olishi mumkin"
+        "text": "Anonim klass nomga ega emas, shuning uchun `extends` ishlatib bo'lmaydi va u faqat ichma-ich massivlarda qo'llanadi"
       },
       {
         "key": "B",
-        "text": "Anonim klass konstruktorga ega bo'lishi mumkin emas"
+        "text": "`new class { ... }` orqali bir martalik sodda obyektlar yaratish mumkin bo'lib, u interfeyslarni implement qilishi va boshqa klasslardan meros olishi mumkin"
       },
       {
         "key": "C",
-        "text": "Anonim klasslar faqat test yozishda ishlatiladi, asosiy kodda PHP SyntaxError beradi"
+        "text": "`new class { ... }` orqali yaratilgan obyekt faqat bitta metodga ega bo'lishi mumkin va interfeyslarni implement qila olmaydi, uni qayta ishlatib ham bo'lmaydi"
       },
       {
         "key": "D",
-        "text": "Anonim klasslar xotiradan hech qachon o'chirilmaydi"
+        "text": "Anonim klass avtomatik Singleton bo'lib, har bir `new class` chaqiruvi bir xil obyektni qaytaradi"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "PHP 7 da kiritilgan new class($args) implements SomeInterface { ... } sintaksisi bir martalik ishlatiladigan sodda obyektlar, mocklar yoki strategiyalar yaratishda alohida .php fayl ochib o'tirmasdan foydalanish uchun juda qulaydir."
   },
   {
@@ -605,22 +605,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Boshqa bir Generator yoki massivdan barcha qiymatlarni delegatsiya asosida ketma-ket chiqarib beradi"
+        "text": "Generator ichida ishga tushgan xatoni ushlab, uni tashqi chaqiruvchiga o'tkazmasdan jim bostiradi"
       },
       {
         "key": "B",
-        "text": "Faqat tashqi API dan kelgan javoblarni qabul qiladi"
+        "text": "Boshqa bir Generator yoki massivdan barcha qiymatlarni delegatsiya asosida ketma-ket chiqarib beradi"
       },
       {
         "key": "C",
-        "text": "Generatorni to'xtatib, xotirani darhol tozalaydi"
+        "text": "Generatorni darhol to'xtatadi va barcha qolgan qiymatlarni o'tkazib yuborib, bitta massiv sifatida qaytaradi"
       },
       {
         "key": "D",
-        "text": "yield qiymatini ma'lumotlar bazasiga saqlaydi"
+        "text": "Boshqa generatorning natijalarini kutib, ular tugagach massivga yig'ib bitta qiymat sifatida chiqaradi"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "yield from $iterable sintaksisi ichki generator yoki massiv (array/Traversable) ichidagi qiymatlarni tashqi chaqiruvchiga to'g'ridan-to'g'ri delegatsiya qiladi. Bu murakkab generator zanjirlarini qisqa va tushunarli yozishga yordam beradi."
   },
   {
@@ -636,15 +636,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Faqat database maydonlari uchun mo'ljallangan no-SQL ma'lumotlar tipi"
+        "text": "Bir nechta Union tiplarini (A|B)|(C|D) ko'rinishida ichma-ich yozish uchun mo'ljallangan, Intersection tiplari bilan ishlamaydi"
       },
       {
         "key": "C",
-        "text": "Tiplarni dinamik ravishda runtime paytida stringdan o'giruvchi eval() funksiyasi"
+        "text": "Intersection (&) tiplarini faqat funksiya qaytarish tipida, Union (|) bilan birga ishlatishni taqiqlovchi qoida"
       },
       {
         "key": "D",
-        "text": "Barcha tiplarni avtomatik ravishda mixed tipiga tenglashtiruvchi rejim"
+        "text": "Tipni `null` bo'lishi mumkin deb belgilashning qisqartmasi: `?Type` o'rniga `Type|null` yozishni majburiy qiladi"
       }
     ],
     "correct": "A",
@@ -659,22 +659,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Abstract class tana qismiga (body) ega to'liq metodlar va xususiyatlar (properties) saqlashi mumkin, interfeysda esa faqat metod signature lari va konstantalar bo'ladi"
+        "text": "Klass bir nechta abstract klassdan meros olishi mumkin, lekin faqat bitta interfeysni implement qila oladi"
       },
       {
         "key": "B",
-        "text": "Klass bir vaqtning o'zida bir nechta abstract klassdan meros olishi mumkin, lekin faqat bitta interfeysni implement qiladi"
+        "text": "Abstract class tana qismiga (body) ega to'liq metodlar va xususiyatlar (properties) saqlashi mumkin, interfeysda esa faqat metod signature lari va konstantalar bo'ladi"
       },
       {
         "key": "C",
-        "text": "Interfeyslarda barcha metodlar private bo'lishi shart"
+        "text": "Abstract class faqat abstract metodlarga ega bo'lishi mumkin, interfeysda esa tanasi bo'lgan metodlar va xususiyatlar yoziladi, ammo bir nechtasini birga ishlatib bo'lmaydi"
       },
       {
         "key": "D",
-        "text": "Abstract klasslardan to'g'ridan-to'g'ri new AbstractClass() qilib obyekt olish mumkin"
+        "text": "Interfeysdan obyekt yaratib bo'ladi, abstract class'dan esa faqat voris klass orqali nusxa olinadi"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "PHP da klass faqat bitta abstract klassdan meros (extends) olishi mumkin, lekin istalgancha interfeysni implement qilishi mumkin. Abstract klassda holat (properties) va tayyor logika (metodlar tanasi) bo'lishi mumkin, interfeys esa faqat shartnoma (kontrakt) vazifasini o'taydi."
   },
   {
@@ -690,15 +690,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Deep copy (chuqur nusxa): barcha ichki obyektlar ham rekursiv yangitdan yaratiladi"
+        "text": "Faqat public xususiyatlar nusxalanadi, private va protected xususiyatlar yangi obyektda bo'sh (null) qoladi"
       },
       {
         "key": "C",
-        "text": "PHP darhol fatal error tashlaydi, chunki __clone() metodi bo'lishi shart"
+        "text": "Deep copy (chuqur nusxa): ichma-ich barcha obyektlar ham avtomatik rekursiv ravishda nusxalanib, mustaqil bo'lib qoladi (`__clone()` shart emas)"
       },
       {
         "key": "D",
-        "text": "Faqatgina o'sha obyektning xotiradagi id raqami (hash) o'zgaradi, boshqa hech narsa nusxalanmaydi"
+        "text": "Xatolik: `__clone()` metodi yozilmagan bo'lsa, PHP obyektni klonlashni rad etib Error tashlaydi"
       }
     ],
     "correct": "A",
@@ -713,22 +713,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Opcache PHP kodni Opcode ga aylantirib umumiy xotirada saqlaydi; JIT esa eng ko'p bajariladigan CPU-bound opcodelarni to'g'ridan-to'g'ri mashina kodiga (machine code) kompilyatsiya qiladi"
+        "text": "Opcache faqat CLI rejimida ishlaydi, JIT esa faqat web-serverda; ular bir-biriga bog'liq emas va birga yoqib bo'lmaydi"
       },
       {
         "key": "B",
-        "text": "JIT ma'lumotlar bazasi so'rovlarini 100 baravar tezlashtiradi va tarmoq kutish vaqtini yo'qotadi"
+        "text": "Opcache PHP kodni Opcode ga aylantirib umumiy xotirada saqlaydi; JIT esa eng ko'p bajariladigan CPU-bound opcodelarni to'g'ridan-to'g'ri mashina kodiga (machine code) kompilyatsiya qiladi"
       },
       {
         "key": "C",
-        "text": "Opcache yoqilgan bo'lsa, PHP fayllaridagi o'zgarishlar hech qachon yangilanmaydi"
+        "text": "JIT PHP kodni opcode ga aylantirib umumiy xotirada saqlaydi; Opcache esa tez-tez ishlaydigan opcodelarni mashina kodiga o'giradi, ikkalasi ham faqat CLI rejimida foyda beradi"
       },
       {
         "key": "D",
-        "text": "JIT PHP 7.0 da kiritilgan bo'lib, faqat CLI muhitida ishlaydi"
+        "text": "Opcache har bir so'rovda kodni qayta kompilyatsiya qiladi, JIT esa natijalarni diskka yozib, keyingi so'rovlarda ishlatadi"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Opcache har bir so'rovda faylni qayta parsing va kompilyatsiya qilishdan qutqaradi (Opcode keshlanadi). PHP 8 da kiritilgan JIT esa DynASM orqali tez-tez chaqiriladigan 'qaynoq' opcodelarni to'g'ridan-to'g'ri x86/ARM mashina kodiga aylantiradi. Bu CPU-bound vazifalarda (matematika, tasvirlar, ML) katta yutuq beradi."
   },
   {
@@ -740,22 +740,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`===` ham qiymatni, ham ma'lumot turini (tipini) solishtiradi; `==` esa tiplarni avtomatik o'zgartirib (type coercion) faqat qiymatni tekshiradi"
+        "text": "`===` faqat obyektlarni, `==` esa faqat satr va sonlarni solishtirish uchun mo'ljallangan, ular almashtirib bo'lmaydi"
       },
       {
         "key": "B",
-        "text": "`==` qat'iy tekshiruv, `===` esa faqat obyektlar uchun ishlatiladi"
+        "text": "`==` ham qiymatni, ham ma'lumot turini solishtiradi; `===` esa tiplarni avtomatik o'zgartirib faqat qiymatni tekshiradi, shu sabab tezroq ishlaydi"
       },
       {
         "key": "C",
-        "text": "`===` faqat sonlarni tekshirish uchun, `==` esa matnlar uchun ishlatiladi"
+        "text": "Ikkalasi bir xil natija beradi, farqi faqat `===` tezroq ishlashida: u massivlar uchun, `==` esa skalyarlar uchun"
       },
       {
         "key": "D",
-        "text": "Ular orasida hech qanday farq yo'q, ikkalasi ham bir xil ishlaydi"
+        "text": "`===` ham qiymatni, ham ma'lumot turini (tipini) solishtiradi; `==` esa tiplarni avtomatik o'zgartirib (type coercion) faqat qiymatni tekshiradi"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "PHP da == operatori tiplarni avtomatik tarzda moslashtiradi (masalan, 0 == '0' -> true). === operatori esa tiplarni o'zgartirmasdan, ularning tipi va qiymati to'liq bir xilligini tekshiradi (0 === '0' -> false). Kutilmagan xatolarni oldini olish uchun doimo === tavsiya etiladi."
   },
   {
@@ -771,15 +771,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Faqat fayllarni diskdan o'chirish va serverni qayta yuklash"
+        "text": "Klass fayllarini avtomatik yuklash (autoload) va ularni PSR-4 bo'yicha namespace'larga bog'lash"
       },
       {
         "key": "C",
-        "text": "Baza jadvallarini avtomatik migrate qilish"
+        "text": "Faqat public metodlar ro'yxatini olish mumkin, private va protected a'zolarga hech qanday usulda kirib bo'lmaydi"
       },
       {
         "key": "D",
-        "text": "PHP interpretatorining C kodini o'zgartirish"
+        "text": "Dastur kodini mashina kodiga kompilyatsiya qilib, ishlash tezligini oshirish va xotira sarfini avtomatik kamaytirish, shuning uchun kod ham tezlashadi"
       }
     ],
     "correct": "A",
@@ -794,22 +794,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Tashqi ko'lamdagi (outer scope) o'zgaruvchilarni `use` kalit so'zisiz avtomatik ravishda qiymat bo'yicha (by-value) ushlaydi"
+        "text": "Tashqi o'zgaruvchilarni havola (by-reference) orqali ushlaydi, shuning uchun funksiya ichida ularni o'zgartirish tashqariga ta'sir qiladi"
       },
       {
         "key": "B",
-        "text": "Arrow function ichida bir nechta ifodalarni (multiline statements) bemalol yozish mumkin"
+        "text": "Tashqi ko'lamdagi (outer scope) o'zgaruvchilarni `use` kalit so'zisiz avtomatik ravishda qiymat bo'yicha (by-value) ushlaydi"
       },
       {
         "key": "C",
-        "text": "Tashqi o'zgaruvchilarni avtomatik havola (by-reference) orqali o'zgartira oladi"
+        "text": "Argumentlarga tip va standart qiymat bera olmaydi, shuning uchun faqat tipsiz parametrlar bilan ishlaydi"
       },
       {
         "key": "D",
-        "text": "Faqat massivlarning array_map funksiyasi bilan ishlaydi"
+        "text": "Bir nechta ifodadan iborat blok tanasini yozishga imkon beradi, `return` kalit so'zini ishlatish ham mumkin"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "PHP 7.4 da kiritilgan Arrow Functions yagona ifodadan iborat bo'lib, tashqi o'zgaruvchilarni avtomatik tarzda o'z ichiga oladi (implicit by-value binding). Ammo ular bir nechta qatorli kod yoki void amallar uchun emas, aniq bitta ifoda qiymatini qaytarish uchun mo'ljallangan."
   },
   {
@@ -821,22 +821,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Ha, `finally` bloki har qanday holatda ham, hatto `return` chaqirilgan bo'lsa ham ijro etiladi"
+        "text": "Yo'q, `return` bajarilishi bilan funksiya darhol tugaydi, shuning uchun `finally` bloki o'tkazib yuboriladi"
       },
       {
         "key": "B",
-        "text": "Yo'q, `return` chaqirilgach funksiya darhol tugaydi va `finally` e'tiborga olinmaydi"
+        "text": "Ha, `finally` bloki har qanday holatda ham, hatto `return` chaqirilgan bo'lsa ham ijro etiladi"
       },
       {
         "key": "C",
-        "text": "Faqat fatal error yuz bergandagina finally bajariladi"
+        "text": "Faqat xatolik (exception) ro'y bergan holatdagina bajariladi, oddiy `return` da esa ishga tushmaydi"
       },
       {
         "key": "D",
-        "text": "Faqat catch bloki ishlamasa finally bajariladi"
+        "text": "Faqat `try` blokida `return` bo'lsa bajariladi, `catch` ichidagi `return` esa `finally` ni bekor qiladi"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "PHP da finally bloki kafolatlangan bajarilish (guaranteed cleanup) uchun mo'ljallangan. Agar try yoki catch blokida return bo'lsa, qiymat hisoblanadi, lekin return qilishdan oldin finally bloki to'liq bajariladi va shundan so'nggina natija qaytariladi."
   },
   {
@@ -848,22 +848,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`__construct()`, `__clone()` va `__wakeup()` (yoki `__unserialize()`)"
+        "text": "`__construct()`, `__sleep()` va `__debugInfo()` metodlarini"
       },
       {
         "key": "B",
-        "text": "Faqat `__toString()` va `__invoke()`"
+        "text": "`__destruct()`, `__toString()` va `__invoke()` metodlarini"
       },
       {
         "key": "C",
-        "text": "Faqat `__destruct()` va `__get()`"
+        "text": "`__construct()`, `__clone()` va `__wakeup()` (yoki `__unserialize()`)"
       },
       {
         "key": "D",
-        "text": "Hech qaysisini yopish shart emas, faqat statik metod yetarli"
+        "text": "`__get()`, `__set()` va `__call()` metodlarini"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Haqiqiy Singleton faqat bitta instansiyaga ega bo'lishi kerak. new orqali yangi obyekt yaratmaslik uchun __construct private qilinadi; clone orqali nusxalamaslik uchun __clone private qilinadi; va unserialize() orqali yangi instansiya tiklanmasligi uchun __wakeup yoki __unserialize bloklanadi."
   },
   {
@@ -879,15 +879,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Nomlangan argumentlar faqat massivlarni uzatishda ishlaydi"
+        "text": "Nomlangan argumentlar faqat o'rnatilgan (built-in) funksiyalarda ishlaydi, foydalanuvchi funksiyalari ularni qo'llab-quvvatlamaydi"
       },
       {
         "key": "C",
-        "text": "Nomlangan argumentlar ishlatilganda funksiyaning parametrlari private bo'lishi shart"
+        "text": "Nomlangan argumentlar faqat konstruktorlarda ishlaydi va ularni oddiy pozitsion argumentlar bilan aralashtirib bo'lmaydi"
       },
       {
         "key": "D",
-        "text": "Agar nomlangan argument ishlatilsa, funksiya faqat string qaytarishi kerak"
+        "text": "Parametrlar faqat e'lon qilingan tartibda, lekin nomi bilan yozilishi shart, default qiymatli parametrni tashlab ketib bo'lmaydi"
       }
     ],
     "correct": "A",
@@ -902,22 +902,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Observer (Kuzatuvchi) patterni"
+        "text": "Strategy (Strategiya) patterni"
       },
       {
         "key": "B",
-        "text": "Factory Method patterni"
+        "text": "Decorator (Bezak) patterni"
       },
       {
         "key": "C",
-        "text": "Decorator patterni"
+        "text": "Factory Method (Zavod metodi) patterni"
       },
       {
         "key": "D",
-        "text": "Adapter patterni"
+        "text": "Observer (Kuzatuvchi) patterni"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "PHP Standart Kutubxonasida (SPL) Observer patterni uchun tayyor SplSubject (attach, detach, notify) va SplObserver (update) interfeyslari mavjud. Ular obyekt holati o'zgarganda boshqa qaram obyektlarni xabardor qilish mexanizmini standartlashtiradi."
   },
   {
@@ -929,22 +929,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Mavjud bo'lmagan (inaccessible) yoki ko'rinish chegarasi yopiq (private/protected) xususiyatga murojaat qilinganda yoki qiymat yozilganda"
+        "text": "Faqat metod nomi mavjud bo'lmasa ishga tushadi, xususiyatlarga murojaat qilishda esa umuman chaqirilmaydi"
       },
       {
         "key": "B",
-        "text": "Har qanday public xususiyat o'qilganda yoki yozilganda"
+        "text": "Har safar har qanday xususiyat o'qilganda yoki yozilganda, u public bo'lsa ham, avtomatik ravishda ishga tushadi"
       },
       {
         "key": "C",
-        "text": "Faqat ma'lumotlar bazasidan model yuklanganda"
+        "text": "Mavjud bo'lmagan (inaccessible) yoki ko'rinish chegarasi yopiq (private/protected) xususiyatga murojaat qilinganda yoki qiymat yozilganda"
       },
       {
         "key": "D",
-        "text": "Faqat klass statik chaqirilganda"
+        "text": "Faqat obyekt serializatsiya qilinayotganda (serialize/unserialize) xususiyatlarni o'qish va tiklash uchun ishga tushadi (faqat shu holatda)"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "__get($property) va __set($property, $value) faqat ob'ektda mavjud bo'lmagan yoki o'sha ko'lamda (scope) ko'rinmaydigan xususiyatlarga murojaat etilganda chaqiriladi. Agar xususiyat public bo'lsa, PHP to'g'ridan-to'g'ri o'qiydi/yozadi va bu sehrli metodlar chaqirilmaydi."
   },
   {
@@ -956,22 +956,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "To'liq kvalifikatsiyalangan klass nomi (FQCN) namespace prefiksidan so'ng kataloglar iyerarxiyasi va fayl nomi bilan birga '.php' kengaytmasiga to'liq mos kelishi kerak"
+        "text": "Klass nomi namespace prefiksidan keyin faqat bitta papka darajasiga ega bo'lishi kerak, ichma-ich namespace'lar esa qo'llab-quvvatlanmaydi, autoloader faqat bir darajani taniydi"
       },
       {
         "key": "B",
-        "text": "Har bir klass faylida faqat pastki chiziqlar (_) bilan ajratilgan nomlar bo'lishi shart"
+        "text": "Autoload `include_path` sozlamasi orqali ishlaydi va klass nomi fayl nomiga mos kelishi shart emas, `classmap` esa PSR-4 uchun majburiy"
       },
       {
         "key": "C",
-        "text": "Barcha klasslar yagona bitta katta fayl ichida saqlanishi kerak"
+        "text": "To'liq kvalifikatsiyalangan klass nomi (FQCN) namespace prefiksidan so'ng kataloglar iyerarxiyasi va fayl nomi bilan birga '.php' kengaytmasiga to'liq mos kelishi kerak"
       },
       {
         "key": "D",
-        "text": "Klass nomi va fayl nomining registri (katta-kichik harflar) farq qilishi mumkin"
+        "text": "Har bir klass fayli `class-` prefiksi bilan boshlanib, nomi kichik harflar va defis bilan yozilishi shart (masalan, class-user-model.php)"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "PSR-4 bo'yicha namespace prefiksi (masalan, App\\) ma'lum bir papkaga (masalan, app/) bog'lanadi. Qolgan har bir sub-namespace papka nomiga, eng oxirgi klass nomi esa aynan shu nomdagi .php faylga (katta-kichik harflar sezgirligi bilan) to'liq mos kelishi shart."
   },
   {
@@ -983,22 +983,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "PHP 7 da `true` (chunki '0' == false), PHP 8 da ham `true` (agar 3-parametr $strict=true berilmasa)"
+        "text": "PHP 7 da `true`, PHP 8 da esa `false`, chunki PHP 8 da satr va bool solishtirishi qat'iyroq bo'ldi"
       },
       {
         "key": "B",
-        "text": "PHP 8 da darhol TypeError beradi"
+        "text": "Ikkala versiyada ham `false`, chunki '0' satri bo'sh bo'lmagan satr sifatida `true` ga teng emas"
       },
       {
         "key": "C",
-        "text": "Har doim false qaytaradi"
+        "text": "PHP 7 da `true` (chunki '0' == false), PHP 8 da ham `true` (agar 3-parametr $strict=true berilmasa)"
       },
       {
         "key": "D",
-        "text": "Faqat array_search ishlatilgandagina true qaytaradi"
+        "text": "PHP 7 da `false`, PHP 8 da `true`, chunki PHP 8 da '0' satri avtomatik int ga o'giriladi"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "in_array() uchinchi parametri $strict standart holda false bo'lgani sababli noqat'iy tenglik (==) bilan tekshiradi. PHP da (bool)'0' false bo'lsa-da, '0' == false true beradi. Xavfsiz tekshiruv uchun doimo in_array('0', [false, true], true) ishlatilishi shart."
   },
   {
@@ -1010,22 +1010,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Klassning barcha xususiyatlari avtomatik readonly va typed bo'ladi, statik xususiyatlar (static properties) va dinamik xususiyatlar (dynamic properties) qo'shish qat'iyan taqiqlanadi"
+        "text": "Klassning faqat public xususiyatlari readonly bo'ladi, private va protected xususiyatlar esa o'zgartirilishi mumkin bo'lib qoladi"
       },
       {
         "key": "B",
-        "text": "Klassdan umuman obyekt yaratib bo'lmaydi"
+        "text": "Klass faqat `final` bo'lishi mumkin va konstruktorda xususiyatlarga qiymat berishdan keyin ularni o'zgartirib bo'lmaydi, statik xususiyatlar esa ruxsat etiladi (meros olishda ham)"
       },
       {
         "key": "C",
-        "text": "Klass metodlari hech qanday parametr qabul qila olmaydi"
+        "text": "Readonly class meros olinmaydi, faqat interfeyslarni implement qiladi va metodlari ham readonly (o'zgarmas) deb hisoblanadi"
       },
       {
         "key": "D",
-        "text": "Readonly klass boshqa hech qanday interfeysni implement qila olmaydi"
+        "text": "Klassning barcha xususiyatlari avtomatik readonly va typed bo'ladi, statik xususiyatlar (static properties) va dinamik xususiyatlar (dynamic properties) qo'shish qat'iyan taqiqlanadi"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Readonly class e'lon qilinganda: uning har bir instansiya xususiyati avtomatik readonly hisoblanadi va tipga ega bo'lishi shart. Dinamik xususiyatlar taqiqlanadi va static xususiyatlar e'lon qilish mumkin emas. Shuningdek, undan meros oluvchi har qanday bola klass ham readonly bo'lishi shart."
   },
   {
@@ -1037,22 +1037,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Yagona `PaymentGatewayInterface` yaratib, har bir to'lov tizimini alohida klass sifatida implement qilish va strategiya (Strategy pattern) orqali chaqirish"
+        "text": "Barcha to'lov tizimlarini bitta statik `Payment::process($type, $data)` metodiga yig'ib, yangi tizim uchun shu metodga yangi tarmoq qo'shish"
       },
       {
         "key": "B",
-        "text": "Bitta ulkan klass ichida `switch($type)` yoki `if-else` shartlari orqali yangi to'lov turlarini qo'shib borish"
+        "text": "Yagona `PaymentGatewayInterface` yaratib, har bir to'lov tizimini alohida klass sifatida implement qilish va strategiya (Strategy pattern) orqali chaqirish"
       },
       {
         "key": "C",
-        "text": "Har bir to'lov tizimi uchun alohida controller ochib, bazadagi jadval strukturasini o'zgartirish"
+        "text": "Har bir to'lov tizimi uchun `PaymentService` klassidan meros olib, asosiy klassdagi metodlarni o'zgartirish va `switch` ni yangilash"
       },
       {
         "key": "D",
-        "text": "Barcha to'lov kodlarini trait ichiga yozib, hamma joyda o'sha traitni ishlatish"
+        "text": "Bitta `PaymentService` klassida `if ($type === 'click') ... elseif ($type === 'payme')` shartlar zanjirini yozib, yangi tizim qo'shilganda uni kengaytirish"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "OCP (Kengayish uchun ochiq, o'zgarish uchun yopiq) tamoyiliga binoan yangi funksionallik mavjud kodni o'zgartirmasdan, yangi kod qo'shish orqali kiritilishi kerak. Interfeys va Strategy pattern orqali yangi to'lov turi mavjud kodga tegilmasdan oson ulanadi."
   },
   {
@@ -1064,22 +1064,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`Error` — PHP engine/runtime darajasidagi jiddiy muammolar (TypeError, ParseError, DivisionByZeroError) uchun; `Exception` esa dasturiy (biznes-logika) xatoliklari uchun mo'ljallangan"
+        "text": "`Error` ni faqat `catch (Exception $e)` bilan ushlash mumkin, `Exception` esa faqat `Throwable` orqali ushlanadi, ikkalasi bir xil iyerarxiyada turadi"
       },
       {
         "key": "B",
-        "text": "`Error` ni try-catch orqali ushlab bo'lmaydi, faqat `Exception` ni ushlash mumkin"
+        "text": "Ikkalasi ham `Exception` klassidan meros oladi; `Error` faqat ogohlantirish (warning) darajasidagi, `Exception` esa jiddiy xatolar uchun ishlatiladi"
       },
       {
         "key": "C",
-        "text": "`Exception` faqat frontend uchun, `Error` esa backend uchun javob beradi"
+        "text": "`Error` — foydalanuvchi kiritgan noto'g'ri ma'lumotlar uchun; `Exception` esa PHP dvigateli ichki xatolari uchun mo'ljallangan va uni ushlab bo'lmaydi, PHP 7 va 8 da bir xil"
       },
       {
         "key": "D",
-        "text": "PHP 7 dan keyin `Exception` eskirgan va o'rniga faqat `Error` ishlatiladi"
+        "text": "`Error` — PHP engine/runtime darajasidagi jiddiy muammolar (TypeError, ParseError, DivisionByZeroError) uchun; `Exception` esa dasturiy (biznes-logika) xatoliklari uchun mo'ljallangan"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "PHP 7 dan boshlab deyarli barcha xatoliklar Throwable interfeysiga birlashtirildi. Error klassi (TypeError, ArithmeticError, ParseError va h.k.) PHP dvigatelining ichki jiddiy xatolari bo'lib, ular ilgari fatal error bo'lgan. Exception esa odatda dasturchi tomonidan nazorat qilinadigan va throw qilinadigan xatoliklar uchun ishlatiladi. Ikkalasini ham catch (Throwable $e) bilan ushlash mumkin."
   },
   {
@@ -1091,22 +1091,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat database seederlarida shunday xatolik yuz beradi"
-      },
-      {
-        "key": "B",
-        "text": "Chunki Laravel tranzaksiya ichida navbatlarni butunlay bloklaydi"
-      },
-      {
-        "key": "C",
         "text": "Tranzaksiya to'liq commit bo'lishidan oldinroq tezkor Queue Worker jobni navbatdan olib bajarishga tushsa, yangi yaratilgan yozuv hali bazada ko'rinmay ModelNotFoundException bilan yiqiladi"
       },
       {
+        "key": "B",
+        "text": "Job yuborilishi tranzaksiyani avtomatik bekor qiladi (rollback), shu sabab yozuv bazaga umuman tushmay qoladi va keyingi so'rovlarda ko'rinmaydi"
+      },
+      {
+        "key": "C",
+        "text": "Queue Worker tranzaksiya ichidagi jobni faqat tranzaksiya tugaguncha kutadi, shuning uchun race condition emas, faqat jobning kechikishi yuz beradi"
+      },
+      {
         "key": "D",
-        "text": "Job tranzaksiyani avtomatik rollback qilib yuboradi"
+        "text": "Tranzaksiya paytida baza jadvali butunlay bloklanadi, shuning uchun worker ulanolmay, `QueryException` bilan har doim qayta urinish (retry) navbatiga tushadi, bu esa jobni sekinlashtiradi"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Bu juda mashhur production xatosi! DB tranzaksiyasi hali yakunlanmasdan dispatch($job) qilinganda, tezkor worker jobni oladi, lekin baza darajasida tranzaksiya hali commit bo'lmagani uchun boshqa ulanish (worker) yozuvni ko'ra olmaydi. afterCommit xususiyati jobni faqat tranzaksiya muvaffaqiyatli yakunlangachgina jo'natishni kafolatlaydi."
   },
   {
@@ -1118,22 +1118,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "bind() bitta instansiya saqlaydi, singleton() har safar yangi ob'ekt yaratadi"
+        "text": "bind() faqat interfeyslarni sinflarga bog'laydi, singleton() va scoped() esa konkret sinflar uchun, ular o'rtasida hayot davri farqi yo'q"
       },
       {
         "key": "B",
-        "text": "bind() har safar yangi ob'ekt beradi, singleton() ilova bo'ylab bitta, scoped() esa joriy HTTP so'rov yoki job davomida bitta instansiya beradi"
+        "text": "bind() ilova bo'ylab bitta ob'ekt beradi, singleton() har safar yangisini yaratadi, scoped() esa faqat testlarda ishlaydi"
       },
       {
         "key": "C",
-        "text": "scoped() faqat ma'lumotlar bazasi so'rovlarida ishlaydi"
+        "text": "bind() har safar yangi ob'ekt beradi, singleton() ilova bo'ylab bitta, scoped() esa joriy HTTP so'rov yoki job davomida bitta instansiya beradi"
       },
       {
         "key": "D",
-        "text": "Uchala metod ham mutlaqo bir xil ishlaydi"
+        "text": "singleton() har HTTP so'rovda yangidan yaratiladi, scoped() esa butun ilova davomida bitta, bind() esa faqat bir marta chaqiriladi"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "bind() har chaqirilganda yangi ob'ekt yasaydi. singleton() ilova yashash davrida yagona nusxani saqlaydi. scoped() (Laravel Octane/Queues uchun muhim) esa bitta HTTP so'rov davomida bitta instansiya bo'lib, so'rov tugagach tozalanadi.",
     "level": "senior"
   },
@@ -1146,22 +1146,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "register() faqat konteynerga bog'lash (binding) uchun mo'ljallangan, bu vaqtda boshqa providerlar hali yuklanmagan bo'lishi mumkin"
+        "text": "register() faqat bir marta, ilovaning birinchi o'rnatilishida chaqiriladi, shuning uchun unda ma'lumotlar bazasiga murojaat qilish xavfsiz emas"
       },
       {
         "key": "B",
-        "text": "register() faqat konsol (CLI) rejimida ishlaydi"
+        "text": "register() ichida Event va DB chaqiruvlari taqiqlangan, chunki ular faqat `boot()` dan keyin ishlaydigan queue worker orqali bajariladi"
       },
       {
         "key": "C",
-        "text": "register() tranzaksiya ichida ishlaydi"
+        "text": "register() har so'rovda ikki marta chaqiriladi, shu sabab ichidagi DB va Event chaqiruvlari ikki marta bajarilib, ma'lumot takrorlanadi"
       },
       {
         "key": "D",
-        "text": "Laravel bunga avtomatik ruxsat bermaydi va Exception tashlaydi"
+        "text": "register() faqat konteynerga bog'lash (binding) uchun mo'ljallangan, bu vaqtda boshqa providerlar hali yuklanmagan bo'lishi mumkin"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "register() faqat konteynerga bog'lash uchundir. Unda boshqa xizmatlarni chaqirib bo'lmaydi, chunki ular hali ro'yxatdan o'tmagan bo'lishi mumkin. Barcha xizmatlar bog'langandan keyin ishlaydigan mantiq 'boot()' metodiga yoziladi.",
     "level": "middle"
   },
@@ -1174,22 +1174,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "rules() -> authorize() -> prepareForValidation()"
+        "text": "prepareForValidation() -> rules() -> authorize()"
       },
       {
         "key": "B",
-        "text": "prepareForValidation() -> authorize() -> rules()"
+        "text": "authorize() -> rules() -> prepareForValidation()"
       },
       {
         "key": "C",
-        "text": "authorize() -> prepareForValidation() -> rules()"
+        "text": "rules() -> authorize() -> prepareForValidation()"
       },
       {
         "key": "D",
-        "text": "rules() -> prepareForValidation() -> authorize()"
+        "text": "authorize() -> prepareForValidation() -> rules()"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "Laravel FormRequest avval authorize() ni tekshiradi (ruxsati bo'lmasa 403 beradi), so'ngra prepareForValidation() orqali kiruvchi ma'lumotlarni tozalaydi/formatlaydi va nihoyat rules() qoidalarini ishga tushiradi.",
     "level": "junior"
   },
@@ -1202,22 +1202,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Post modelidagi barcha Global Scopes ni o'chiradi"
+        "text": "Faqat {user} ni yuklaydi, {post} ni esa controllerga xom ID ko'rinishida uzatadi, bog'lanishni tekshirmaydi"
       },
       {
         "key": "B",
-        "text": "Faqat ko'rsatilgan {user} ga tegishli bo'lgan {post} ni yuklaydi va begona post ID si berilsa 404 qaytaradi"
+        "text": "Barcha {post} larni bitta so'rovda yuklaydi va ularni {user} ning ID si bo'yicha avtomatik guruhlab, to'liq ro'yxat sifatida qaytaradi"
       },
       {
         "key": "C",
-        "text": "Marshrutni faqat avtorizatsiyadan o'tgan adminlarga ochadi"
+        "text": "Begona post ID berilganda 403 (Forbidden) qaytaradi va foydalanuvchining sessiyasini darhol tugatadi"
       },
       {
         "key": "D",
-        "text": "Postlarni avtomatik tarzda keshga yozib qo'yadi"
+        "text": "Faqat ko'rsatilgan {user} ga tegishli bo'lgan {post} ni yuklaydi va begona post ID si berilsa 404 qaytaradi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Scoped Route Model Binding ota-bola bog'lanishini tekshiradi: agar so'ralgan {post} aynan shu {user} ga tegishli bo'lmasa, avtomatik 404 (Not Found) beradi. Bu IDOR / BOLA xavfsizlik zaifligini 1 qatorda yopadi.",
     "level": "middle"
   },
@@ -1234,15 +1234,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Controller ishga tushishidan oldin"
+        "text": "Javob mijozga yuborilib, brauzer ulanishi yopilganidan so'ng, alohida jarayonda (terminate) bajariladi"
       },
       {
         "key": "C",
-        "text": "Hech qachon ishga tushmaydi, chunki return bo'lib ketadi"
+        "text": "Faqat xatolik (exception) yuz berganda, javobni qayta ishlash o'rniga ishga tushadi"
       },
       {
         "key": "D",
-        "text": "Faqat xatolik yuz bergandagina"
+        "text": "Controller chaqirilishidan oldin, so'rov middleware zanjiriga kirgan zahoti, ya'ni Controller ishga tushmasidan avval bajariladi"
       }
     ],
     "correct": "A",
@@ -1258,7 +1258,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Ular app/Core papkasiga ko'chirildi"
+        "text": "Ular boshqa nomlar bilan `app/Core` papkasiga ko'chirildi va endi `config/kernel.php` fayli orqali boshqariladi"
       },
       {
         "key": "B",
@@ -1266,11 +1266,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Faqat .env fayli orqali sozlanadigan qilindi"
+        "text": "Ular composer paketiga (`laravel/framework`) ko'chirilib, loyiha ichida sozlash uchun ochiq qoldirilmadi"
       },
       {
         "key": "D",
-        "text": "Ular vendor ichiga ko'chirildi va ularni o'zgartirib bo'lmaydi"
+        "text": "Faqat Console Kernel olib tashlandi, Http Kernel va RouteServiceProvider avvalgidek `app/Http` va `app/Providers` da qoldi"
       }
     ],
     "correct": "B",
@@ -1286,22 +1286,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "URL dagi ma'lumotlarni shifrlaydi va hech kim uni o'qiy olmaydi"
+        "text": "URL ni shifrlaydi (AES), shuning uchun foydalanuvchi parametr qiymatini ko'ra olmaydi va o'zgartira ham olmaydi"
       },
       {
         "key": "B",
-        "text": "URL parametrlariga kriptografik HMAC hesh qo'shadi, agar foydalanuvchi bitta parametrni o'zgartirsa havola bekor bo'ladi"
+        "text": "Havolani faqat tizimga kirgan foydalanuvchiga ruxsat beradi, `auth` middleware o'rniga sessiya cookie'sini tekshiradi"
       },
       {
         "key": "C",
-        "text": "Havolani faqat bitta IP manzildan ochishga ruxsat beradi"
+        "text": "Havolani faqat bir marta ishlatish mumkin bo'lgan tokenga aylantirib, ikkinchi ochilishda uni bazadan o'chiradi"
       },
       {
         "key": "D",
-        "text": "Foydalanuvchi brauzeriga majburiy SSL o'rnatadi"
+        "text": "URL parametrlariga kriptografik HMAC hesh qo'shadi, agar foydalanuvchi bitta parametrni o'zgartirsa havola bekor bo'ladi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Signed URL lar APP_KEY yordamida parametrlar ustidan kriptografik imzo (signature) yasaydi. Agar kimdir URL dagi user_id=5 ni user_id=6 ga o'zgartirsa, imzo mos kelmaydi va 403 Invalid Signature xatosi qaytadi.",
     "level": "middle"
   },
@@ -1314,22 +1314,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "load() har doim qaytadan DB ga so'rov yuboradi, loadMissing() esa agar relatsiya oldin yuklangan bo'lsa ortiqcha so'rov yubormaydi"
+        "text": "load() JOIN orqali bitta so'rovda, loadMissing() esa har bir model uchun alohida so'rov bilan relatsiyani yuklaydi"
       },
       {
         "key": "B",
-        "text": "loadMissing() faqat bo'sh (null) qiymatlarni yuklaydi"
+        "text": "load() bitta modelga, loadMissing() esa faqat Collection ga qo'llanadi va ikkalasi ham bir xil so'rov yuboradi"
       },
       {
         "key": "C",
-        "text": "load() faqat bitta model uchun, loadMissing() esa faqat kolleksiyalar uchun"
+        "text": "load() faqat bo'sh relatsiyani yuklaydi, loadMissing() esa har doim qaytadan DB ga so'rov yuborib, mavjudini yangilaydi"
       },
       {
         "key": "D",
-        "text": "Ikkalasi mutlaqo bir xil"
+        "text": "load() har doim qaytadan DB ga so'rov yuboradi, loadMissing() esa agar relatsiya oldin yuklangan bo'lsa ortiqcha so'rov yubormaydi"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "load('posts') relatsiya xotirada mavjud bo'lsa ham DB dan qayta so'rab oladi. loadMissing('posts') esa relatsiya avval eager-load qilingan-qilinmaganini tekshiradi va faqat yuklanmagan bo'lsagina DB ga bitta so'rov yuboradi.",
     "level": "junior"
   },
@@ -1342,22 +1342,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Aks holda polimorfik relatsiyalar MySQL da ishlamaydi"
+        "text": "Morph map jadval ustunlari uchun avtomatik indeks yaratadi, shu sabab polimorfik so'rovlar sezilarli tezlashadi"
       },
       {
         "key": "B",
-        "text": "Baza ustunida 'App\\Models\\Post' kabi to'liq sinf nomi saqlanishining oldini olish va kod refactoringida DB ma'lumotlari buzilmasligi uchun"
+        "text": "Morph map bo'lmasa, polimorfik relatsiyalarda Eager Loading ishlamaydi va har doim N+1 muammosi yuzaga keladi"
       },
       {
         "key": "C",
-        "text": "Ma'lumotlar bazasi hajmini 50% ga siqish uchun"
+        "text": "Polimorfik relatsiyalar faqat morph map bilan ishlaydi; u bo'lmasa so'rovlar xatolik beradi va `commentable_id` ustuni umuman to'ldirilmaydi"
       },
       {
         "key": "D",
-        "text": "Eloquent o'rniga Query Builder ishlatishga majburlash uchun"
+        "text": "Baza ustunida 'App\\Models\\Post' kabi to'liq sinf nomi saqlanishining oldini olish va kod refactoringida DB ma'lumotlari buzilmasligi uchun"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Standart bo'yicha Laravel commentable_type ustuniga 'App\\Models\\Post' deb yozadi. Agar keyinchalik sinf boshqa papkaga ko'chirilsa, bazadagi barcha relatsiyalar buziladi. MorphMap yordamida 'post' aliasi ishlatilsa, kod o'zgarsa ham baza xavfsiz qoladi.",
     "level": "senior"
   },
@@ -1370,7 +1370,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "chunk() faqat PostgreSQL da ishlaydi"
+        "text": "chunk() har bir bo'lakni alohida tranzaksiyada qulflaydi, chunkById() esa qulf qo'ymaydi, shu sababli chunk() ichida yozish xavfsiz emas"
       },
       {
         "key": "B",
@@ -1378,11 +1378,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "chunkById() faqat bitta qatordan o'qiydi"
+        "text": "chunk() butun natijani oldin xotiraga yuklab, keyin bo'laklarga bo'ladi; chunkById() esa bo'laklarni to'g'ridan-to'g'ri bazadan oqim sifatida o'qiydi, chunk() esa faqat kichik jadvallar uchun"
       },
       {
         "key": "D",
-        "text": "chunk() xotirani kamroq yeydi"
+        "text": "chunk() faqat Collection da ishlaydi va tartiblangan ma'lumot talab qilmaydi, chunkById() esa faqat id ustuni UUID bo'lsagina ishlaydi"
       }
     ],
     "correct": "B",
@@ -1398,7 +1398,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Barcha ma'lumotlar bazasi tranzaksiyalarini o'chirib qo'yish uchun"
+        "text": "Global scope'ni modeldan butunlay o'chirib tashlaydi, shuning uchun u keyingi barcha so'rovlarda ham ishlamay qoladi"
       },
       {
         "key": "B",
@@ -1406,11 +1406,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Faqat bitta jadvalni tozalash uchun"
+        "text": "Modelning barcha relatsiyalarini yuklashni o'chirib, faqat asosiy jadvalning ustunlarini tezroq olish uchun ishlatiladi (qayta yoqib bo'lmaydi)"
       },
       {
         "key": "D",
-        "text": "Eloquent o'rniga xom PDO obyektini olish uchun"
+        "text": "Faqat testlarda qo'llaniladi, production kodida ishlatilsa global scope xavfsizlik cheklovlarini doimiy buzadi"
       }
     ],
     "correct": "B",
@@ -1426,22 +1426,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "encode() va decode()"
-      },
-      {
-        "key": "B",
         "text": "get() va set()"
       },
       {
+        "key": "B",
+        "text": "load() va save()"
+      },
+      {
         "key": "C",
-        "text": "serialize() va unserialize()"
+        "text": "handle() va cast()"
       },
       {
         "key": "D",
-        "text": "read() va write()"
+        "text": "serialize() va hydrate()"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "CastsAttributes interfeysi get($model, $key, $value, $attributes) va set($model, $key, $value, $attributes) metodlaridan iborat. get() bazadagi xom qiymatni Value Object ga, set() esa Value Object ni bazaga yoziladigan xom formatga aylantiradi.",
     "level": "middle"
   },
@@ -1454,22 +1454,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Modelning barcha keraksiz metodlarini avtomatik o'chiradi"
+        "text": "Modelni bazadan o'chirmasdan, faqat `deleted_at` ustunini to'ldirib, yozuvni foydalanuvchidan yashiradi"
       },
       {
         "key": "B",
-        "text": "Muntazam ravishda eski loglar, eskirgan sessiyalar yoki vaqti o'tgan tokenlarni fonda avtomatik tozalaydi"
+        "text": "Model jadvalini muntazam optimallashtirib, indekslarni qayta qurib va fragmentatsiyani kamaytirib turadi"
       },
       {
         "key": "C",
-        "text": "Baza migratsiyalarini siqadi"
+        "text": "Modellar ro'yxatini keshdan tozalab, eskirgan Eloquent natijalarini qayta hisoblashga majbur qiladi"
       },
       {
         "key": "D",
-        "text": "Model indekslarini qayta quradi"
+        "text": "Muntazam ravishda eski loglar, eskirgan sessiyalar yoki vaqti o'tgan tokenlarni fonda avtomatik tozalaydi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Prunable traiti va prunable() metodi yordamida vaqti o'tgan yozuvlar (masalan, 30 kundan oshgan loglar) belgilanadi. 'model:prune' cron buyrug'i fonda xotirani to'ldirmasdan ularni avtomatik tozalab turadi.",
     "level": "senior"
   },
@@ -1482,22 +1482,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Jadvaldagi barcha ustunlarga avtomatik bittadan alohida indeks ochadi"
+        "text": "So'rov natijasini indeksning o'zida keshlab qo'yadi, shuning uchun bir xil so'rov takrorlanganda baza uni qayta bajarmaydi"
       },
       {
         "key": "B",
-        "text": "So'rovdagi barcha ustunlar (SELECT, WHERE, ORDER BY) indeksning o'zida mavjud bo'lib, diskdagi asosiy jadvalga (Clustered Index) murojaat qilish shart bo'lmaydi"
+        "text": "Bir nechta alohida indeksni optimizator bitta so'rovda birlashtirib ishlatishi, shu sababli har bir ustunga alohida indeks qo'yish kifoya, bu so'rovni tezlashtiradi"
       },
       {
         "key": "C",
-        "text": "Jadvalni to'liq RAM ga keshlab qo'yadi"
+        "text": "Indeks to'liq operativ xotiraga yuklanib, diskka umuman yozilmaydi va qayta ishga tushirishda ma'lumot yo'qolmaydi"
       },
       {
         "key": "D",
-        "text": "Primary Key o'rniga ishlatiladigan maxsus indeks turi"
+        "text": "So'rovdagi barcha ustunlar (SELECT, WHERE, ORDER BY) indeksning o'zida mavjud bo'lib, diskdagi asosiy jadvalga (Clustered Index) murojaat qilish shart bo'lmaydi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Agar SELECT qilinayotgan va WHERE da tekshirilayotgan barcha ustunlar bitta kompozit indeksda bo'lsa, MySQL jadval qatorlarini diskdan o'qib o'tirmaydi va javobni to'g'ridan-to'g'ri RAM dagi B-Tree indeksning o'zidan qaytaradi (EXPLAIN da 'Using index').",
     "level": "senior"
   },
@@ -1510,7 +1510,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "MySQL email ustunlariga indeks qo'yishga ruxsat bermaydi"
+        "text": "Chunki email ustuni UNIQUE bo'lmasa indeks ishlamaydi; takrorlanuvchi qiymatlarda MySQL doim jadvalni to'liq o'qiydi"
       },
       {
         "key": "B",
@@ -1518,11 +1518,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "LIKE operatori faqat sonli qiymatlar bilan ishlaydi"
+        "text": "Chunki `LIKE` operatori B-Tree indeksini umuman qo'llab-quvvatlamaydi; indeks faqat `=` va `IN` shartlarida ishlaydi, boshqa hollarda emas, `LIKE 'a%'` ham shunday"
       },
       {
         "key": "D",
-        "text": "@ belgisi maxsus belgi bo'lgani sababli indeksni buzadi"
+        "text": "Chunki '%' belgisi oldidan emas, oxiridan qo'yilganda indeks ishlamaydi; '@gmail.com%' ko'rinishidagina Full Table Scan yuz beradi"
       }
     ],
     "correct": "B",
@@ -1538,7 +1538,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Qatorni faqat o'qish uchun ochadi va boshqalarga ham o'qishga ruxsat beradi"
+        "text": "Qulfni faqat tanlov bajarilayotgan lahzagacha ushlaydi va SELECT tugashi bilan avtomatik bo'shatadi, tranzaksiyani kutmaydi"
       },
       {
         "key": "B",
@@ -1546,11 +1546,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Qatorni bazadan o'chirib tashlaydi"
+        "text": "Butun jadvalni qulflaydi, tranzaksiya tugamaguncha boshqa tranzaksiyalar jadvaldan hech narsa o'qiy olmaydi va qator qo'sha olmaydi, bu ishlashni sekinlashtiradi"
       },
       {
         "key": "D",
-        "text": "Tranzaksiya vaqtini cheksiz qilib qo'yadi"
+        "text": "Qatorlarni qulflamaydi, faqat o'zgarish bo'lsa xatolik tashlaydi (versiya ustuni orqali), qulf esa umuman ishlatilmaydi"
       }
     ],
     "correct": "B",
@@ -1566,22 +1566,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Bir vaqtda ikkita foydalanuvchi bir xil qatorni o'chirib yuborishi"
-      },
-      {
-        "key": "B",
         "text": "Boshqa tranzaksiya o'zgartirgan, lekin hali COMMIT bo'lmagan (va keyinchalik ROLLBACK bo'lishi mumkin bo'lgan) xom ma'lumotni o'qib olish"
       },
       {
+        "key": "B",
+        "text": "Bir tranzaksiya ichida bir xil so'rovni ikki marta bajarganda, ikkinchi marta boshqa tranzaksiya qo'shgan yangi qatorlar paydo bo'lishi"
+      },
+      {
         "key": "C",
-        "text": "Ma'lumotlar bazasi faylining diskda buzilishi"
+        "text": "Ikki tranzaksiya bir-birining qulfini kutib qolishi va baza ularning birini avtomatik bekor qilishi (deadlock)"
       },
       {
         "key": "D",
-        "text": "SQL so'rovida sintaksis xato bo'lishi"
+        "text": "Bir tranzaksiya o'qigan qatorni boshqa tranzaksiya o'zgartirib commit qilgani sababli, ikkinchi o'qishda boshqa qiymat ko'rinishi"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Dirty Read - hali tasdiqlanmagan (uncommitted) ma'lumotni o'qishdir. Agar 1-tranzaksiya pulni o'tkazib, keyin xatolik tufayli rollback qilsa, 2-tranzaksiya aslida mavjud bo'lmagan soxta balansni ko'rgan bo'ladi.",
     "level": "junior"
   },
@@ -1594,22 +1594,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Index Cardinality jadvaldagi xotira hajmi bo'lib, unga qarab indeks siqiladi"
-      },
-      {
-        "key": "B",
         "text": "Kardinallik - ustundagi unikal qiymatlar sonidir; agar ustunda faqat 2-3 xil qiymat bo'lsa (masalan 1 mln qatordan 500 mingtasi 'active'), DB optimizatori indeksdan ko'ra jadvalni to'liq skaner qilishni tezroq deb topadi"
       },
       {
+        "key": "B",
+        "text": "Kardinallik — jadvaldagi qatorlar umumiy soni; qatorlar soni kam bo'lgan jadvallarda indeks qo'yish har doim ortiqcha va baza uni e'tiborsiz qoldiradi, chunki kichik jadvalda daraxt yaratish ortiqcha"
+      },
+      {
         "key": "C",
-        "text": "Past kardinallik indeks yaratishda xato beradi"
+        "text": "Kardinallik — ustundagi NULL qiymatlar soni; NULL ko'p bo'lsa MySQL indeksni umuman ishlatmaydi, shuning uchun status kabi ustunlarda indeks bo'lmaydi"
       },
       {
         "key": "D",
-        "text": "Faqat Foreign Key larda kardinallik hisoblanadi"
+        "text": "Kardinallik — indeks daraxtining chuqurligi; past kardinallikli ustunlarda daraxt juda chuqur bo'lib ketadi, shu sabab qidiruv sekinlashadi"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Kardinallik qanchalik yuqori bo'lsa (masalan, user_id, email), indeks shunchalik samarali ishlaydi. Agar ustun faqat 'M' va 'F' dan iborat bo'lsa, qidiruv natijasi jadvalning 50% ini tashkil qiladi va diskdan indeks orqali sakrab o'qish Full Table Scan dan sekinroq bo'lib qoladi.",
     "level": "senior"
   },
@@ -1622,7 +1622,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Jadvaldagi barcha indekslarni qayta qurish uchun"
+        "text": "Katta jadvallarni parallel ravishda bir nechta oqimda o'qib, natijalarni tezroq birlashtirish va umumiy so'rov vaqtini qisqartirish uchun"
       },
       {
         "key": "B",
@@ -1630,11 +1630,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Tranzaksiyalarni avtomatik retry qilish uchun"
+        "text": "Jadvalning har bir qatori uchun trigger ishga tushirib, bog'liq jadvallarni ketma-ket yangilash uchun"
       },
       {
         "key": "D",
-        "text": "Baza parolini shifrlash uchun"
+        "text": "Takrorlanuvchi qatorlarni (duplicate) topib o'chirish va jadvalni avtomatik unikal holatga keltirish uchun"
       }
     ],
     "correct": "B",
@@ -1650,22 +1650,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Partitioning bir nechta jismoniy serverlar bo'ylab bo'ladi, Sharding esa bitta server ichida"
+        "text": "Partitioning faqat o'qish uchun nusxalar (replika) yaratadi, Sharding esa yozish yuklamasini bitta Master'ga jamlaydi"
       },
       {
         "key": "B",
-        "text": "Partitioning bitta server/baza ichida bitta jadvalni qismlarga bo'ladi, Sharding esa ma'lumotlarni bir nechta alohida jismoniy serverlarga (DB instansiyalariga) tarqatadi"
+        "text": "Partitioning ma'lumotlarni bir nechta alohida serverlarga tarqatadi, Sharding esa bitta serverda jadvalni mantiqiy bo'laklarga bo'ladi"
       },
       {
         "key": "C",
-        "text": "Ikkalasi mutlaqo bitta narsa"
+        "text": "Partitioning bitta server/baza ichida bitta jadvalni qismlarga bo'ladi, Sharding esa ma'lumotlarni bir nechta alohida jismoniy serverlarga (DB instansiyalariga) tarqatadi"
       },
       {
         "key": "D",
-        "text": "Sharding faqat NoSQL da bo'ladi"
+        "text": "Ikkalasi ham bir xil narsa: jadvalni bo'laklarga ajratish; farqi faqat nomida, MySQL da Partitioning, PostgreSQL da Sharding deb ataladi, ajratib o'tirish shart emas"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Partitioning bitta baza ichida jadvalni oylarga yoki ID diapazoniga bo'lib saqlaydi (bitta server). Sharding esa gorizontal masshtablash bo'lib, foydalanuvchilarning 1-yarmini 1-serverga, 2-yarmini 2-serverga joylashtirishni anglatadi.",
     "level": "senior"
   },
@@ -1682,15 +1682,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Bazaga ulanishni doimiy ochiq (persistent) ushlab turish"
+        "text": "Replikalar o'rtasida yuklamani teng taqsimlash uchun har bir so'rovni navbat bilan boshqa replikaga yo'naltiradi (round-robin)"
       },
       {
         "key": "C",
-        "text": "Keshni avtomatik tozalash uchun"
+        "text": "Ulanishni uzmasdan saqlab turadi (persistent connection), shu sabab har bir so'rovda yangi TCP ulanish ochish xarajati yo'qoladi"
       },
       {
         "key": "D",
-        "text": "Faqat bitta jadvalga yozishga ruxsat berish"
+        "text": "Foydalanuvchining barcha so'rovlarini (o'qish ham, yozish ham) bitta replikaga biriktirib qo'yadi, shuning uchun Master bazaga yuklama tushmaydi, bu yuklamani yaxshi taqsimlaydi"
       }
     ],
     "correct": "A",
@@ -1706,7 +1706,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "volatile-lru butun bazani tozalaydi, allkeys-lru esa faqat bitta kalitni o'chiradi"
+        "text": "volatile-lru eng ko'p ishlatilgan muddatli kalitlarni o'chiradi, allkeys-lru esa barcha kalitlar ichidan eng ko'p ishlatilganlarini o'chiradi"
       },
       {
         "key": "B",
@@ -1714,11 +1714,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "allkeys-lru faqat sonli kalitlarni o'chiradi"
+        "text": "volatile-lru faqat muddati o'rnatilmagan kalitlar orasidan eng kam ishlatilganlarini o'chiradi, allkeys-lru esa faqat muddati bor kalitlarni tozalaydi, bunda TTL muddati hisobga olinmaydi"
       },
       {
         "key": "D",
-        "text": "volatile-lru xotira to'lganda Exception beradi"
+        "text": "Ikkalasi ham bir xil ishlaydi, farqi shundaki, volatile-lru faqat string tipidagi, allkeys-lru esa barcha tipdagi kalitlarni tozalaydi"
       }
     ],
     "correct": "B",
@@ -1734,22 +1734,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Ilova har doim keshga yozadi, kesh esa fonda bazaga yozib boradi"
+        "text": "Kesh o'zi bazadan ma'lumot yuklaydi: topilmasa kesh tizimi bazaga murojaat qiladi, ilova esa bazadan to'g'ridan-to'g'ri o'qimaydi"
       },
       {
         "key": "B",
-        "text": "Ilova avval keshni tekshiradi: agar topilsa (Cache Hit) keshdan oladi; topilmasa (Cache Miss) bazadan o'qiydi, keshga yozib qo'yadi va javob qaytaradi"
+        "text": "Ilova yozish paytida ma'lumotni avval keshga yozadi, keshdagi o'zgarishlar esa bazaga fonda, ma'lum vaqt oralig'ida ko'chiriladi"
       },
       {
         "key": "C",
-        "text": "Baza har safar o'zgarganda avtomatik keshni yangilaydi"
+        "text": "Ilova ma'lumotni avval bazaga yozadi, so'ng keshga sinxron yozadi; o'qishda har doim faqat keshdan oladi va kesh bo'sh bo'lsa xato qaytaradi"
       },
       {
         "key": "D",
-        "text": "Kesh har 5 daqiqada o'zini to'liq o'chiradi"
+        "text": "Ilova avval keshni tekshiradi: agar topilsa (Cache Hit) keshdan oladi; topilmasa (Cache Miss) bazadan o'qiydi, keshga yozib qo'yadi va javob qaytaradi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Cache-Aside - eng keng tarqalgan kesh strategiyasidir: ilova keshga qaraydi, bo'lmasa DB dan olib, keyingi safar tez bo'lishi uchun keshga qo'yadi. Yozish paytida esa keshdagi eski kalit o'chirib tashlanadi (Invalidation).",
     "level": "junior"
   },
@@ -1762,7 +1762,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Pub/Sub xabarlarni diskda saqlaydi, Streams esa yo'q"
+        "text": "Pub/Sub faqat bitta Redis serverida ishlaydi, Streams esa klasterda; ular xabar saqlash va yetkazish xususiyatlari bo'yicha farq qilmaydi"
       },
       {
         "key": "B",
@@ -1770,11 +1770,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Streams faqat bitta obunachiga xizmat qila oladi"
+        "text": "Streams faqat bitta consumer bilan ishlaydi va xabarlar tartibi kafolatlanmaydi, Pub/Sub esa bir nechta subscriber uchun tartibli yetkazishni ta'minlaydi, shuning uchun u faqat kichik loyihalarga mos"
       },
       {
         "key": "D",
-        "text": "Pub/Sub faqat sonlarni uzatadi"
+        "text": "Pub/Sub xabarlarni diskka saqlaydi va har bir subscriber uni faqat bir marta oladi, Streams esa xabarlarni xotirada saqlab, o'qilgach o'chirib tashlaydi"
       }
     ],
     "correct": "B",
@@ -1790,22 +1790,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Redis serveri to'satdan o'chib qolganda"
+        "text": "Redis xotirasi to'lib, eviction siyosati kalitlarni o'chira boshlaganda va ilova bu kalitlarni qayta tiklay olmay qolganda"
       },
       {
         "key": "B",
-        "text": "Juda ommabop kesh kalitining muddati (TTL) tugashi bilan bir vaqtda kelgan minglab parallel so'rovlar birdaniga bazaga yopirilib, DB ni qulatganda"
+        "text": "Kesh kalitlari juda uzun yoki bir xil prefiksga ega bo'lib, ular xesh to'qnashuviga (collision) olib kelib noto'g'ri qiymat qaytarganda"
       },
       {
         "key": "C",
-        "text": "Kesh hajmi cheksiz oshib ketganda"
+        "text": "Bir nechta Redis tuguni (node) o'rtasida replikatsiya uzilib, kesh ma'lumotlari tugunlar o'rtasida mos kelmay qolganda"
       },
       {
         "key": "D",
-        "text": "Faqat memcached da bo'ladi"
+        "text": "Juda ommabop kesh kalitining muddati (TTL) tugashi bilan bir vaqtda kelgan minglab parallel so'rovlar birdaniga bazaga yopirilib, DB ni qulatganda"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Masalan, bosh sahifa keshining TTL i tugasa, o'sha soniyada kirgan 5000 ta foydalanuvchi keshni topolmay, barchasi bir vaqtda og'ir SQL so'rovini bazaga yuboradi. Buni oldini olish uchun Lock (Mutex) yoki ehtimollik asosidagi erta qayta hisoblash (Probabilistic Early Expiration) ishlatiladi.",
     "level": "middle"
   },
@@ -1818,11 +1818,11 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Python"
+        "text": "Perl"
       },
       {
         "key": "B",
-        "text": "JavaScript"
+        "text": "Python"
       },
       {
         "key": "C",
@@ -1830,7 +1830,7 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "D",
-        "text": "PHP"
+        "text": "Go"
       }
     ],
     "correct": "C",
@@ -1846,7 +1846,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Laravel dasturchilari buni ataylab cheklab qo'ygan"
+        "text": "Teglarni tozalash `flush()` bilan emas, faqat `forget()` bilan amalga oshadi, shuning uchun ularning o'zida teg tushunchasi mavjud emas"
       },
       {
         "key": "B",
@@ -1854,11 +1854,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Faylli tizimlar faqat rasmlarni saqlay oladi"
+        "text": "Laravel teglar uchun alohida `tags` jadvalini talab qiladi va u migratsiya orqali yaratilmasa, fayl va database drayverlari ishlamaydi"
       },
       {
         "key": "D",
-        "text": "MySQL da kesh saqlash taqiqlangan"
+        "text": "Teglash faqat `database` drayverida ishlamaydi, fayl drayveri esa tegni qo'llab-quvvatlaydi, lekin `flush()` metodi bu drayverda taqiqlangan"
       }
     ],
     "correct": "B",
@@ -1874,22 +1874,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Barcha navbatlar teng huquqli bo'lib, tasodifiy tartibda ishlanadi"
+        "text": "Navbatlar alifbo tartibida ishlanadi: avval 'default', so'ng 'high', oxirida 'low', ro'yxatdagi tartib e'tiborga olinmaydi (doimiy tartibda)"
       },
       {
         "key": "B",
-        "text": "Doimo 'high' navbatida biron vazifa bormi tekshiriladi; 'high' to'liq bo'shagandagina 'default', u ham bo'shagandagina 'low' navbatiga o'tiladi"
+        "text": "Worker har bir navbatdan teng miqdorda, ya'ni 10 tadan vazifa olib, ularni parallel ravishda uch oqimda bajaradi"
       },
       {
         "key": "C",
-        "text": "Har bir navbatdan navbatma-navbat bittadan (Round-Robin) olinadi"
+        "text": "Doimo 'high' navbatida biron vazifa bormi tekshiriladi; 'high' to'liq bo'shagandagina 'default', u ham bo'shagandagina 'low' navbatiga o'tiladi"
       },
       {
         "key": "D",
-        "text": "Faqat oxirgi qo'shilgan joblar ustuvor bo'ladi (LIFO)"
+        "text": "Barcha uchala navbatdagi vazifalar teng ulushda (round-robin) olinadi, shuning uchun 'high' navbati tezroq bo'shamaydi"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Laravel Queue workerlari ro'yxatdagi birinchi navbatga qat'iy ustuvorlik beradi. Modomiki 'high' navbatida vazifa bor ekan, 'default' va 'low' navbatlari kutib turadi. Agar barcha navbatlarni teng taqsimlash kerak bo'lsa, alohida worker jarayonlarini ishga tushirish lozim."
   },
   {
@@ -1901,22 +1901,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "RabbitMQ xabarlarni hech qachon o'chirmaydi, Kafka esa o'qiydigan zahoti o'chiradi"
+        "text": "Ikkalasi ham bir xil me'morchilikka ega; farqi faqat dasturlash tilida: RabbitMQ Erlang, Kafka esa Java, shuning uchun ularning xabar saqlashi ham bir xil"
       },
       {
         "key": "B",
-        "text": "RabbitMQ an'anaviy xabarlar navbati (Push modeli, o'qilgach o'chadi), Kafka esa doimiy taqsimlangan hodisalar jurnali (Pull modeli, o'qilgach ham saqlanadi)"
+        "text": "RabbitMQ faqat bitta serverda ishlaydi va klasterlashni qo'llab-quvvatlamaydi, Kafka esa faqat klasterda ishlaydi va xabarlarni saqlamaydi"
       },
       {
         "key": "C",
-        "text": "Kafka faqat bitta tilda ishlaydi"
+        "text": "RabbitMQ doimiy jurnal (Pull modeli, o'qilgach ham saqlanadi), Kafka esa an'anaviy navbat (Push modeli, o'qilgach o'chadi)"
       },
       {
         "key": "D",
-        "text": "RabbitMQ faqat WebSocket orqali ishlaydi"
+        "text": "RabbitMQ an'anaviy xabarlar navbati (Push modeli, o'qilgach o'chadi), Kafka esa doimiy taqsimlangan hodisalar jurnali (Pull modeli, o'qilgach ham saqlanadi)"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "RabbitMQ Smart Broker / Dumb Consumer printsipida ishlaydi (xabar yetkazilgach o'chadi). Kafka esa Dumb Broker / Smart Consumer printsipida o'zgarmas Append-only log sifatida xabarlarni kunlab saqlaydi va bir nechta tizimlar o'z tezligida o'qib boradi.",
     "level": "senior"
   },
@@ -1929,7 +1929,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Baza parolini buzuvchi maxsus SQL buyrug'i"
+        "text": "Xabar ichida zararli kod bo'lib, workerni buzishi; himoya uchun barcha xabarlar `serialize()` bilan shifrlanib, so'ng workerda dekodlanadi"
       },
       {
         "key": "B",
@@ -1937,11 +1937,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Navbatdagi xotirani tozalovchi maxsus buyruq"
+        "text": "Bir xil xabar navbatga ikki marta tushishi (duplicate) va u ikki marta bajarilishi; undan himoyalanish uchun har bir xabarga TTL berib, qayta ishlamaymiz"
       },
       {
         "key": "D",
-        "text": "Workerning CPU quvvatini 100% ga chiqaruvchi virus"
+        "text": "Navbatga juda ko'p xabar tushib, workerlar ulgura olmay qolishi; undan himoyalanish uchun navbat uzunligini cheklab, ortiqcha xabarlarni jim tashlab yuboramiz (qayta ishlanmaydi)"
       }
     ],
     "correct": "B",
@@ -1957,22 +1957,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "ShouldBeUnique job navbatda turganida ham, bajarilayotganida ham qulfni ushlaydi; ShouldBeUniqueUntilProcessing esa worker vazifani bajarishni BOSHLAGAN zahoti qulfni ochadi"
+        "text": "ShouldBeUnique bir xil jobni umuman bir martagina yuborishga ruxsat beradi (butun umr davomida), ShouldBeUniqueUntilProcessing esa muddatli (TTL) qulf qo'yadi"
       },
       {
         "key": "B",
-        "text": "ShouldBeUnique faqat Redisda ishlaydi"
+        "text": "ShouldBeUnique faqat Redis drayverida ishlaydi, ShouldBeUniqueUntilProcessing esa faqat database drayverida; ular qulf vaqtida farq qilmaydi"
       },
       {
         "key": "C",
-        "text": "ShouldBeUniqueUntilProcessing har doim xato beradi"
+        "text": "ShouldBeUnique job navbatda turganida ham, bajarilayotganida ham qulfni ushlaydi; ShouldBeUniqueUntilProcessing esa worker vazifani bajarishni BOSHLAGAN zahoti qulfni ochadi"
       },
       {
         "key": "D",
-        "text": "Ikkala interfeys ham bitta narsa"
+        "text": "ShouldBeUnique job faqat navbatga qo'yilgunga qadar qulf ushlaydi; ShouldBeUniqueUntilProcessing esa job to'liq tugaguncha qulfni ushlab turadi"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "ShouldBeUnique job to'liq tugaguniga qadar bir xil ID li yangi job qo'shilishini bloklaydi. ShouldBeUniqueUntilProcessing esa job ijrosi boshlanishi bilan qulfni bo'shatadi, natijada navbatda turgan paytda dublikat bo'lmaydi, lekin bajarilish paytida yangi navbat olish mumkin bo'ladi.",
     "level": "senior"
   },
@@ -1985,22 +1985,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Routing key bo'yicha aniq bitta navbatga yuboradi"
+        "text": "Routing key ga to'liq mos kelgan navbatga xabarni yetkazadi, mos kelmasa xabar o'chiriladi (Direct)"
       },
       {
         "key": "B",
-        "text": "Routing key ga umuman qaramasdan, o'ziga ulangan BARCHA navbatlarga xabarning nusxasini tarqatadi (Broadcast)"
+        "text": "Xabarni faqat bitta navbatga, navbatlar orasida navbatma-navbat (round-robin) taqsimlab yetkazadi"
       },
       {
         "key": "C",
-        "text": "Faqat birinchi bo'sh workerga uzatadi"
+        "text": "Routing key ga umuman qaramasdan, o'ziga ulangan BARCHA navbatlarga xabarning nusxasini tarqatadi (Broadcast)"
       },
       {
         "key": "D",
-        "text": "Xabarni navbatlarga navbati bilan teng bo'lib beradi (Round-robin)"
+        "text": "Routing key dagi andoza (pattern) bo'yicha, masalan `order.*`, mos navbatlarga tanlab yetkazadi (Topic)"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Fanout exchange xabarni o'ziga bog'langan barcha navbatlarga nusxalab tashlaydi (Broadcast). Masalan: 'Buyurtma berildi' xabari bir vaqtning o'zida ham SMS navbatiga, ham Ombor navbatiga, ham Buxgalteriya navbatiga yetkaziladi.",
     "level": "middle"
   },
@@ -2013,7 +2013,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "RabbitMQ uchun veb-monitoring paneli"
+        "text": "Faqat Amazon SQS navbatlari uchun mo'ljallangan, vazifalarni bulutda parallel bajaradigan serverless paket"
       },
       {
         "key": "B",
@@ -2021,11 +2021,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Faqat MySQL database queue drayveri bilan ishlaydi"
+        "text": "Faqat database drayveri uchun ishlab chiqilgan, `jobs` jadvalidagi vazifalarni veb-interfeys orqali qo'lda boshqarish paketi"
       },
       {
         "key": "D",
-        "text": "AWS SQS navbatlarini boshqarish vositasi"
+        "text": "Istalgan navbat drayveri (database, SQS, Redis) bilan ishlaydigan, lekin avtomatik masshtablash imkoniyati yo'q monitoring paketi"
       }
     ],
     "correct": "B",
@@ -2041,7 +2041,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Cookie fayllarini to'liq shifrlaydi"
+        "text": "Cookie'ni faqat bir marta, sessiya boshida yuboradi va keyingi barcha so'rovlarda qayta yubormaydi, shuning uchun CSRF imkonsiz bo'ladi"
       },
       {
         "key": "B",
@@ -2049,11 +2049,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "JavaScript orqali cookie o'qilishini taqiqlaydi (HttpOnly kabi)"
+        "text": "Foydalanuvchi cookie'sini shifrlab yuboradi, shu sabab uchinchi sayt uni o'qiy olmaydi, lekin so'rovga qo'shib yuborishi mumkin"
       },
       {
         "key": "D",
-        "text": "Faqat HTTPS orqali ishlashga majbur qiladi"
+        "text": "Cookie faqat HTTPS orqali uzatiladi va JavaScript uni o'qiy olmaydi, shuning uchun CSRF so'rovlari ishlamaydi"
       }
     ],
     "correct": "B",
@@ -2069,22 +2069,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Foydalanuvchi kiritgan harflarni o'chirib tashlaydi"
+        "text": "So'rov faqat ma'lum bir IP manzildan kelgan bo'lsa bajariladi, Prepared Statement esa shu manzillarni oldindan tekshirib chiqadi"
       },
       {
         "key": "B",
-        "text": "SQL so'rov kodi va uzatilgan parametrlar (ma'lumotlar) alohida ajratiladi; baza ma'lumotni hech qachon bajariluvchi buyruq deb qabul qilmaydi"
+        "text": "Parametrlar maxsus belgilar (', \") dan tozalanib, bazaga yuboriladi; shuning uchun hujumchi so'rov mantiqini o'zgartira olmaydi"
       },
       {
         "key": "C",
-        "text": "So'rovni bazaga yuborishdan oldin keshlab qo'yadi"
+        "text": "Baza foydalanuvchi kiritmasini avtomatik shifrlab saqlaydi, shuning uchun uni so'rov sifatida o'qib ham, bajarib ham bo'lmaydi"
       },
       {
         "key": "D",
-        "text": "Faqat sonli qiymatlar bilan ishlashga ruxsat beradi"
+        "text": "SQL so'rov kodi va uzatilgan parametrlar (ma'lumotlar) alohida ajratiladi; baza ma'lumotni hech qachon bajariluvchi buyruq deb qabul qilmaydi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Prepared Statements da SQL sintaksisi oldindan kompilyatsiya qilinadi. Keyin uzatilgan foydalanuvchi kiritmasi (hatto unda ' OR 1=1 -- bo'lsa ham) oddiy o'lik satr (string literal) sifatida qaraladi va SQL mantig'ini buzolmaydi.",
     "level": "junior"
   },
@@ -2097,22 +2097,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Foydalanuvchi parolini qayta shifrlash uchun"
+        "text": "Hujumchi oldindan bilgan yoki qurbonga o'tkazgan eski Sessiya ID raqami o'rniga butunlay yangi tasodifiy Session ID berish va eski sessiya ma'lumotlarini unga ko'chirish orqali hisob o'g'irlanishini bartaraf qilish uchun"
       },
       {
         "key": "B",
-        "text": "Faqat foydalanuvchining IP manzilini tekshirish uchun"
+        "text": "Sessiya ma'lumotlarini serverda shifrlab, ularni yangi cookie'ga ko'chirmasdan, foydalanuvchining eski cookie'sini brauzerdan o'chirish orqali XSS hujumlaridan himoyalanish uchun"
       },
       {
         "key": "C",
-        "text": "Kesh xotirasini tozalash uchun"
+        "text": "Sessiya muddatini uzaytirib, foydalanuvchi qayta kirishga majbur bo'lmasligi va cookie'ning muddati tugab qolmasligi uchun; bu faqat qulaylik uchun va xavfsizlikka ta'sir qilmaydi"
       },
       {
         "key": "D",
-        "text": "Hujumchi oldindan bilgan yoki qurbonga o'tkazgan eski Sessiya ID raqami o'rniga butunlay yangi tasodifiy Session ID berish va eski sessiya ma'lumotlarini unga ko'chirish orqali hisob o'g'irlanishini bartaraf qilish uchun"
+        "text": "Foydalanuvchining parolini sessiyada qayta tekshirib, har bir kirishda yangi CSRF tokenini yaratish va sessiyani bazaga ko'chirish orqali hisobni brute-force dan himoya qilish uchun, bu sessiya ID sidan ishonchliroq"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Session Fixation hujumida buzg'unchi qurbon brauzeriga o'zining sessiya ID sini kiritib qo'yadi. Agar foydalanuvchi tizimga kirganda sessiya ID yangilanmasa (regenerate), buzg'unchi ham o'sha sessiya ID bilan uning hisobiga kirib oladi. Laravel Auth tizimi bu xavfni regenerate() orqali avtomatik bartaraf etadi."
   },
   {
@@ -2124,22 +2124,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`{!! ... !!}` xavfsizroq, chunki u avtomatik SQL Injection ni tekshiradi"
+        "text": "`{{ ... }}` xom HTML ni chiqaradi va XSS xavfi bor; `{!! ... !!}` esa barcha maxsus belgilarni `htmlspecialchars()` orqali xavfsiz ekranlaydi, shuning uchun `{!! ... !!}` tavsiya etiladi"
       },
       {
         "key": "B",
-        "text": "`{{ ... }}` barcha maxsus belgilarni `htmlspecialchars()` orqali xavfsiz ekranlaydi (XSS dan himoya); `{!! ... !!}` esa xom HTML ni hech qanday tekshiruvsiz chiqaradi va XSS ga olib kelishi mumkin"
+        "text": "`{{ ... }}` faqat string qiymatlarni, `{!! ... !!}` esa faqat sonlarni chiqaradi va ikkalasi ham XSS dan bir xil himoyalaydi"
       },
       {
         "key": "C",
-        "text": "Ular mutlaqo bir xil ishlaydi, faqat sintaktik uslub farqi bor"
+        "text": "Ikkalasi bir xil ekranlaydi; farqi faqat `{!! ... !!}` ma'lumotni JSON sifatida chiqarishida va faqat massivlar bilan ishlashida"
       },
       {
         "key": "D",
-        "text": "`{{ ... }}` faqat sonlarni, `{!! ... !!}` esa matnlarni chiqaradi"
+        "text": "`{{ ... }}` barcha maxsus belgilarni `htmlspecialchars()` orqali xavfsiz ekranlaydi (XSS dan himoya); `{!! ... !!}` esa xom HTML ni hech qanday tekshiruvsiz chiqaradi va XSS ga olib kelishi mumkin"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "{{ ... }} avtomatik tarzda htmlspecialchars() funksiyasini chaqiradi va <script>alert(1)</script> kabi xavfli teglarni zararsizlantiradi. {!! ... !!} esa xom kontentni to'g'ridan-to'g'ri render qiladi; unga faqat to'liq ishonchli (masalan HTMLPurifier dan o'tgan) matnlar berilishi kerak."
   },
   {
@@ -2151,22 +2151,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "SQL Injection"
+        "text": "SQL Injection va ma'lumotlar bazasiga ruxsatsiz kirish urinishlaridan"
       },
       {
         "key": "B",
-        "text": "XSS (Cross-Site Scripting) va ruxsatsiz begona skriptlarning yuklanishi"
+        "text": "Brute-force hujumlari va parollarni ommaviy taxmin qilishdan"
       },
       {
         "key": "C",
-        "text": "DDoS hujumlari"
+        "text": "XSS (Cross-Site Scripting) va ruxsatsiz begona skriptlarning yuklanishi"
       },
       {
         "key": "D",
-        "text": "Serverning qizib ketishi"
+        "text": "DDoS hujumlari va server resurslarining haddan tashqari yuklanishidan"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "CSP brauzerga qaysi domenlardan skriptlar, stillar va rasmlar yuklanishiga ruxsat berilganini bildiradi. Natijada hujumchi saytga inline JavaScript kod tiqsa ham, brauzer uni 'ruxsatsiz manba' deb bloklaydi.",
     "level": "senior"
   },
@@ -2179,22 +2179,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Argon2id juda tez ishlaydi va hech qanday resurs talab qilmaydi"
-      },
-      {
-        "key": "B",
         "text": "Argon2id ham CPU, ham xotira (RAM-hardened) talab qiladi; bu esa GPU va maxsus chiplar (ASIC) yordamida parollarni ommaviy sindirishni imkonsiz qiladi"
       },
       {
+        "key": "B",
+        "text": "Argon2id parolni salt (tuz) ishlatmasdan xeshlaydi, bu esa bir xil parollar uchun bir xil xesh berib, tekshirishni tezlashtiradi (ammo kamroq xavfsiz)"
+      },
+      {
         "key": "C",
-        "text": "Argon2id parolni qayta tiklash (decrypt) imkonini beradi"
+        "text": "Argon2id faqat CPU ni yuklaydi, lekin Bcrypt dan tezroq ishlaydi, shuning uchun serverga tushadigan yuklama kamayadi"
       },
       {
         "key": "D",
-        "text": "Faqat Linux da ishlaydi"
+        "text": "Argon2id xeshni qaytarib parolga aylantirish (dekodlash) imkonini beradi, shu sabab parolni tiklash funksiyasini qo'llash oson"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Bcrypt faqat CPU ni yuklaydi va kuchli GPU larda parallel sindirish osonroq. Argon2id esa Memory-hardened xesh bo'lib, har bir tekshiruv uchun bir necha megabayt RAM talab qiladi va ASIC/GPU hujumchilarini iqtisodiy jihatdan to'xtatadi.",
     "level": "senior"
   },
@@ -2207,7 +2207,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Foydalanuvchi brauzerida zararli kod ishlatiladi"
+        "text": "Hujumchi foydalanuvchining brauzeriga zararli JavaScript kod yuborib, uning cookie va sessiya ma'lumotlarini o'g'irlashga majbur qiladi, bunda zaif nuqta mijoz brauzeri"
       },
       {
         "key": "B",
@@ -2215,11 +2215,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Serverga juda ko'p POST so'rov yuboriladi"
+        "text": "Hujumchi foydalanuvchini aldab, u tizimga kirgan holda begona saytdan serverga kutilmagan so'rov yuborishga majbur qiladi"
       },
       {
         "key": "D",
-        "text": "Foydalanuvchining paroli o'g'irlanadi"
+        "text": "Hujumchi bazaga yuboriladigan so'rovga SQL buyruqlarini qo'shib, serverni ma'lumotlar bazasidagi jadvallarni o'chirishga majbur qiladi"
       }
     ],
     "correct": "B",
@@ -2235,22 +2235,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat parollarni majburiy 16 belgidan uzun qilish"
+        "text": "`preventLazyLoading()`, `preventSilentlyDiscardingAttributes()` va `preventAutoCommit()` (tranzaksiyalarni avtomatik commit qilishni taqiqlash), bu testlarni tezlashtiradi"
       },
       {
         "key": "B",
-        "text": "Barcha SQL so'rovlarini avtomatik keshga olish"
-      },
-      {
-        "key": "C",
         "text": "`preventLazyLoading()`, `preventSilentlyDiscardingAttributes()` (fillable da bo'lmagan maydonlar tashlab yuborilganda exception tashlash) va `preventAccessingMissingAttributes()`"
       },
       {
+        "key": "C",
+        "text": "Faqat `preventLazyLoading()` ni yoqadi; fillable va mavjud bo'lmagan atributlar bilan bog'liq tekshiruvlar alohida sozlanadi"
+      },
+      {
         "key": "D",
-        "text": "Faqat soft deletes funksiyasini majburiy qilish"
+        "text": "Barcha modellarda `$guarded = []` ni majburiy qilib, har qanday maydonni yozishga ruxsat beradi va faqat xatolarni log faylga yozadi"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Model::shouldBeStrict(!app()->isProduction()) eng zamonaviy Laravel tavsiyasidir. U fillable ga qo'shilmagan maydon yozilganda jim tashlab yuborish o'rniga darhol MassAssignmentException tashlaydi, N+1 muammosini darhol ko'rsatadi va xatolarni ishlab chiqish bosqichida ushlashga yordam beradi."
   },
   {
@@ -2262,22 +2262,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Stub faqat oldindan tayyorlangan javobni qaytaradi (State verification), Mock esa metod necha marta va qanday argumentlar bilan chaqirilganini ham qat'iy tekshiradi (Behavior verification)"
+        "text": "Ikkalasi bir xil: farqi faqat nomida; PHPUnit da `createStub()` va `createMock()` bir xil obyekt qaytaradi va bir xil tekshiruvlar qiladi"
       },
       {
         "key": "B",
-        "text": "Mock faqat bazaga yozadi, Stub esa o'qiydi"
+        "text": "Mock faqat oldindan tayyorlangan javobni qaytaradi (State verification), Stub esa metod necha marta chaqirilganini ham tekshiradi (Behavior verification), Mock bundan tezroq ishlaydi"
       },
       {
         "key": "C",
-        "text": "Stub PHPUnit da, Mock esa faqat Pest da ishlaydi"
+        "text": "Stub faqat oldindan tayyorlangan javobni qaytaradi (State verification), Mock esa metod necha marta va qanday argumentlar bilan chaqirilganini ham qat'iy tekshiradi (Behavior verification)"
       },
       {
         "key": "D",
-        "text": "Ikkalasi mutlaqo bitta narsa"
+        "text": "Stub haqiqiy obyektning to'liq nusxasi bo'lib, bazaga haqiqiy so'rov yuboradi; Mock esa faqat xotirada ishlaydigan soxta obyekt, ularning farqi tezlikda"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Stub shunchaki soxta ma'lumot qaytaradi: $stub->method('get')->willReturn(5). Mock esa 'sendEmail metodi roppa-rosa 1 marta 'ali@mail' argumenti bilan chaqirildimi?' deb chaqiruv xatti-harakatini (behavior) qat'iy tekshiradi.",
     "level": "junior"
   },
@@ -2290,22 +2290,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Serverning CPU va xotira quvvatini o'lchaydi"
-      },
-      {
-        "key": "B",
         "text": "Arxitektura qoidalarini (masalan, Controllerlar faqat DTO qabul qilishi, hech kim Model ichida Request ishlatmasligi, dd() qolib ketmasligi) avtomat test sifatida tekshiradi"
       },
       {
+        "key": "B",
+        "text": "Controllerlarning HTTP so'rovlarga javob berish tezligini o'lchab, sekin ishlaydigan arxitektura qatlamlarini aniqlaydi"
+      },
+      {
         "key": "C",
-        "text": "Ma'lumotlar bazasi jadvallarini avtomatik tuzadi"
+        "text": "Brauzerda foydalanuvchi interfeysini avtomatik ochib, sahifalar arxitekturasi va navigatsiyasi to'g'ri ishlashini tekshiradi (end-to-end), ya'ni ssenariyni takrorlaydi"
       },
       {
         "key": "D",
-        "text": "Frontend CSS stillarini testlaydi"
+        "text": "Dastur arxitekturasini avtomatik ravishda diagrammaga (UML) aylantirib beradi va loyiha tuzilmasining hujjatini yaratadi"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Pest Arch plagin koddagi arxitekturaviy intizomni nazorat qiladi: arch('app')->expect(['dd', 'dump'])->not->toBeUsed() yoki Controllerlar ichida to'g'ridan-to'g'ri DB so'rovlari yozilmaganini kafolatlaydi.",
     "level": "senior"
   },
@@ -2318,22 +2318,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Mutation testing faqat bazadagi xatolarni topadi"
-      },
-      {
-        "key": "B",
         "text": "Kod satrlari shunchaki ishga tushishi (coverage) yetarli emas; Infection kod ichidagi operatorlarni ataylab teskarisiga o'zgartiradi (masalan, > ni < qiladi) va testlar buni sezib yiqilishini tekshiradi"
       },
       {
+        "key": "B",
+        "text": "Kodni avtomatik ravishda bir necha marta takroran ishga tushirib, testlar barqaror (flaky emas) ekanini va xotira sizib chiqmasligini tekshiradi"
+      },
+      {
         "key": "C",
-        "text": "Mutation testing testlarni 100 barobar sekinlashtirgani uchun taqiqlangan"
+        "text": "Testlarning ishlash tezligini o'lchab, eng sekin testlarni aniqlaydi; 100% coverage esa testlar tez ishlashini kafolatlaydi, faqat hajmi muhim"
       },
       {
         "key": "D",
-        "text": "Infection faqat PHP 7 da ishlaydi"
+        "text": "Kodni avtomatik tuzatadi: topilgan xatolarni Infection o'zi tuzatib, yangi testlarni generatsiya qiladi, shu sabab coverage har doim 100% bo'ladi, shu sabab testlarni yozish shart bo'lib qolmaydi"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Agar testda assert yozilmagan bo'lsa ham Code Coverage 100% ko'rsatishi mumkin. Mutation Testing esa kodga ataylab xatolar kiritib ('mutantlar'), sizning testlaringiz bu xatolarni ushlay olishini sinovdan o'tkazadi.",
     "level": "senior"
   },
@@ -2346,22 +2346,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Kod o'zgarmagan bo'lsa ham, ba'zan o'tib, ba'zan yiqiluvchi beqaror testlar (ko'pincha vaqt, tarmoq yoki ketma-ketlikka bog'liq bo'ladi)"
+        "text": "Kodning yangi versiyasida buzilgan va doimiy ravishda yiqiladigan testlar, ular xatoni aniq ko'rsatadi va ishonchli hisoblanadi"
       },
       {
         "key": "B",
-        "text": "Juda sekin ishlovchi testlar"
+        "text": "Kod qamrovi (coverage) past bo'lgan va faqat sodda holatlarni tekshiradigan testlar, ular har doim muvaffaqiyatli o'tadi"
       },
       {
         "key": "C",
-        "text": "Faqat Windows da xato beruvchi testlar"
+        "text": "Faqat sekin ishlaydigan, ya'ni belgilangan vaqt chegarasidan (timeout) oshib ketadigan testlar, ular doimo bir xil natija beradi"
       },
       {
         "key": "D",
-        "text": "Hali yozib tugatilmagan testlar"
+        "text": "Kod o'zgarmagan bo'lsa ham, ba'zan o'tib, ba'zan yiqiluvchi beqaror testlar (ko'pincha vaqt, tarmoq yoki ketma-ketlikka bog'liq bo'ladi)"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Flaky testlar jamoaning CI/CD ga ishonchini so'ndiradi. Ularning sababi odatda: now() vaqti, random generatorlar, parallel testlarda ma'lumotlar to'qnashuvi yoki tashqi API larga bog'lanib qolishdir.",
     "level": "middle"
   },
@@ -2374,22 +2374,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Testlardagi barcha assertlarni o'chirib tashlash"
-      },
-      {
-        "key": "B",
         "text": "Paralell testlash (pest --parallel) va Bcrypt xesh narxini (cost) test muhitida minimal qilib qo'yish"
       },
       {
+        "key": "B",
+        "text": "Barcha testlarni bitta tranzaksiyaga o'rab, `RefreshDatabase` ni o'chirish va testlarda bazadan umuman foydalanmaslik"
+      },
+      {
         "key": "C",
-        "text": "Faqat bitta test faylini ishga tushirish"
+        "text": "Testlarni alohida fayllarga bo'lmasdan bitta katta test klassiga yig'ib, ularni ketma-ket bajarish"
       },
       {
         "key": "D",
-        "text": "PHP-FPM ni o'chirib qo'yish"
+        "text": "Har bir test oldidan migratsiyalarni qaytadan ishga tushirish (`migrate:fresh`) va keshni har safar tozalash"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Paralell testlash barcha CPU yadrolarini ishlatadi. Shuningdek, test muhitida HASH_ROUNDS=4 (yoki Bcrypt hasher round) qilib qo'yilsa, har bir testdagi parol xeshlash 200ms o'rniga 1ms oladi va minglab testlar soniyalarda o'tadi.",
     "level": "middle"
   },
@@ -2402,22 +2402,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Tarmoq ulanishini butunlay o'chirib qo'yadi"
+        "text": "Tashqi servis ishlamay qolganda so'rovni avtomatik qayta yuboradi (retry) va xatolik bo'lsa test o'tgan hisoblanadi"
       },
       {
         "key": "B",
-        "text": "Tashqi servisga (Telegram, Stripe, SMS shlyuz) haqiqiy so'rov yubormasdan, oldindan belgilangan soxta JSON javobni qaytaradi"
+        "text": "Tashqi servisga haqiqiy so'rov yuboradi, lekin javobni keshlab qo'yadi va keyingi testlarda shu keshlangan javobni qaytaradi"
       },
       {
         "key": "C",
-        "text": "Baza so'rovlarini to'xtatadi"
+        "text": "Tashqi servisga (Telegram, Stripe, SMS shlyuz) haqiqiy so'rov yubormasdan, oldindan belgilangan soxta JSON javobni qaytaradi"
       },
       {
         "key": "D",
-        "text": "Faqat localhost ga so'rov yuborishga ruxsat beradi"
+        "text": "Faqat ichki (localhost) manzillarga so'rovlarni bloklaydi, tashqi servislarga esa so'rovlar odatdagidek yuboriladi"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Http::fake() tashqi API larni test qilishda bebaho vositadir. U real tarmoq so'rovini to'xtatib, belgilangan status va body ni qaytaradi, shuningdek Http::assertSent() orqali so'rov to'g'ri jo'natilganini tekshiradi.",
     "level": "junior"
   },
@@ -2430,22 +2430,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Entity faqat sonlarni, Value Object esa satrlarni saqlaydi"
-      },
-      {
-        "key": "B",
         "text": "Entity o'zining noyob identifikatoriga (ID) ega bo'ladi va vaqt o'tishi bilan o'zgarishi mumkin; Value Object esa ID ga ega bo'lmaydi, faqat o'z qiymatlari bilan aniqlanadi va o'zgarmasdir (Immutable)"
       },
       {
+        "key": "B",
+        "text": "Entity faqat bazadagi jadval qatoriga mos keladi, Value Object esa faqat DTO sifatida API javoblarida ishlatiladi; ularning domen mantiqida farqi yo'q"
+      },
+      {
         "key": "C",
-        "text": "Value Object faqat ma'lumotlar bazasida yashaydi"
+        "text": "Entity ID ga ega emas va faqat qiymatlari bilan aniqlanadi; Value Object esa noyob ID ga ega va vaqt o'tishi bilan o'zgarishi mumkin bo'lgan obyektdir, ya'ni amalda ularni ajratish shart emas"
       },
       {
         "key": "D",
-        "text": "Entity va Value Object bitta narsa"
+        "text": "Ikkalasi ham noyob ID ga ega; farqi shundaki, Entity o'zgarmas (immutable), Value Object esa o'zgaruvchan va har bir o'zgarishda yangi ID oladi"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "User bu Entity (chunki uning ID si bor, ismi o'zgarsa ham u o'sha user). Money yoki Address esa Value Object (50 000 so'm har doim 50 000 so'm, uning alohida shaxsiyati yo'q, agar 10 000 qo'shilsa yangi ob'ekt hosil bo'ladi).",
     "level": "middle"
   },
@@ -2458,22 +2458,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Email xabarlarini tezroq yuborishni"
+        "text": "Xabarlarning navbatda tartibsiz kelishi muammosini hal qilib, har bir xabarning aynan bir martagina yetkazilishini (exactly-once) har doim kafolatlaydi"
       },
       {
         "key": "B",
-        "text": "Ma'lumotlar bazasiga yozish va navbatga (Kafka/RabbitMQ) xabar yuborish o'rtasidagi 'Dual-Write' muammosini hal qilib, xabarlar yo'qolib ketmasligini 100% kafolatlaydi"
+        "text": "Bir nechta mikroservis bazasi o'rtasida ma'lumotlarni sinxron JOIN qilish va bitta so'rovda barcha servislardan ma'lumot olish muammosini hal qiladi"
       },
       {
         "key": "C",
-        "text": "Keshni avtomatik tozalashni"
+        "text": "Servislar o'rtasidagi HTTP so'rovlar sekinlashganda ularni keshlab, ma'lumotlar bazasiga yuklamani kamaytirish muammosini hal qiladi"
       },
       {
         "key": "D",
-        "text": "Foydalanuvchi parollarini shifrlashni"
+        "text": "Ma'lumotlar bazasiga yozish va navbatga (Kafka/RabbitMQ) xabar yuborish o'rtasidagi 'Dual-Write' muammosini hal qilib, xabarlar yo'qolib ketmasligini 100% kafolatlaydi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Agar baza saqlanib, Kafka ga xabar ketmay qolsa ma'lumot uzilib qoladi. Outbox pattern da hodisa bitta DB tranzaksiyasida 'outbox' jadvaliga yoziladi, alohida servis esa uni o'qib Kafkaga ishonchli uzatadi.",
     "level": "senior"
   },
@@ -2486,22 +2486,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Elektr quvvatini tejash uchun serverni o'chiradi"
+        "text": "Tashqi xizmatga yuboriladigan so'rovlarni oldindan shifrlab, ular o'rtasida xavfsiz ulanish (TLS zanjiri) o'rnatadi va uzilishlarning oldini oladi"
       },
       {
         "key": "B",
-        "text": "Sekinlashgan yoki qulagan tashqi xizmatga cheksiz so'rov yuborib butun tizimni osiltirib qo'ymaslik uchun, ma'lum xatolar sonidan keyin zanjirni vaqtincha uzib (Open state), zudlik bilan fallback javob qaytaradi"
+        "text": "Kiruvchi so'rovlar sonini cheklab (rate limit), belgilangan chegaradan oshganda ortiqcha so'rovlarni navbatga qo'yadi va keyinroq ketma-ket bajaradi, shuning uchun u xizmat holatini tekshirmaydi"
       },
       {
         "key": "C",
-        "text": "Baza tranzaksiyalarini commit qiladi"
+        "text": "Sekinlashgan yoki qulagan tashqi xizmatga cheksiz so'rov yuborib butun tizimni osiltirib qo'ymaslik uchun, ma'lum xatolar sonidan keyin zanjirni vaqtincha uzib (Open state), zudlik bilan fallback javob qaytaradi"
       },
       {
         "key": "D",
-        "text": "SQL Injection xatolarini ushlaydi"
+        "text": "Muvaffaqiyatsiz so'rovni cheksiz qayta-qayta yuborib (retry), xizmat tiklanguncha kutadi va barcha foydalanuvchilarga bir xil javob qaytaradi"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Circuit Breaker elektr avtomatiga o'xshaydi: agar to'lov servisi qotib qolsa, barcha so'rovlar unga ulanishni kutib osilib qolmasligi uchun zanjirni uzadi va darhol 'Xizmat vaqtincha band' deb tizimning qolgan qismini saqlab qoladi.",
     "level": "senior"
   },
@@ -2514,7 +2514,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Sync va Async"
+        "text": "Synchronous va Asynchronous (sinxron va asinxron HTTP chaqiruvlari)"
       },
       {
         "key": "B",
@@ -2522,11 +2522,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Master va Slave"
+        "text": "Optimistic va Pessimistic (versiyaga va qulfga asoslangan tranzaksiyalar)"
       },
       {
         "key": "D",
-        "text": "Public va Private"
+        "text": "Two-Phase va Three-Phase Commit (ikki va uch bosqichli tasdiqlash protokollari) (atomik tasdiqlash usullari)"
       }
     ],
     "correct": "B",
@@ -2542,7 +2542,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Tezlik yoki Xavfsizlik"
+        "text": "Consistency (Muvofiqlik) yoki Partition (Bo'linish)"
       },
       {
         "key": "B",
@@ -2550,11 +2550,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Xotira yoki Disk"
+        "text": "Availability (Mavjudlik) yoki Performance (Tezlik)"
       },
       {
         "key": "D",
-        "text": "Frontend yoki Backend"
+        "text": "Durability (Chidamlilik) yoki Isolation (Izolyatsiya)"
       }
     ],
     "correct": "B",
@@ -2570,22 +2570,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Kod va ma'lumotlar bazasini turli tillarda yozish"
+        "text": "Barcha servislar uchun yagona ma'lumotlar bazasini ishlatib, har bir servisga faqat o'z jadvallariga yozish huquqini berish orqali ma'lumot yaxlitligini saqlash, hammasi bitta joyda"
       },
       {
         "key": "B",
-        "text": "Ma'lumotlarni o'zgartiruvchi operatsiyalarni (Command - Create/Update/Delete) va ma'lumotlarni o'quvchi operatsiyalarni (Query - Read) butunlay alohida modellar va bazalarga ajratish"
+        "text": "Ilovani frontend va backend qismlariga ajratib, ularni alohida repozitoriy va serverlarga joylash orqali jamoalar ishini mustaqil qilish"
       },
       {
         "key": "C",
-        "text": "Faqat navbatlar bilan ishlash"
+        "text": "Bitta modelda ham yozish, ham o'qish amallarini birlashtirib, relyatsion baza va keshni umumiy bitta jadvalga yig'ish orqali kodni soddalashtirish"
       },
       {
         "key": "D",
-        "text": "Barcha kontrollerlarni bitta joyga yig'ish"
+        "text": "Ma'lumotlarni o'zgartiruvchi operatsiyalarni (Command - Create/Update/Delete) va ma'lumotlarni o'quvchi operatsiyalarni (Query - Read) butunlay alohida modellar va bazalarga ajratish"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "CQRS da yozish mantiqi murakkab biznes qoidalariga ega bo'lib relyatsion bazada (Postgres) bajariladi, o'qish esa hech qanday JOIN larsiz tayyor denormalizatsiyalangan ko'rinishda (Elasticsearch/Redis) tezkor qaytariladi.",
     "level": "senior"
   },
@@ -2598,22 +2598,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Barcha metodlar bitta argument qabul qilishi kerak"
+        "text": "Yuqori darajali modullar quyi darajali modullarga bog'liq bo'lmasligi kerak, ikkalasi ham abstraksiyaga bog'liq bo'lishi lozim"
       },
       {
         "key": "B",
-        "text": "Ota sinf ob'ektini uning istalgan voris sinf ob'ekti bilan almashtirganda dasturning to'g'ri ishlashi buzilmasligi shart"
+        "text": "Sinf faqat bitta vazifani bajarishi va o'zgarish uchun bitta sababga ega bo'lishi kerak, aks holda uni bo'lish zarur"
       },
       {
         "key": "C",
-        "text": "Har bir sinf faqat bitta interfeysga ega bo'lishi shart"
+        "text": "Ota sinf ob'ektini uning istalgan voris sinf ob'ekti bilan almashtirganda dasturning to'g'ri ishlashi buzilmasligi shart"
       },
       {
         "key": "D",
-        "text": "Barcha xususiyatlar private bo'lishi kerak"
+        "text": "Voris sinf ota sinfdan kamida bitta yangi public metod qo'shishi shart, aks holda meros olishning ma'nosi qolmaydi"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "LSP voris sinf ota sinfning kontraktini buzmasligini talab qiladi: ota sinf kutmagan yangi xatolar (exceptions) tashlamaslik, qaytarish tipini toraytirmaslik va mavjud metodlarni bo'sh qilib tashlamaslik shart.",
     "level": "junior"
   },
@@ -2626,22 +2626,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat frontend hodisalarini (click, hover) log faylga yozish"
+        "text": "Obyektning faqat joriy yakuniy holatini saqlash o'rniga, tizimda sodir bo'lgan har bir hodisani (Events) o'zgarmas (immutable) ketma-ketlik tariqasida saqlash va joriy holatni ularni qayta o'ynatish (replay) orqali tiklash"
       },
       {
         "key": "B",
-        "text": "Ma'lumotlar bazasi o'rniga faqat Redis keshini ishlatish"
+        "text": "O'qish va yozish amallarini alohida modellar va bazalarga ajratib, o'qish uchun denormalizatsiyalangan nusxalarni yuritish, hodisalar esa umuman saqlanmaydi"
       },
       {
         "key": "C",
-        "text": "Barcha jadvallarni bitta umumiy jadvalga birlashtirish"
+        "text": "Ma'lumotlar bazasidan voz kechib, barcha holatni faqat xotirada (in-memory) saqlash va ilova qayta ishga tushganda uni tashqi keshdan qayta yuklab olish"
       },
       {
         "key": "D",
-        "text": "Obyektning faqat joriy yakuniy holatini saqlash o'rniga, tizimda sodir bo'lgan har bir hodisani (Events) o'zgarmas (immutable) ketma-ketlik tariqasida saqlash va joriy holatni ularni qayta o'ynatish (replay) orqali tiklash"
+        "text": "Obyektning joriy holatini har bir o'zgarishda bazadagi bitta qatorga qayta yozib, eski qiymatlarni zaxira jadvaliga ko'chirish va kerak bo'lsa ulardan foydalanish, hodisalar faqat auditga yoziladi, tiklash uchun emas"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Event Sourcing da (masalan moliyaviy bank tizimlarida) faqat hisobdagi qoldiq saqlanmaydi, balki har bir depozit, pul o'tkazmasi alohida hodisa sifatida append-only jadvalga yoziladi. Bu orqali 100% audit tarixi va tizimni vaqt bo'yicha orqaga qaytarish (Time-travel debugging) imkoni vujudga keladi."
   },
   {
@@ -2653,22 +2653,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Fayllarni ZIP qilib siqadi"
+        "text": "Image qatlamlarini avtomatik siqish (gzip) orqali kod va kutubxonalarni arxivga o'rab, konteyner ishga tushganda ularni xotirada ochish hisobiga hajmni kamaytiradi"
       },
       {
         "key": "B",
-        "text": "Birinchi bosqichda barcha og'ir vositalar (Composer, Node.js, npm, gcc) yordamida loyiha yig'iladi, yakuniy yengil bosqichga (Alpine) esa faqat tayyor kod va vendor ko'chiriladi, barcha og'ir kompilyatorlar tashlab ketiladi"
+        "text": "Bir vaqtning o'zida bir nechta konteynerni parallel ishga tushirib, umumiy qatlamlarni ular o'rtasida ulashish orqali har bir image hajmini kichraytiradi"
       },
       {
         "key": "C",
-        "text": "Konteynerdagi loglarni o'chiradi"
+        "text": "Faqat `.dockerignore` faylidagi fayllarni image dan chiqarib tashlaydi, bunda yig'ish va ishlash muhiti bir xil qoladi, shu sababli kompilyatorlar image ichida saqlanadi, natijada hajm deyarli o'zgarmaydi"
       },
       {
         "key": "D",
-        "text": "Faqat bitta PHP faylini saqlaydi"
+        "text": "Birinchi bosqichda barcha og'ir vositalar (Composer, Node.js, npm, gcc) yordamida loyiha yig'iladi, yakuniy yengil bosqichga (Alpine) esa faqat tayyor kod va vendor ko'chiriladi, barcha og'ir kompilyatorlar tashlab ketiladi"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Multi-stage build yordamida yig'ish (build) muhiti va ishlab turish (runtime) muhiti ajratiladi. Node/Composer faqat 1-bosqichda ishlatilib, yakuniy production konteyneriga kirmaydi, natijada hajm minimal va xavfsiz bo'ladi.",
     "level": "senior"
   },
@@ -2681,22 +2681,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "SIGKILL (kill -9)"
+        "text": "SIGSTOP (kill -19)"
       },
       {
         "key": "B",
-        "text": "SIGTERM (kill -15)"
+        "text": "SIGHUP (kill -1)"
       },
       {
         "key": "C",
-        "text": "SIGSTOP"
+        "text": "SIGTERM (kill -15)"
       },
       {
         "key": "D",
-        "text": "SIGHUP"
+        "text": "SIGKILL (kill -9)"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Dastlab SIGTERM yuboriladi: jarayonga o'z ishini (joriy HTTP so'rov yoki navbatdagi vazifani) xavfsiz yakunlash uchun vaqt (masalan 30 soniya) beriladi. Agar belgilangan vaqtda to'xtamasa, majburiy SIGKILL yuboriladi.",
     "level": "junior"
   },
@@ -2713,15 +2713,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "static faqat Windows da ishlaydi"
+        "text": "Tanlovda farq yo'q: 'static' va 'dynamic' bir xil ishlaydi, faqat `pm.max_children` qiymati static rejimda e'tiborga olinmaydi va avtomatik hisoblanadi"
       },
       {
         "key": "C",
-        "text": "dynamic faqat test muhitida ishlaydi"
+        "text": "Katta yuklamali serverlarda jarayonlar soni yuklamaga qarab moslashishi uchun 'dynamic', resurslari cheklanganlarida esa xotira sarfini aniq belgilash uchun 'static' tanlanadi (qat'iy qoida)"
       },
       {
         "key": "D",
-        "text": "Ikkalasi ham mutlaqo bir xil"
+        "text": "'static' faqat CLI va cron vazifalari uchun, 'dynamic' esa faqat web so'rovlar uchun mo'ljallangan; ikkalasini bitta serverda birga ishlatib bo'lmaydi"
       }
     ],
     "correct": "A",
@@ -2737,7 +2737,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat rasmlarni tezroq yuklaydi"
+        "text": "Server tomonda HTML sahifani to'liq render qilib, brauzerga tayyor holda yuborish (SSR), shu sababli JavaScript fayllarga ehtiyoj yo'qoladi"
       },
       {
         "key": "B",
@@ -2745,11 +2745,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Parollarni talab qilmaslik"
+        "text": "Ma'lumotlarni avtomatik ravishda shifrlash, shu sababli HTTP/1.1 dagi barcha xavfsizlik zaifliklari bartaraf bo'ladi va HTTPS ga ehtiyoj qolmaydi"
       },
       {
         "key": "D",
-        "text": "Nginx konfiguratsiyasini talab qilmaslik"
+        "text": "Har bir fayl uchun alohida TCP ulanish ochish orqali so'rovlarni to'liq mustaqil qilish, bu esa umumiy yuklanish tezligini oshiradi"
       }
     ],
     "correct": "B",
@@ -2765,22 +2765,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Liveness podni o'chiradi, Readiness yangilaydi"
+        "text": "Liveness podning trafikni qabul qilishga tayyorligini tekshiradi (tayyor bo'lmasa trafik yo'naltirmaydi); Readiness esa pod tiriklini tekshiradi va qotib qolsa uni qayta ishga tushiradi (HTTP orqali tekshiriladi)"
       },
       {
         "key": "B",
-        "text": "Liveness podning tirikligini tekshiradi (agar o'lib qolsa, qayta ishga tushiradi); Readiness esa pod yangi trafikni qabul qilishga tayyormi yoki yo'qligini tekshiradi (tayyor bo'lmasa unga trafik yo'naltirmaydi)"
+        "text": "Ikkalasi ham bir xil vazifani bajaradi: pod ishlamay qolsa uni qayta ishga tushiradi; farqi faqat tekshiruv chastotasida (Liveness har 10s, Readiness har 30s)"
       },
       {
         "key": "C",
-        "text": "Ikkalasi bir xil tekshiruv bajaradi"
+        "text": "Liveness konteyner xotirasi limitdan oshganini tekshiradi va uni o'chiradi; Readiness esa konteyner CPU yuklamasini o'lchab, podlar sonini avtomatik oshiradi"
       },
       {
         "key": "D",
-        "text": "Readiness faqat Docker Compose da ishlaydi"
+        "text": "Liveness podning tirikligini tekshiradi (agar o'lib qolsa, qayta ishga tushiradi); Readiness esa pod yangi trafikni qabul qilishga tayyormi yoki yo'qligini tekshiradi (tayyor bo'lmasa unga trafik yo'naltirmaydi)"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "Readiness ilova migratsiyani tugatib keshni yuklaguncha unga foydalanuvchi so'rovlarini bermay kutib turadi. Liveness esa agar PHP worker qotib qolgan (Deadlock) bo'lsa, uni o'ldirib yangidan tiriltiradi.",
     "level": "senior"
   },
@@ -2793,22 +2793,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Server narxini 2 barobar arzonlashtiradi"
+        "text": "Yangi versiya foydalanuvchilarning kichik qismiga (masalan, 5%) bosqichma-bosqich chiqariladi va xatolik bo'lmasa, trafik ulushi asta-sekin oshirib boriladi (Canary) (bir qism eski versiyada qoladi)"
       },
       {
         "key": "B",
-        "text": "Yangi versiya alohida parallel muhitda (Green) to'liq tayyorlanadi va trafik bir soniyada unga o'tkaziladi; xatolik yuz bersa bir zumda orqaga (Blue ga) qaytish (Zero-Downtime Rollback) mumkin bo'ladi"
+        "text": "Serverlar birin-ketin yangilanadi: har safar bitta server o'chirib yangi kod bilan qayta ishga tushiriladi, shu sababli har doim kam quvvat bilan ishlanadi (Rolling)"
       },
       {
         "key": "C",
-        "text": "Faqat ma'lumotlar bazasini yangilaydi"
+        "text": "Yangi versiya alohida parallel muhitda (Green) to'liq tayyorlanadi va trafik bir soniyada unga o'tkaziladi; xatolik yuz bersa bir zumda orqaga (Blue ga) qaytish (Zero-Downtime Rollback) mumkin bo'ladi"
       },
       {
         "key": "D",
-        "text": "Git komandalarini talab qilmaydi"
+        "text": "Yangi versiya to'g'ridan-to'g'ri jonli serverga yuklanadi va eski kod o'chiriladi; xatolik bo'lsa, git orqali oldingi commit ga qaytariladi va qayta deploy qilinadi"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Blue-Green da ikkita bir xil production muhiti bo'ladi: biri jonli trafikni qabul qiladi, ikkinchisiga yangi kod deploy qilinadi va test qilinadi. Router/Load Balancer orqali trafik darhol o'tkaziladi (Zero-downtime) va nosozlikda zumda qaytariladi.",
     "level": "senior"
   },
@@ -2821,7 +2821,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat POST va PATCH"
+        "text": "POST, PATCH va DELETE"
       },
       {
         "key": "B",
@@ -2829,11 +2829,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Faqat GET va POST"
+        "text": "GET, POST, HEAD va PATCH"
       },
       {
         "key": "D",
-        "text": "Barcha HTTP metodlari doimo idempotent bo'ladi"
+        "text": "GET, POST va OPTIONS"
       }
     ],
     "correct": "B",
@@ -2848,22 +2848,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "401 server xatosi, 403 esa mijoz xatosi hisoblanadi"
-      },
-      {
-        "key": "B",
-        "text": "401 faqat POST so'rovlarida, 403 esa faqat GET so'rovlarida beriladi"
-      },
-      {
-        "key": "C",
         "text": "401 — mijoz kimligi noma'lum (autentifikatsiyadan o'tmagan); 403 — mijoz autentifikatsiyadan o'tgan, ammo ushbu resursga ruxsati (huquqi) yo'q"
       },
       {
+        "key": "B",
+        "text": "401 — server vaqtincha mavjud emas; 403 — so'rov formati noto'g'ri bo'lgani uchun server uni qayta ishlay olmaydi"
+      },
+      {
+        "key": "C",
+        "text": "Ikkalasi bir xil ma'noga ega; farqi faqat 401 brauzer uchun, 403 esa mobil ilovalar uchun qaytariladi"
+      },
+      {
         "key": "D",
-        "text": "Ular orasida farq yo'q, ikkalasi ham xuddi bir xil ma'noni bildiradi"
+        "text": "401 — mijoz autentifikatsiyadan o'tgan, ammo resursga ruxsati yo'q; 403 — mijoz kimligi noma'lum (autentifikatsiyadan o'tmagan)"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "401 Unauthorized aslida 'Unauthenticated' (kimligi tasdiqlanmagan yoki token yo'q/yaroqsiz) deganidir. 403 Forbidden esa server foydalanuvchini tanidi, lekin uning rollari yoki huquqlari (Policy/Gate) bu resursga kirishga ruxsat bermaydi."
   },
   {
@@ -2875,22 +2875,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat mijoz tomondan (localStorage) tokenni o'chirib tashlash kifoya, serverda hech narsa qilish shart emas"
+        "text": "JWT ning `exp` (amal qilish muddati) qiymatini serverda o'zgartirib, eski tokenning ichidagi muddatni qisqartirish orqali uni bekor qilish"
       },
       {
         "key": "B",
-        "text": "JWT stateless bo'lgani sababli tokenni amal qilish muddati tugaguncha bekor qilish mutlaqo imkonsiz"
+        "text": "Tokenni mijoz tomonda localStorage dan o'chirish yetarli, chunki server uni boshqa tan olmaydi va token avtomatik yaroqsiz bo'lib qoladi"
       },
       {
         "key": "C",
-        "text": "Barcha foydalanuvchilarning parolini majburiy o'zgartirish"
+        "text": "Tokenning 'jti' (JWT ID) identifikatorini qora ro'yxatga (Redis Blacklist) qolgan amal qilish muddatiga saqlash yoki foydalanuvchi jadvalida `token_version` ustunini oshirish"
       },
       {
         "key": "D",
-        "text": "Tokenning 'jti' (JWT ID) identifikatorini qora ro'yxatga (Redis Blacklist) qolgan amal qilish muddatiga saqlash yoki foydalanuvchi jadvalida `token_version` ustunini oshirish"
+        "text": "Parol o'zgartirilganda JWT dagi `sub` (subject) maydonini yangi qiymatga almashtirish; eski tokenlar boshqa foydalanuvchiga tegishli deb rad etiladi (token qayta imzolanmaydi)"
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "JWT o'zida ma'lumot saqlagani uchun server uning holatini bilmaydi. Haqiqiy xavfsiz logout uchun Redisda qisqa muddatli qora ro'yxat (jti blacklist with TTL) yuritiladi yoki foydalanuvchining token_version raqami oshiriladi; token ichidagi versiya mos kelmasa rad etiladi."
   },
   {
@@ -2902,22 +2902,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Mijoz ilovalari 'client_secret' ni xavfsiz saqlay olmaydi (Public Client), PKCE esa dinamik `code_verifier` va `code_challenge` orqali kod o'g'irlanishining oldini oladi"
+        "text": "PKCE foydalanuvchi parolini ilova orqali to'g'ridan-to'g'ri serverga yuborishga imkon beradi (Password Grant), bu esa avtorizatsiya sahifasiga yo'naltirishdan qulayroq"
       },
       {
         "key": "B",
-        "text": "Faqat serverlar o'rtasida API chaqiruvlarini tezlashtirish uchun"
+        "text": "Mijoz ilovalari 'client_secret' ni xavfsiz saqlay olmaydi (Public Client), PKCE esa dinamik `code_verifier` va `code_challenge` orqali kod o'g'irlanishining oldini oladi"
       },
       {
         "key": "C",
-        "text": "PKCE orqali barcha ma'lumotlar bazasiz to'g'ridan-to'g'ri shifrlanadi"
+        "text": "Implicit grant ni almashtirish uchun: PKCE tokenni URL fragment orqali to'g'ridan-to'g'ri brauzerga qaytaradi, shu sabab kod almashinuvi bosqichi umuman talab qilinmaydi"
       },
       {
         "key": "D",
-        "text": "Implicit Grant oqimi xavfsizroq bo'lgani sababli PKCE faqat zaxira sifatida ishlatiladi"
+        "text": "SPA va mobil ilovalarda client_secret ni xavfsiz saqlash mumkin, PKCE esa faqat tokenning amal qilish muddatini uzaytirish uchun ishlatiladi"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "SPA va Mobile ilovalar ochiq kodli hisoblanadi va ularda client_secret saqlab bo'lmaydi. Ilgari ishlatilgan Implicit grant xavfli hisoblanib bekor qilingan (RFC 8252). PKCE mexanizmida har bir so'rovda bir martalik tasodifiy kalit yaratilib, authorization_code o'g'irlansa ham token olishga yo'l qo'ymaydi."
   },
   {
@@ -2929,22 +2929,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Sanctum faqat MySQL bilan ishlaydi, Passport esa faqat PostgreSQL bilan ishlaydi"
-      },
-      {
-        "key": "B",
-        "text": "Passport bepul, Sanctum esa faqat pullik Laravel Forge obunachilari uchun"
-      },
-      {
-        "key": "C",
         "text": "Sanctum — yengil shaxsiy tokenlar (PAT) va SPA uchun cookie-based session auth beradi; Passport esa to'liq OAuth2 server (grantlar, scopes, client credentials) hisoblanadi"
       },
       {
+        "key": "B",
+        "text": "Sanctum faqat JWT tokenlar bilan, Passport esa faqat session cookie bilan ishlaydi; ikkalasi ham OAuth2 serveri vazifasini bajarmaydi"
+      },
+      {
+        "key": "C",
+        "text": "Sanctum — to'liq OAuth2 server (grantlar, scopes, client credentials); Passport esa faqat SPA uchun yengil cookie-based session auth beradi"
+      },
+      {
         "key": "D",
-        "text": "Sanctum eskirgan bo'lib, uning o'rniga faqat Passport tavsiya etiladi"
+        "text": "Sanctum faqat Laravel ning eski (5.x) versiyalarida ishlaydi, Passport esa Laravel 8+ uchun yagona rasmiy autentifikatsiya paketi hisoblanadi, farq faqat nomida"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Laravel Sanctum ko'p hollarda (mobil ilovalar va birinchi tomon SPA lari uchun) yetarli bo'lgan yengil yechimdir (Personal Access Token va CSRF himoyalangan Cookie auth). Passport esa uchinchi tomon dasturchilariga to'liq OAuth2 API taqdim etish zarur bo'lganda qo'llaniladi."
   },
   {
@@ -2956,7 +2956,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat foydalanuvchining login/parolini bazaga shifrlash uchun"
+        "text": "Server javoblarini mijoz brauzerida keshlab, bir xil GET so'rovlar takrorlanganda server yuklamasini kamaytiradi"
       },
       {
         "key": "B",
@@ -2964,11 +2964,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "API tezligini oshirish maqsadida Gzip siqishni yoqadi"
+        "text": "So'rov va javob ma'lumotlarini shifrlab, uzatish paytida uchinchi tomon ularni ushlab olib o'qishining oldini oladi"
       },
       {
         "key": "D",
-        "text": "Foydalanuvchining IP manzilini bloklaydi"
+        "text": "Mijoz so'rovlarini bitta IP manzildan sekundiga chegaralangan sonda yuborishga majbur qiladi, shu sabab DDoS hujumlarining oldi olinadi, va so'rovlarni logga ham yozadi"
       }
     ],
     "correct": "B",
@@ -2983,22 +2983,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat bir xil domen ichidagi oddiy GET so'rovlarida"
+        "text": "Faqat server javobida `Access-Control-Allow-Origin: *` bo'lmasa va cookie yuborilmayotgan bo'lsa, so'rov bloklanishidan oldin yuboriladi, bu esa faqat bir marta yuboriladi"
       },
       {
         "key": "B",
-        "text": "Faqat veb-saytda HTTPS o'rnatilmagan bo'lsa"
+        "text": "So'rov 'Simple Request' talablariga mos kelmasa (masalan, `Content-Type: application/json`, maxsus Authorization headeri yoki PUT/DELETE/PATCH metodlari ishlatilganda)"
       },
       {
         "key": "C",
-        "text": "Faqat mijoz interneti uzilib qolganda"
+        "text": "Faqat so'rov HTTP (shifrlanmagan) protokolida yuborilganda, HTTPS ga o'tish xavfsiz ekanini tekshirish uchun yuboriladi"
       },
       {
         "key": "D",
-        "text": "So'rov 'Simple Request' talablariga mos kelmasa (masalan, `Content-Type: application/json`, maxsus Authorization headeri yoki PUT/DELETE/PATCH metodlari ishlatilganda)"
+        "text": "Har bir cross-origin so'rovdan oldin, hatto oddiy GET so'rov bo'lsa ham, brauzer OPTIONS so'rovini majburiy yuboradi"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Brauzer xavfsizlik maqsadida notanish cross-origin manzilga nooddiy so'rov (JSON body, Authorization header yoki PUT/DELETE) yuborishdan oldin OPTIONS metodi bilan preflight so'rovi yuboradi va serverning Access-Control-Allow-* sarlavhalarini tekshiradi."
   },
   {
@@ -3010,22 +3010,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`Retry-After`, `X-RateLimit-Limit` va `X-RateLimit-Remaining`"
+        "text": "`Content-Length`, `Cache-Control` va `ETag` (keshlash sarlavhalari)"
       },
       {
         "key": "B",
-        "text": "`Cache-Control` va `ETag`"
+        "text": "`Wait-Until`, `X-Timeout` va `Expires`"
       },
       {
         "key": "C",
-        "text": "`Content-Security-Policy` va `X-Frame-Options`"
+        "text": "`Allow`, `Accept` va `X-Request-Id`"
       },
       {
         "key": "D",
-        "text": "`Location` va `Set-Cookie`"
+        "text": "`Retry-After`, `X-RateLimit-Limit` va `X-RateLimit-Remaining`"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Rate limiting qoidasi buzilganda server 429 status kodi bilan birga Retry-After (soniyalarda qancha kutish kerakligi), X-RateLimit-Limit (jami ruxsat etilgan limit) va X-RateLimit-Remaining (qolgan urinishlar soni) sarlavhalarini qaytarishi standart hisoblanadi."
   },
   {
@@ -3037,7 +3037,7 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Brauzer manzil satriga yozish osonroq bo'ladi"
+        "text": "Mijozlar har bir versiya uchun alohida domen ishlatishi shart emas, shuning uchun SSL sertifikat xarajati kamayadi"
       },
       {
         "key": "B",
@@ -3045,11 +3045,11 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "C",
-        "text": "Hech qanday routing sozlamalari talab qilinmaydi"
+        "text": "So'rovlar tezroq ishlaydi, chunki marshrutizator versiyani URL dan o'qimaydi va header tahlili ancha yengil operatsiya"
       },
       {
         "key": "D",
-        "text": "Baza so'rovlarini avtomatik 2 baravar tezlashtiradi"
+        "text": "Versiya URI da ko'rinadi, shu sabab brauzerda tekshirish va keshlash osonlashadi hamda hujjatlashtirish soddalashadi"
       }
     ],
     "correct": "B",
@@ -3064,22 +3064,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`PUT` faqat yangi ma'lumot kiritadi, `PATCH` faqat o'chiradi"
+        "text": "`PUT` yangi resurs yaratish uchun, `PATCH` esa mavjud resursni o'chirib, o'rniga yangisini yaratish uchun ishlatiladi"
       },
       {
         "key": "B",
-        "text": "`PUT` xavfsiz (safe) metod, `PATCH` esa xavfli metod hisoblanadi"
+        "text": "`PUT` resursning faqat ma'lum maydonlarini qisman yangilaydi; `PATCH` esa resursni butunlay to'liq almashtirish uchun ishlatiladi va butun obyektni talab qiladi"
       },
       {
         "key": "C",
-        "text": "`PUT` resursni butunlay to'liq almashtirish (full replacement) uchun; `PATCH` esa resursning faqat ma'lum maydonlarini qisman yangilash (partial update) uchun ishlatiladi"
+        "text": "Ikkalasi bir xil ishlaydi; farqi faqat `PATCH` idempotent emasligida, `PUT` esa har doim xavfsiz (safe) metod hisoblanadi"
       },
       {
         "key": "D",
-        "text": "Ikkalasi mutlaqo bir xil va xohlaganini almashtirib ishlataverish mumkin"
+        "text": "`PUT` resursni butunlay to'liq almashtirish (full replacement) uchun; `PATCH` esa resursning faqat ma'lum maydonlarini qisman yangilash (partial update) uchun ishlatiladi"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "RFC 5789 ga binoan: PUT chaqirilganda resursning barcha maydonlari yuborilishi kerak (yuborilmagan maydonlar odatda null bo'ladi). PATCH esa faqat o'zgargan maydonlarni (masalan faqat { 'status': 'active' }) yuborish orqali qisman yangilash uchun mo'ljallangan."
   },
   {
@@ -3091,22 +3091,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`Queueable`"
+        "text": "`ShouldBroadcast`"
       },
       {
         "key": "B",
-        "text": "`AsyncJobInterface`"
+        "text": "`ShouldQueue`"
       },
       {
         "key": "C",
-        "text": "`Dispatchable`"
+        "text": "`ShouldDispatch`"
       },
       {
         "key": "D",
-        "text": "`ShouldQueue`"
+        "text": "`Queueable`"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Laravel da agar Job klassi ShouldQueue interfeysini implement qilsa, dispatch() chaqirilganda u darhol sinxron bajarilmasdan, sozlangan navbat drayveriga (Redis, Database va h.k.) asinxron bajarilish uchun yuboriladi."
   },
   {
@@ -3118,22 +3118,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`queue:listen` faqat Redis bilan ishlaydi, `queue:work` esa faqat Database bilan ishlaydi"
-      },
-      {
-        "key": "B",
         "text": "`queue:work` butun freymvorkni xotiraga 1 marta yuklaydi (daemon) va yuqori unumdorlik beradi; `queue:listen` esa har bir job uchun freymvorkni qaytadan yuklaydi (local dev uchun qulay)"
       },
       {
+        "key": "B",
+        "text": "`queue:work` faqat Redis drayverida ishlaydi, `queue:listen` esa database va SQS drayverlari uchun; ular freymvorkni yuklash usulida farq qilmaydi"
+      },
+      {
         "key": "C",
-        "text": "`queue:work` faqat bitta job bajarib to'xtaydi, `queue:listen` esa to'xtovsiz ishlaydi"
+        "text": "`queue:listen` butun freymvorkni xotiraga 1 marta yuklaydi (daemon) va yuqori unumdorlik beradi; `queue:work` esa har bir job uchun freymvorkni qaytadan yuklaydi, deploy uchun qulay"
       },
       {
         "key": "D",
-        "text": "Production da doimo `queue:listen` ishlatilishi shart"
+        "text": "`queue:work` faqat bitta jobni bajarib to'xtaydi, `queue:listen` esa navbatni doimiy tinglaydi, lekin ikkalasi ham kod o'zgarishini avtomatik ko'radi"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Production muhitda faqat queue:work (Supervisor nazorati ostida) ishlatiladi, chunki u freymvorkni doimiy xotirada saqlab juda tez ishlaydi (deploy paytida queue:restart kerak). queue:listen esa har bir jobda freymvorkni qaytadan yuklagani uchun sekinroq, lekin kod o'zgarishlarini darhol ko'radi."
   },
   {
@@ -3145,22 +3145,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat database drayverida timeout ishlatilganda"
-      },
-      {
-        "key": "B",
-        "text": "Faqat job ichida sleep() funksiyasi ishlatilganda"
-      },
-      {
-        "key": "C",
         "text": "Agar `retry_after` vaqti `timeout` dan kichik yoki unga teng bo'lsa (masalan timeout=90, retry_after=60), birinchi worker hali jobni tugatmasdan, ikkinchi worker uni qayta olib bajarishga tushadi"
       },
       {
+        "key": "B",
+        "text": "Agar `timeout` ni `0` qilib qo'ysak, worker jobni to'xtatmaydi va retry_after hech qachon ishlamaydi, shu sababli job ikki marta bajariladi"
+      },
+      {
+        "key": "C",
+        "text": "Agar `retry_after` vaqti `timeout` dan ancha katta bo'lsa (masalan timeout=60, retry_after=300), job qayta urinishgacha uzoq kutadi va ikkinchi marta bajarilib ketadi, shu sabab job takrorlanadi"
+      },
+      {
         "key": "D",
-        "text": "Agar tries soni 1 dan katta bo'lsa"
+        "text": "Agar `timeout` va `retry_after` ham queue drayveriga, ham har bir job klassiga alohida berilsa, ular bir-birini bekor qiladi va job ikki marta bajariladi"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "Bu juda xavfli production xatosi! retry_after queue drayveri (masalan Redis) jobni boshqa workerga bermay turish vaqtidir. Agar job 80 soniya davom etsa, ammo retry_after=60 bo'lsa, navbat tizimi jobni 'tashlab ketilgan' deb hisoblab ikkinchi workerga beradi va natijada pul ikki marta yechilishi yoki xat ikki marta ketishi mumkin. retry_after doimo timeoutdan sezilarli katta bo'lishi shart!"
   },
   {
@@ -3172,22 +3172,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Tarmoq yoki server uzilishlari sababli bir xil job bir necha marta qayta bajarilsa ham, yakuniy tizim holati faqat bir marta bajarilgandek to'g'ri qolishi"
+        "text": "Job faqat bir marta, ya'ni birinchi urinishdayoq muvaffaqiyatli bajarilishi kafolatlanishi va qayta urinishlar umuman bo'lmasligi va xatolik kuzatilmaydi"
       },
       {
         "key": "B",
-        "text": "Job faqat tunda soat 00:00 da bajarilishi"
+        "text": "Job juda tez, 1 soniyadan kam vaqtda bajarilishi va shu sabab navbatda hech qachon kutib qolmasligi"
       },
       {
         "key": "C",
-        "text": "Job hech qachon xatolik (Exception) tashlamasligi"
+        "text": "Tarmoq yoki server uzilishlari sababli bir xil job bir necha marta qayta bajarilsa ham, yakuniy tizim holati faqat bir marta bajarilgandek to'g'ri qolishi"
       },
       {
         "key": "D",
-        "text": "Job faqat bitta CPU yadrosida ishlashi"
+        "text": "Job bir vaqtning o'zida bir nechta workerda parallel bajarilib, natijalar avtomatik ravishda birlashtirilishi"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Taqsimlangan tizimlarda 'At-least-once delivery' (kamida bir marta yetkazish) kafolati bo'ladi. Agar worker vazifani bajarib, natijani bazaga yozgach Redisga 'ACK' yuborishdan oldin o'chib qolsa, job qayta ishga tushadi. Idempotentlik (masalan order_id bo'yicha tekshirib keyin to'lov qilish) orqali ikki marta yozilishning oldi olinadi."
   },
   {
@@ -3199,22 +3199,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "PHP ning global massivida tekshiriladi"
+        "text": "Job klassi `final` deb belgilanadi va Laravel har bir nusxa uchun alohida navbat yaratib, nusxalarni bir-biridan izolyatsiya qiladi"
       },
       {
         "key": "B",
-        "text": "Faqat fayllar tizimida .lock fayl yaratiladi"
+        "text": "Navbatga tushgan jobning nusxalari worker tomonidan olinganda xotirada solishtiriladi va faqat birinchisi bajariladi, qolganlari jimgina tashlanadi"
       },
       {
         "key": "C",
-        "text": "Baza jadvalida auto_increment ustun orqali"
+        "text": "Kesh drayveri (odatda Redis Lock) orqali `uniqueId()` bo'yicha lock olinadi va job muvaffaqiyatli tugaguncha (yoki timeoutgacha) dublikatlar bloklanadi"
       },
       {
         "key": "D",
-        "text": "Kesh drayveri (odatda Redis Lock) orqali `uniqueId()` bo'yicha lock olinadi va job muvaffaqiyatli tugaguncha (yoki timeoutgacha) dublikatlar bloklanadi"
+        "text": "Job navbatga tushishidan oldin `jobs` jadvalida bir xil ID li yozuv bor-yo'qligi `SELECT` bilan tekshiriladi va topilsa job o'chiriladi"
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "ShouldBeUnique interfeysi klassning uniqueId() metodi qaytargan kalit bo'yicha keshdan atomik qulf (atomic lock) oladi. Job navbatda turganida yoki bajarilayotgan paytda xuddi shu parametrlar bilan boshqa dispatch() chaqirilsa, u shunchaki e'tiborga olinmaydi."
   },
   {
@@ -3226,22 +3226,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`Bus::chain([...])` (Job Chaining)"
+        "text": "`Queue::bulk([...])` (Bulk Dispatch)"
       },
       {
         "key": "B",
-        "text": "`Artisan::call('queue:work')`"
+        "text": "`Bus::chain([...])` (Job Chaining)"
       },
       {
         "key": "C",
-        "text": "`Bus::batch([...])` (Job Batching)"
+        "text": "`dispatchSync()` (Sinxron bajarish)"
       },
       {
         "key": "D",
-        "text": "`Event::dispatch()`"
+        "text": "`Bus::batch([...])` (Job Batching)"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "Bus::batch() yordamida yuzlab joblar parallel ishga tushiriladi va ->then(callback), ->catch(callback), ->finally(callback) orqali barchasi tugagandagi hodisalar nazorat qilinadi. Bus::chain() esa teskarisi — joblarni qat'iy ketma-ket (biri tugasa keyingisi) bajarish uchundir."
   },
   {
@@ -3253,22 +3253,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Jobni faqat ertasi kuni ertalab soat 9:00 da bajaradi"
-      },
-      {
-        "key": "B",
         "text": "Vazifani navbat drayveriga (Redis/DB) jo'natmasdan, HTTP javob mijozga (brauzerga) yuborilib ulanish uzilgach, shu jarayonning o'zida darhol bajaradi"
       },
       {
+        "key": "B",
+        "text": "Vazifani faqat tranzaksiya commit bo'lgandan keyin navbatga yuboradi; oddiy `dispatch()` esa tranzaksiyadan oldin yuboradi"
+      },
+      {
         "key": "C",
-        "text": "Faqat xatolik yuz bergandagina javob qaytaradi"
+        "text": "Vazifani navbatga qo'yadi, lekin faqat HTTP javob mijozga yuborilgach worker uni oladi; oddiy `dispatch()` esa vazifani darhol workerga uzatadi"
       },
       {
         "key": "D",
-        "text": "Faqat AJAX so'rovlarida ishlaydi"
+        "text": "Vazifani navbat drayveriga yuboradi, lekin HTTP javob yuborilishini job tugagunga qadar kechiktiradi, shuning uchun foydalanuvchi javobni kutadi"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "dispatchAfterResponse() fastcgi_finish_request() imkoniyatidan foydalanadi: foydalanuvchi HTTP javobni darhol oladi va sahifa yuklanishi kutmaydi, ammo job alohida queue worker talab qilmasdan joriy PHP-FPM jarayoni yopilishidan oldin darhol bajariladi."
   },
   {
@@ -3284,15 +3284,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Faqat serverdagi php.ini faylida memory_limit=-1 qilinishi kerak"
+        "text": "`--sleep=0` va `--rest=0` (worker navbat bo'sh bo'lganda ham kutmasdan to'xtovsiz ishlab, xotirani doimiy yangilab turadi)"
       },
       {
         "key": "C",
-        "text": "Worker ichida har bir siklda unset($GLOBALS) chaqirilishi shart"
+        "text": "`--timeout=0` va `--tries=0` (worker vaqt va urinishlar bo'yicha cheklovsiz ishlaydi va hech qachon qayta ishga tushmaydi), xotira sizishi to'xtaydi va restart shart bo'lmaydi"
       },
       {
         "key": "D",
-        "text": "Buning chorasi yo'q, faqat har kecha serverni o'chirib yoqish kerak"
+        "text": "`--force` va `--daemon` (worker maintenance rejimida ham ishlab, xotirani avtomatik tozalaydigan daemon holatiga o'tadi)"
       }
     ],
     "correct": "A",
@@ -3307,22 +3307,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Job bajarilishi uchun ajratilgan maksimal vaqt chegarasi"
+        "text": "Agar job xatolik bilan yiqilsa, 1-qayta urinish 30 soniyadan so'ng, 2-qayta urinish 60 soniyadan so'ng, 3-qayta urinish 120 soniyadan so'ng amalga oshiriladi (Exponential Backoff)"
       },
       {
         "key": "B",
-        "text": "Navbatda 30, 60 va 120 ta worker bir vaqtda ishlashi"
+        "text": "Job navbatga tushgandan so'ng 30 soniya kutib birinchi marta, 60 soniyada ikkinchi marta, 120 soniyada uchinchi marta bajariladi (Delayed Dispatch), xato bo'lmasa ham kechikadi"
       },
       {
         "key": "C",
-        "text": "Ushbu job faqat 30 foiz ehtimollik bilan bajarilishi"
+        "text": "Job faqat 3 marta urinadi: urinishlar orasidagi vaqt har safar tasodifiy (30 dan 120 soniyagacha) tanlanadi (Jitter)"
       },
       {
         "key": "D",
-        "text": "Agar job xatolik bilan yiqilsa, 1-qayta urinish 30 soniyadan so'ng, 2-qayta urinish 60 soniyadan so'ng, 3-qayta urinish 120 soniyadan so'ng amalga oshiriladi (Exponential Backoff)"
+        "text": "Job muvaffaqiyatli bajarilgach, 30, 60 va 120 soniyadan so'ng uning natijasi qayta tekshirilib, bajarilishi tasdiqlanadi (Verification Retry)"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Exponential Backoff strategiyasi tashqi servislar (masalan to'lov gateway yoki SMS provayder) vaqtincha ishlamay qolganda serverni ketma-ket so'rovlar bilan qiynamaslik uchun tobora uzoqroq oraliq bilan qayta urinish imkonini beradi."
   },
   {
@@ -3334,22 +3334,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Muvaffaqiyatli bajarilgan barcha vazifalarni doimiy arxivlash uchun"
+        "text": "Navbat uzunligi belgilangan chegaradan oshganda yangi xabarlarni vaqtincha ushlab turib, keyinroq asosiy navbatga qaytarish va yuklamani tekislash uchun"
       },
       {
         "key": "B",
-        "text": "Barcha qayta urinishlardan (max retries) keyin ham yiqilgan yoki 'zaharli' (poison pill) xabarlarni asosiy navbatdan ajratib olib, tizimni to'xtatib qo'ymaslik va muammoni alohida tahlil qilish uchun"
+        "text": "Navbatdagi barcha xabarlarning zaxira nusxasini boshqa serverda saqlab, asosiy navbat o'chib qolsa ularni tiklash va yo'qotishlarning oldini olish uchun, shu bilan navbat hech qachon to'lmaydi"
       },
       {
         "key": "C",
-        "text": "Elektron pochtalarni (Email) o'chirish uchun maxsus pochta qutisi"
+        "text": "Barcha qayta urinishlardan (max retries) keyin ham yiqilgan yoki 'zaharli' (poison pill) xabarlarni asosiy navbatdan ajratib olib, tizimni to'xtatib qo'ymaslik va muammoni alohida tahlil qilish uchun"
       },
       {
         "key": "D",
-        "text": "Baza jadvallarini tozalash uchun triggerlar to'plami"
+        "text": "Xabarlarni muvaffaqiyatli bajarilgach arxivlab, audit uchun saqlash va hisobotlar tayyorlashga imkon berish uchun, qayta urinishlar bilan bog'liq emas"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Agar biror xabarda sintaktik xato yoki noadekvat parametr bo'lsa (Poison Pill), u workerlarni ketma-ket yiqitaveradi va asosiy navbat tiqilib qoladi (head-of-line blocking). DLQ bunday xabarlarni alohida 'qabriston' navbatiga ko'chirib, dasturchiga alert beradi va asosiy tizim faoliyatini davom ettiradi."
   },
   {
@@ -3361,22 +3361,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat ma'lumotlar bazasi ulanishini sessiyaga bog'lash uchun"
+        "text": "Service Provider ning `boot()` metodida bog'lanmagan klasslarni avtomatik topib, ularni konteynerga o'zi qo'shish uchun"
       },
       {
         "key": "B",
-        "text": "Bitta interfeysga turli klasslar (controller/service) murojaat qilganda, har biriga alohida boshqa-boshqa implementatsiyalarni inyekt qilish uchun"
+        "text": "Bir xil klassning bir nechta nusxasini (Singleton emas) avtomatik yaratib, har bir so'rov uchun alohida nusxa berish uchun"
       },
       {
         "key": "C",
-        "text": "Barcha dependency larni avtomatik global Singleton qilish uchun"
+        "text": "Bitta interfeysga turli klasslar (controller/service) murojaat qilganda, har biriga alohida boshqa-boshqa implementatsiyalarni inyekt qilish uchun"
       },
       {
         "key": "D",
-        "text": "Controller metodlarida avtomatik tranzaksiya ochish uchun"
+        "text": "Interfeysni konteynerga bir marta, global tarzda bog'lab, undan keyin barcha klasslarga bir xil implementatsiyani berish uchun (barcha joyda bir xil)"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Contextual Binding `$this->app->when(PhotoController::class)->needs(Filesystem::class)->give(fn() => Storage::disk('local'));` ko'rinishida yoziladi. Bu orqali bitta Filesystem interfeysini PhotoController ga 'local' disk, VideoController ga esa 's3' disk shaklida moslashuvchan berish mumkin."
   },
   {
@@ -3388,11 +3388,11 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Fasadlar klassning oddiy statik metodlar to'plami bo'lib, Service Container bilan bog'lanmagan"
+        "text": "Fasadlar `__construct()` da barcha statik metodlarni haqiqiy statik funksiyalar sifatida e'lon qiladi, shuning uchun ular konteynerdan obyekt olmaydi, ya'ni konteynerdan foydalanilmaydi"
       },
       {
         "key": "B",
-        "text": "Fasadlar faqat Eloquent modellari uchun mo'ljallangan maxsus xususiyatdir"
+        "text": "Fasad klassi `getFacadeAccessor()` orqali har safar yangi obyekt yaratadi (`new`) va uning statik metodlarini faqat compile vaqtida bog'laydi"
       },
       {
         "key": "C",
@@ -3400,7 +3400,7 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "D",
-        "text": "Fasadlar har chaqirilganda yangi PHP jarayonini ishga tushiradi"
+        "text": "Fasadlar PHP ning `__get()` sehrli metodi orqali xususiyatlarni konteynerdan oladi va metodlarni `Reflection` yordamida kompilyatsiya qiladi"
       }
     ],
     "correct": "C",
@@ -3415,22 +3415,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat ma'lumotlar bazasi jadvallariga indeks qo'shish uchun"
+        "text": "Laravelning ichki klasslariga (masalan `Response`, `Collection`, `Str`, `Request`) o'z xususiy metodlarimizni runtime paytida qo'shish (kengaytirish) imkonini beradi"
       },
       {
         "key": "B",
-        "text": "HTML sahifalarni avtomatik siqish uchun"
+        "text": "Klassning private va protected metodlariga tashqaridan kirishga ruxsat berib, ularni testlarda to'g'ridan-to'g'ri chaqirish imkonini beradi, testlarni osonlashtiradi"
       },
       {
         "key": "C",
-        "text": "Fayllarni serverga yuklash tezligini oshiradi"
+        "text": "Metodlarni avtomatik ravishda keshlab, bir xil argumentlar bilan chaqirilganda natijani qayta hisoblamasdan qaytaradi (memoization)"
       },
       {
         "key": "D",
-        "text": "Laravelning ichki klasslariga (masalan `Response`, `Collection`, `Str`, `Request`) o'z xususiy metodlarimizni runtime paytida qo'shish (kengaytirish) imkonini beradi"
+        "text": "Eloquent modellarga relatsiyalarni avtomatik ravishda aniqlab, ularni migratsiya va jadval strukturasidan o'zi yaratadi"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Macroable trait orqali Response::macro('caps', fn($str) => Response::make(strtoupper($str))) kabi o'z metodlaringizni freymvork yadrosini o'zgartirmasdan turib ServiceProvider ichida kiritishingiz mumkin."
   },
   {
@@ -3442,22 +3442,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "HTTP javob brauzerga (mijozga) to'liq yetkazib berilib, ulanish yopilgandan so'ng, fon rejimida og'ir loglash yoki statistikani saqlash uchun bajariladi"
+        "text": "So'rov kelgan zahoti, boshqa middleware lardan oldin, so'rovni tekshirish uchun bajariladi va Controller ishga tushishini kutmaydi"
       },
       {
         "key": "B",
-        "text": "Faqat so'rov paytida fatal xatolik yuz bergandagina"
+        "text": "Faqat middleware ichida xatolik (exception) tashlansa ishga tushadi va xatolik haqida log yozish uchun mo'ljallangan"
       },
       {
         "key": "C",
-        "text": "Controller metodiga kirmasdan oldin"
+        "text": "Middleware ning `handle()` metodi tugagach, lekin javob brauzerga yuborilishidan oldin, har doim sinxron bajariladi va javobni kechiktiradi"
       },
       {
         "key": "D",
-        "text": "Faqat foydalanuvchi tizimdan chiqqan paytda"
+        "text": "HTTP javob brauzerga (mijozga) to'liq yetkazib berilib, ulanish yopilgandan so'ng, fon rejimida og'ir loglash yoki statistikani saqlash uchun bajariladi"
       }
     ],
-    "correct": "A",
+    "correct": "D",
     "explanation": "Agar Middleware ichida public function terminate($request, $response) e'lon qilinsa, FastCGI finish_request() orqali brauzerga javob yetkazilgach, foydalanuvchini kuttirmasdan og'ir amallar (audit log, analytics) xavfsiz bajariladi."
   },
   {
@@ -3469,11 +3469,11 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat server xotirasi to'lib qolganda shunday bo'ladi"
+        "text": "`config:cache` bajarilgach, `env()` faqat `.env.example` faylidan o'qiydi, shuning uchun haqiqiy `.env` qiymatlari doim `null` qaytaradi"
       },
       {
         "key": "B",
-        "text": "Chunki .env fayli faqat testing muhitida o'qiladi"
+        "text": "`env()` funksiyasi `config:cache` dan keyin o'chirib tashlanadi (deprecated) va uning o'rniga faqat `getenv()` ishlatilishi kerak"
       },
       {
         "key": "C",
@@ -3481,7 +3481,7 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "D",
-        "text": "Bu Laravelning xatosi (bug) hisoblanadi"
+        "text": "`config:cache` bajarilganda `.env` fayli shifrlanadi va `env()` uni faqat `APP_KEY` berilgan holdagina deshifrlab o'qiy oladi"
       }
     ],
     "correct": "C",
@@ -3496,22 +3496,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat fayl keshida ishlaydi, Redisda ishlamaydi"
+        "text": "Teglar kesh yozuvlarining amal qilish muddatini avtomatik uzaytiradi, lekin cheklovi shuki, bitta kalitga faqat bitta teg biriktirish mumkin"
       },
       {
         "key": "B",
-        "text": "Kesh hajmini avtomatik 10 baravar qisqartiradi"
+        "text": "Teglar orqali bir-biriga bog'liq kesh yozuvlarini guruhlab tozalash mumkin, ammo bu xususiyat `file` va `database` drayverlarida ishlamaydi (faqat Redis, Memcached va h.k. da ishlaydi)"
       },
       {
         "key": "C",
-        "text": "Faqat bitta tag berish mumkin, massiv berib bo'lmaydi"
+        "text": "Teglar orqali kesh yozuvlarini guruhlab tozalash mumkin, ammo bu xususiyat `redis` va `memcached` drayverlarida ishlamaydi (faqat `file` va `database` da ishlaydi) (qolgan drayverlarda emas)"
       },
       {
         "key": "D",
-        "text": "Teglar orqali bir-biriga bog'liq kesh yozuvlarini guruhlab tozalash mumkin, ammo bu xususiyat `file` va `database` drayverlarida ishlamaydi (faqat Redis, Memcached va h.k. da ishlaydi)"
+        "text": "Teglar kalitlarni shifrlab saqlaydi, shu sabab xavfsizlik oshadi; cheklovi esa bir nechta kalitni birdaniga o'chirib bo'lmasligi"
       }
     ],
-    "correct": "D",
+    "correct": "B",
     "explanation": "Cache Tags yordamida ma'lum mavzuga oid yozuvlarni birgalikda boshqarish mumkin. Ammo kalitlar iyerarxiyasini qo'llab-quvvatlamaydigan oddiy faylli yoki relyatsion bazali kesh drayverlarida (file, database) Cache::tags() xato (BadMethodCallException) beradi."
   },
   {
@@ -3523,22 +3523,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat database seederlarida"
+        "text": "Blade shablonlarini kompilyatsiya qilish va view keshlash mexanizmida"
       },
       {
         "key": "B",
-        "text": "HTTP Middleware zanjiri va ko'p bosqichli buyurtma/to'lov qayta ishlash logikasida"
+        "text": "Service Container ning bog'lanishlarni hal qilish (resolve) jarayonida"
       },
       {
         "key": "C",
-        "text": "Faqat Blade shablonlarini kompilyatsiya qilishda"
+        "text": "HTTP Middleware zanjiri va ko'p bosqichli buyurtma/to'lov qayta ishlash logikasida"
       },
       {
         "key": "D",
-        "text": "Fayllarni zip arxiv qilishda"
+        "text": "Eloquent ning relatsiyalarni yuklash (Eager Loading) va query builder tizimida"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "Laravel HTTP so'rovlarini Middleware orqali o'tkazishda aynan illuminate/pipeline komponentidan foydalanadi: app(Pipeline::class)->send($request)->through($middleware)->then($destination). Ushbu pattern murakkab biznes-jarayonlarni bosqichma-bosqich ajratish uchun eng yaxshi amaliyotdir."
   },
   {
@@ -3550,11 +3550,11 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Gate faqat API uchun, Policy esa faqat Web formalar uchun ishlatiladi"
+        "text": "Policy HTTP so'rov darajasida (middleware sifatida), Gate esa faqat Blade shablonlarida (`@can`) tekshiruv uchun ishlatiladi; ular boshqa joyda ishlamaydi, birga ishlatib bo'lmaydi"
       },
       {
         "key": "B",
-        "text": "Gate avtomatik barcha ruxsatlarni beradi, Policy esa taqiqlaydi"
+        "text": "Policy faqat umumiy harakatlar (admin-panelga kirish) uchun, Gate esa muayyan Model atrofida CRUD huquqlarini guruhlaydi"
       },
       {
         "key": "C",
@@ -3562,7 +3562,7 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "D",
-        "text": "Policy eskirgan bo'lib, o'rniga faqat Gate ishlatiladi"
+        "text": "Policy faqat `User` modeliga tegishli, Gate esa istalgan model uchun; ular bir-biriga bog'liq emas va birgalikda ishlatib bo'lmaydi"
       }
     ],
     "correct": "C",
@@ -3581,15 +3581,15 @@ window.INTERVIEW_TESTS = [
       },
       {
         "key": "B",
-        "text": "Faqat server o'chib qolganda zaxira serverga yo'naltiradi"
+        "text": "Barcha so'rovlardan oldin, route lar tekshirilishidan avval ishlaydi va so'rov URL manzilini kichik harflarga o'zgartiradi"
       },
       {
         "key": "C",
-        "text": "Barcha POST so'rovlarini avtomatik GET ga o'giradi"
+        "text": "Foydalanuvchi autentifikatsiyadan o'tmagan bo'lsa, uni avtomatik ravishda kirish (login) sahifasiga yo'naltiradi"
       },
       {
         "key": "D",
-        "text": "Baza tranzaksiyasini orqaga qaytaradi (rollback)"
+        "text": "Mavjud route da xatolik (exception) yuz berganda ishga tushadi va xatolikni log faylga yozib, standart sahifani ko'rsatadi"
       }
     ],
     "correct": "A",
@@ -3604,22 +3604,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat internet tezligi past bo'lganda yuklanadi"
+        "text": "Provayderning `register()` va `boot()` metodlari birinchi so'rovdan so'ng keshga yoziladi va keyingi so'rovlarda hech qachon qayta chaqirilmaydi"
       },
       {
         "key": "B",
-        "text": "Provayderni ertasi kuni ertalab soat 9:00 gacha kechiktiradi"
+        "text": "`DeferrableProvider` provayderni ilova to'liq yuklanib bo'lgandan keyin, so'rov oxirida (terminate bosqichida) ro'yxatdan o'tkazadi, shuning uchun u ilova ishga tushishini sekinlashtirmaydi"
       },
       {
         "key": "C",
-        "text": "Ma'lumotlar bazasini asinxron yuklash uchun ishlatiladi"
+        "text": "`DeferrableProvider` interfeysi va `provides()` metodi orqali: ushbu provayder har bir so'rovda yuklanmasdan, faqat uning xizmatiga haqiqiy ehtiyoj paydo bo'lgandagina (on-demand) xotiraga yuklanadi"
       },
       {
         "key": "D",
-        "text": "`DeferrableProvider` interfeysi va `provides()` metodi orqali: ushbu provayder har bir so'rovda yuklanmasdan, faqat uning xizmatiga haqiqiy ehtiyoj paydo bo'lgandagina (on-demand) xotiraga yuklanadi"
+        "text": "Provayder faqat navbat (queue) workerlarida yuklanadi va HTTP so'rovlarda hech qachon ishlatilmaydi, `provides()` metodi esa shu workerlarni belgilaydi"
       }
     ],
-    "correct": "D",
+    "correct": "C",
     "explanation": "Agar provayder faqat kamdan-kam ishlatiladigan og'ir servisni (masalan Riak, AWS SES client) ro'yxatdan o'tkazsa, uni DeferrableProvider qilish orqali har bir oddiy HTTP so'rovda keraksiz yuklanishining oldi olinadi va ilova tezligi oshadi."
   },
   {
@@ -3631,22 +3631,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat ma'lumotlar bazasi migratsiyalarini tekshirish uchun"
+        "text": "Validatsiya muvaffaqiyatli o'tgandan keyin, ma'lumotlarni bazaga saqlashdan oldin ularni qayta formatlash va sanitizatsiya qilish uchun ishlatiladi, shu sabab `rules()` dan keyin bajariladi"
       },
       {
         "key": "B",
-        "text": "Validatsiya qoidalari (rules) bajarilishidan oldin mijozdan kelgan ma'lumotlarni tozalash, formatlash (masalan telefon raqamidan bo'shliqlarni olib tashlash) yoki yangi maydon qo'shish uchun"
+        "text": "Foydalanuvchi huquqini tekshirish uchun: `false` qaytarsa, so'rov `403` bilan to'xtatiladi va validatsiya qoidalari umuman ishga tushmaydi"
       },
       {
         "key": "C",
-        "text": "Faqat fayllarni virusga qarshi tekshirish uchun"
+        "text": "Validatsiya qoidalari (rules) bajarilishidan oldin mijozdan kelgan ma'lumotlarni tozalash, formatlash (masalan telefon raqamidan bo'shliqlarni olib tashlash) yoki yangi maydon qo'shish uchun"
       },
       {
         "key": "D",
-        "text": "Validatsiyadan o'tgan ma'lumotlarni darhol JSON ga o'girish uchun"
+        "text": "Validatsiya xatolari bo'lganda chiqariladigan xabarlarni (`messages()`) o'zbek tiliga avtomatik tarjima qilish va formatlash uchun"
       }
     ],
-    "correct": "B",
+    "correct": "C",
     "explanation": "prepareForValidation() validatsiyadan oldin $this->merge(['phone' => preg_replace('/\\D/', '', $this->phone)]) kabi ma'lumotlarni normalizatsiya qilish uchun eng qulay joydir. Bu controller ichida ortiqcha tozalash kodlari yozilishining oldini oladi."
   },
   {
@@ -3658,22 +3658,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Closure (anonim funksiya) asosidagi routelar (masalan `Route::get('/test', fn() => 'ok')`), chunki PHP closure larni xavfsiz serializatsiya qila olmaydi"
+        "text": "Faqat Controller metodiga yo'naltirilgan routelar (`Route::get('/x', [XController::class, 'index'])`), chunki ular klass nomini keshda saqlay olmaydi"
       },
       {
         "key": "B",
-        "text": "Faqat POST metodidagi routelar"
+        "text": "Middleware biriktirilgan routelar, chunki middleware zanjirini keshlash uchun har bir so'rovda qayta tuzish talab etiladi"
       },
       {
         "key": "C",
-        "text": "Faqat kontrollerga ulangan routelar"
+        "text": "Closure (anonim funksiya) asosidagi routelar (masalan `Route::get('/test', fn() => 'ok')`), chunki PHP closure larni xavfsiz serializatsiya qila olmaydi"
       },
       {
         "key": "D",
-        "text": "Hech qanday route xatolik bermaydi"
+        "text": "Parametrli routelar (`/users/{id}`), chunki ularning dinamik qismini oldindan kompilyatsiya qilib, keshga yozib bo'lmaydi"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Laravel 8 gacha bo'lgan versiyalarda Closure routelar route:cache ni to'liq qulatgan. Zamonaviy versiyalarda maxsus wrapperlar bo'lsa-da, barcha routelarni aniq Controller klasslariga bog'lash productionda tavsiya etilgan eng toza amaliyotdir."
   },
   {
@@ -3685,22 +3685,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Barcha eventlarni ma'lumotlar bazasiga yozib boradi"
+        "text": "Listener klassining nomi event nomi bilan bir xil bo'lishi (masalan `OrderShipped` va `OrderShippedListener`) asosida avtomatik bog'laydi, type-hint e'tiborga olinmaydi"
       },
       {
         "key": "B",
-        "text": "Faqat Redis pub/sub orqali ishlaydi"
-      },
-      {
-        "key": "C",
         "text": "`EventServiceProvider` da qo'lda `$listen` massivini to'ldirmasdan, `app/Listeners` papkasidagi klasslarning `handle(SomeEvent $event)` metodining type-hintiga qarab avtomatik bog'laydi"
       },
       {
+        "key": "C",
+        "text": "Har bir so'rovda `app/Events` papkasini skanerlab, topilgan klasslarni avtomatik ravishda barcha mavjud listenerlarga bog'laydi (cache ishlatilmaydi)"
+      },
+      {
         "key": "D",
-        "text": "Faqat frontend WebSocketlar uchun ishlaydi"
+        "text": "`composer.json` dagi `extra.laravel.events` bo'limida listenerlarni qo'lda ro'yxatga olish orqali, `app/Listeners` papkasi esa e'tiborga olinmaydi"
       }
     ],
-    "correct": "C",
+    "correct": "B",
     "explanation": "Event Discovery (shouldDiscoverEvents() -> true) dasturchini har bir event va listernerni EventServiceProvider ichida qo'lda ro'yxatdan o'tkazish majburiyatidan qutqaradi. Reflection orqali listener qaysi eventni qabul qilishi avtomatik aniqlanadi."
   },
   {
@@ -3712,22 +3712,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Har bir kanal uchun alohida 3 ta klass ochish shart"
-      },
-      {
-        "key": "B",
         "text": "Notification klassidagi `via($notifiable)` metodi ichida `return ['mail', 'database', 'vonage'];` massivini qaytarish orqali"
       },
       {
+        "key": "B",
+        "text": "Har bir kanal uchun alohida Notification klassi yaratib, ularni ketma-ket `Notification::send()` bilan alohida-alohida chaqirish orqali"
+      },
+      {
         "key": "C",
-        "text": "Faqat queue worker orqali 3 ta alohida komanda yuboriladi"
+        "text": "`config/notifications.php` faylida 'default_channels' massivini belgilab, barcha bildirishnomalar avtomatik shu kanallarga yuborilishi orqali"
       },
       {
         "key": "D",
-        "text": "Laravel bir vaqtda faqat bitta kanalga yuborishni qo'llab-quvvatlaydi"
+        "text": "Notification klassidagi `toChannels()` metodi ichida har bir kanal uchun qiymat qaytarish va `route()` metodini yozish orqali"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Laravel Notification tizimining eng kuchli jihati uning ko'p kanalliligidir (multi-channel). via() metodi ichida kerakli kanallar ko'rsatiladi va tegishli toMail(), toDatabase(), toBroadcast() metodlari o'z kanali bo'yicha formatlab yetkazadi."
   },
   {
@@ -3739,22 +3739,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat IP manzil bo'yicha cheksiz qulflash"
+        "text": "`RateLimiter::for('api', fn($req) => $req->user()?->isVip() ? Limit::none() : Limit::perMinute(60)->by($req->user()?->id ?: $req->ip()))`"
       },
       {
         "key": "B",
-        "text": "Faqat fayllar hajmini tekshirish uchun"
+        "text": "`RateLimiter::for('api', fn($req) => Limit::perMinute(60))->unlimitedFor($req->user()?->isVip())`"
       },
       {
         "key": "C",
-        "text": "Database jadvalidagi qatorlar sonini cheklash uchun"
+        "text": "`RateLimiter::define('api', fn($req) => $req->user()?->isVip() ? Limit::perMinute(1000) : Limit::perHour(60))` // VIP uchun 1000/min"
       },
       {
         "key": "D",
-        "text": "`RateLimiter::for('api', fn($req) => $req->user()?->isVip() ? Limit::none() : Limit::perMinute(60)->by($req->user()?->id ?: $req->ip()))`"
+        "text": "`Route::throttle('api', fn($req) => Limit::perMinute(60)->bucket($req->ip()))->exceptVip()`"
       }
     ],
-    "correct": "D",
+    "correct": "A",
     "explanation": "Laravel RateLimiter juda moslashuvchan: Limit::perMinute(), Limit::perHour() orqali foydalanuvchi maqomiga qarab (VIP foydalanuvchilar uchun bepul, oddiy foydalanuvchilar uchun daqiqasiga 60 ta) dinamik limitlar belgilash imkonini beradi."
   },
   {
@@ -3766,22 +3766,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Amazon S3 kabi bulutli xotiralarda yopiq (private) fayllarni vaqtincha xavfsiz yuklab olish uchun imzolangan maxsus URL (Pre-signed URL) generatsiya qilish uchun"
+        "text": "Ochiq (public) fayllarning URL manzilini qisqartirib, muddati tugagach, havolani bazadan avtomatik o'chirib yuborish uchun"
       },
       {
         "key": "B",
-        "text": "Faqat lokal diskdagi fayllarni 1 daqiqaga keshga olish uchun"
+        "text": "Amazon S3 kabi bulutli xotiralarda yopiq (private) fayllarni vaqtincha xavfsiz yuklab olish uchun imzolangan maxsus URL (Pre-signed URL) generatsiya qilish uchun"
       },
       {
         "key": "C",
-        "text": "Faylni serverdan o'chirish uchun taymer qo'yish"
+        "text": "Faylni serverga yuklash vaqtida uni vaqtincha papkaga saqlab, belgilangan muddatdan so'ng avtomatik o'chirib tashlash uchun, shu bilan joy bo'shatiladi"
       },
       {
         "key": "D",
-        "text": "Faqat rasm fayllarining hajmini kichraytirish"
+        "text": "Faylni mijoz brauzerida keshlab, `Cache-Control` sarlavhasi orqali muddatidan keyin qayta yuklab olishni majburlash uchun"
       }
     ],
-    "correct": "A",
+    "correct": "B",
     "explanation": "Hujjatlar yoki xususiy fayllar S3 da ochiq (public) turmasligi kerak. temporaryUrl() Amazon S3 imzoli URL yaratadi va u masalan 15 daqiqadan so'ng avtomatik yaroqsiz holga keladi."
   },
   {
@@ -3793,22 +3793,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Ikkalasi ham bir xil qavslarsiz yoziladi"
+        "text": "Argumentlar: `{--user}`, `{--user=}`; Optsiyalar: `{queue}`, `{silent?}`"
       },
       {
         "key": "B",
-        "text": "Argumentlar faqat raqam, optsiyalar faqat matn bo'lishi shart"
+        "text": "Argumentlar: `{user}`, `{--user?}`; Optsiyalar: `{queue=}`, `{-silent}`"
       },
       {
         "key": "C",
-        "text": "Argumentlar: `{user}`, `{user?}`; Optsiyalar (flags): `{--queue=}`, `{--silent}`"
+        "text": "Argumentlar: `[user]`, `[user?]`; Optsiyalar: `[--queue]`, `[--silent]`"
       },
       {
         "key": "D",
-        "text": "Faqat fayl nomlari orqali belgilanadi"
+        "text": "Argumentlar: `{user}`, `{user?}`; Optsiyalar (flags): `{--queue=}`, `{--silent}`"
       }
     ],
-    "correct": "C",
+    "correct": "D",
     "explanation": "Artisan $signature xususiyatida argumentlar to'g'ridan-to'g'ri {param} ko'rinishida (majburiy yoki {param?} ixtiyoriy), kalitli optsiyalar esa ikkita tire bilan {--option=} ko'rinishida e'lon qilinadi."
   },
   {
@@ -3820,22 +3820,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat login sahifasiga yo'naltirish uchun"
-      },
-      {
-        "key": "B",
         "text": "Har qanday boshqa tekshiruvdan oldin ishga tushib, masalan 'Super Admin' foydalanuvchilarga barcha huquqlarni to'g'ridan-to'g'ri tasdiqlash (grant all) uchun"
       },
       {
+        "key": "B",
+        "text": "Har qanday boshqa tekshiruvdan keyin ishga tushib, hech bir Policy ruxsat bermagan holatlarda qo'shimcha xabar log faylga yozish uchun (faqat audit uchun)"
+      },
+      {
         "key": "C",
-        "text": "Faqat parollarni tekshirish uchun"
+        "text": "Faqat guest (kirmagan) foydalanuvchilar uchun ishga tushib, ularni avtomatik ravishda login sahifasiga yo'naltirish uchun"
       },
       {
         "key": "D",
-        "text": "Barcha foydalanuvchilarning sessiyasini o'chirish uchun"
+        "text": "Barcha huquqlarni bir martalik keshlab qo'yib, har bir so'rovda Policy larni qayta tekshirmasdan natijani qaytarish (cache) uchun"
       }
     ],
-    "correct": "B",
+    "correct": "A",
     "explanation": "Gate::before har qanday Policy yoki Gate metodidan oldin ishga tushadi. Agar u true qaytarsa, qolgan tekshiruvlar ko'rilmasdan darhol ruxsat beriladi. Bu Super Admin rolini realizatsiya qilishning eng toza usulidir."
   },
   {
@@ -3847,22 +3847,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Eski versiyalardagi `Http/Kernel.php`, `Console/Kernel.php` va bir qancha provayderlar olib tashlanib, routing, middleware va exception handling to'g'ridan-to'g'ri `bootstrap/app.php` ichida zanjirli (chained fluent methods) orqali sozlanadi"
+        "text": "Barcha sozlamalar `config/app.php` ga ko'chirildi va `bootstrap/app.php` fayli butunlay olib tashlandi; ilova to'g'ridan-to'g'ri `public/index.php` orqali yuklanadi"
       },
       {
         "key": "B",
-        "text": "Barcha sozlamalar faqat .env faylida qilinadi"
+        "text": "Eski `app/Http/Kernel.php` saqlanib qoldi, lekin `bootstrap/app.php` faqat ilovaning nomini va `basePath` ni belgilaydi; routing va middleware avvalgidek `app/Providers` da sozlanadi, Kernel va Provider fayllari avvalgidek mavjud"
       },
       {
         "key": "C",
-        "text": "Faqat XML formatiga o'tkazildi"
+        "text": "Eski versiyalardagi `Http/Kernel.php`, `Console/Kernel.php` va bir qancha provayderlar olib tashlanib, routing, middleware va exception handling to'g'ridan-to'g'ri `bootstrap/app.php` ichida zanjirli (chained fluent methods) orqali sozlanadi"
       },
       {
         "key": "D",
-        "text": "Hech narsa o'zgarmagan, Laravel 10 bilan bir xil"
+        "text": "`bootstrap/app.php` endi faqat Composer autoload ni ulaydi, routing va middleware esa `routes/web.php` fayli ichida `Route::middleware()` orqali sozlanadi"
       }
     ],
-    "correct": "A",
+    "correct": "C",
     "explanation": "Laravel 11 ilova arxitekturasini minimal va ixcham ko'rinishga keltirdi. Ko'p faylli Kernel klasslari o'rniga Application::configure(basePath: dirname(__DIR__))->withRouting()->withMiddleware()->withExceptions()->create() fluet sintaksisi kiritildi."
   },
   {
@@ -3874,22 +3874,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "Faqat videolarni translatsiya qilish"
-      },
-      {
-        "key": "B",
-        "text": "HTML sahifalarni PDF ga aylantirish"
-      },
-      {
-        "key": "C",
         "text": "Ma'lumotlar bazasidagi xom qiymatni o'qiyotganda (`get`) maxsus Value Object ga aylantirish va saqlayotganda (`set`) uni yana bazaga mos formatga o'girish"
       },
       {
+        "key": "B",
+        "text": "Model ma'lumotlarini JSON yoki massivga o'girishda qaysi maydonlar chiqarilishini belgilaydi (`$hidden` va `$visible`)"
+      },
+      {
+        "key": "C",
+        "text": "Eloquent so'rovlariga avtomatik global shart qo'shib, masalan faqat faol yozuvlarni qaytarishni ta'minlaydi (Global Scope), modelni qayta sozlash shart emas"
+      },
+      {
         "key": "D",
-        "text": "Baza jadvallarini o'chirish"
+        "text": "Modeldagi hodisalarni (`creating`, `updated`) tinglovchi observer yaratib, ularni avtomatik ravishda ro'yxatdan o'tkazadi"
       }
     ],
-    "correct": "C",
+    "correct": "A",
     "explanation": "CastsAttributes interfeysi orqali masalan JSON saqlangan koordinatalarni Coordinates($lat, $lng) obyektiga yoki pul maydonini Money($amount, $currency) Value Object ga xavfsiz va qulay konvertatsiya qilish mumkin."
   },
   {
@@ -3901,15 +3901,15 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "PresenceChannel shifrlanmagan ochiq kanal hisoblanadi"
+        "text": "PresenceChannel faqat bitta foydalanuvchi bilan bog'lanadi (1-ga-1 chat), PrivateChannel esa bir nechta foydalanuvchi uchun guruh chati sifatida ishlatiladi, shuning uchun u faqat 1-ga-1 chatga mos"
       },
       {
         "key": "B",
-        "text": "PrivateChannel faqat HTTP orqali, PresenceChannel esa faqat SMS orqali ishlaydi"
+        "text": "PresenceChannel faqat ruxsati bor foydalanuvchilar uchun; PrivateChannel esa nafaqat ruxsat beradi, balki kanalda kimlar onlayn turganini ham ko'rsatadi"
       },
       {
         "key": "C",
-        "text": "Ikkalasi mutlaqo bir xil"
+        "text": "PrivateChannel xabarlarni shifrlaydi, PresenceChannel esa xabarlarni shifrlamaydi, ammo ikkalasi ham kanalda kim onlayn ekanini aniqlab bera olmaydi"
       },
       {
         "key": "D",
@@ -3928,22 +3928,22 @@ window.INTERVIEW_TESTS = [
     "options": [
       {
         "key": "A",
-        "text": "`php artisan route:list --clean`"
+        "text": "`php artisan route:list --with-middleware`"
       },
       {
         "key": "B",
-        "text": "`php artisan route:list -v` (yoki `--verbose`)"
+        "text": "`php artisan route:list --middleware=all`"
       },
       {
         "key": "C",
-        "text": "`php artisan route:list --no-middleware`"
+        "text": "`php artisan route:list --show-middleware`"
       },
       {
         "key": "D",
-        "text": "`php artisan route:list --sql`"
+        "text": "`php artisan route:list -v` (yoki `--verbose`)"
       }
     ],
-    "correct": "B",
+    "correct": "D",
     "explanation": "php artisan route:list buyrug'iga -v yoki -vv qo'shilsa, har bir yo'nalishga qaysi middleware lar (auth, throttle, custom middleware) biriktirilgani aniq ro'yxatda ko'rsatiladi."
   }
 ];
