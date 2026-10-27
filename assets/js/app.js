@@ -15,7 +15,7 @@
   const STATUS_V1_TO_V2 = [0, 1, 1, 2, 2];
   const PROGRESS_VERSION = 2;
   const PRIORITY = { core: "Core", important: "Important", optional: "Optional" };
-  const KEYS = { progress: "lsm:progress", theme: "lsm:theme", collapsed: "lsm:collapsed", last: "lsm:last", quiz: "lsm:quiz_scores", session: "lsm:session", progressV: "lsm:progress-v", questions: "lsm:questions", bookmarks: "lsm:bookmarks" };
+  const KEYS = { progress: "lsm:progress", theme: "lsm:theme", collapsed: "lsm:collapsed", last: "lsm:last", srs: "lsm:srs", levels: "lsm:levels", quiz: "lsm:quiz_scores", session: "lsm:session", progressV: "lsm:progress-v", questions: "lsm:questions", bookmarks: "lsm:bookmarks" };
 
   const CAREER_LEVELS = [
     { id: "junior", label: "Junior", name: "Junior Developer", subLevels: ["foundation", "junior"], badge: "Junior", color: "var(--accent-text)", bg: "var(--accent-soft)", icon: "code", desc: "PHP sintaksisi, OOP asoslari, MVC, sodda CRUD va bazaviy vositalar" },
@@ -168,6 +168,12 @@
   }
   let masteredIq = new Set(store.get(KEYS.questions, []));
   let bookmarkedIq = new Set(store.get(KEYS.bookmarks, []));
+  /* Intervyu savollari: Leitner takrorlash. iqSrs[id] = { box 1..5, due: "yyyy-mm-dd", last, r: 0|1|2 } */
+  let iqSrs = store.get(KEYS.srs, {}) || {};
+  let iqMode = "today";
+  let iqTodayIds = [];
+  const SRS_DAYS = [0, 1, 3, 7, 14, 30];
+  const dayStr = (add = 0) => { const d = new Date(); d.setDate(d.getDate() + add); return d.toLocaleDateString("sv"); };
 
   const statusOf = (subId) => {
     const v = progress[subId];
@@ -235,7 +241,7 @@
   }
 
   function markdown(src) {
-    const lines = String(src).replace(/\r\n?/g, "\n").split("\n");
+    const lines = (Array.isArray(src) ? src.join("\n") : String(src)).replace(/\r\n?/g, "\n").split("\n");
     const out = [];
     let i = 0;
     const isBlockStart = (l) => /^(```|#{1,6}\s|>\s?|\s*[-*]\s+|\s*\d+[.)]\s+|\|)/.test(l);
@@ -298,6 +304,7 @@
     const nav = $("#sidebar");
     nav.innerHTML = `
       <button class="side-search" data-open-palette aria-label="Skill yoki mavzu qidirish">${icon("search")}<span>Skill yoki mavzu qidiring…</span><kbd>/</kbd></button>
+      <div class="side-levels" role="group" aria-label="Global daraja filtri">${CAREER_LEVELS.map((l) => `<button type="button" data-glevel="${l.id}" aria-pressed="${globalLevels.has(l.id)}" style="--lvl-color:${l.color}">${l.label}</button>`).join("")}</div>
       ${GROUPS.map((g) => `
         <div class="side-group" data-group="${g.id}" data-collapsed="${!!collapsed[g.id]}">
           <button class="side-group-btn" aria-expanded="${!collapsed[g.id]}" aria-controls="sg-${g.id}">
@@ -372,6 +379,38 @@
   function statusLegend(counts) {
     return `<div class="status-legend">${STATUSES.map((s, i) =>
       `<span data-st="${i}"><i class="st-dot"></i>${s.label} <b>${counts[i]}</b></span>`).join("")}</div>`;
+  }
+
+  const TECH_STACK = [
+    { title: "PHP", ver: "7.4+ → 8.4", desc: "Tipizatsiya, Attributes, Enums, Fibers, JIT, OPcache va Property Hooks.", tags: ["PHP 8.3/8.4", "OOP", "OPcache", "JIT"], slug: "php", icon: "code" },
+    { title: "Laravel Framework", ver: "10+ / 11+", desc: "Service Container, Eloquent ORM, Pipeline, Octane, Reverb va Artisan ekotizimi.", tags: ["Laravel 11", "Eloquent", "Octane", "Artisan"], slug: "laravel", icon: "rocket" },
+    { title: "MySQL & PostgreSQL", ver: "MySQL 8.0+ / PG 15+", desc: "InnoDB, ACID, B-Tree indekslar, EXPLAIN, Partitioning va Tranzaksiyalar.", tags: ["MySQL 8", "PostgreSQL", "ACID", "Indexes"], slug: "mysql", icon: "database" },
+    { title: "Redis In-Memory", ver: "Redis 7.0+", desc: "Cache-Aside, Distributed Lock (Redlock), Streams, Pub/Sub va Eviction siyosatlari.", tags: ["Redis 7", "Cache-Aside", "Redlock", "Streams"], slug: "redis", icon: "gauge" },
+    { title: "Docker & Compose", ver: "Docker 24+ / Compose v2", desc: "Multi-stage Dockerfile, Alpine, konteynerlar izolyatsiyasi, volume va tarmoqlar.", tags: ["Multi-stage", "Alpine", "Compose", "Linux"], slug: "docker", icon: "boxes" },
+    { title: "Nginx & PHP-FPM / Octane", ver: "Nginx 1.24+ / FastCGI", desc: "pm.max_children tuning, Reverse Proxy, FrankenPHP, Swoole va HTTP/2 / HTTPS.", tags: ["PHP-FPM", "Nginx", "FrankenPHP", "FastCGI"], slug: "php-fpm", icon: "server" },
+    { title: "Laravel Horizon & Queues", ver: "Horizon 5+ / Queues", desc: "Asinxron ishlov, Idempotent job'lar, auto-balancing, batching, chaining va Supervisor.", tags: ["Horizon", "Queues", "Supervisor", "Workers"], slug: "queues-and-background-jobs", icon: "queue" },
+    { title: "RabbitMQ & Apache Kafka", ver: "RabbitMQ 3.12+ / Kafka 3+", desc: "Event-Driven arxitektura, xabarlar brokiri, stream processing va consumer groups.", tags: ["RabbitMQ", "Kafka", "EDA", "Events"], slug: "rabbitmq", icon: "branch" },
+    { title: "Sanctum & API Security", ver: "Sanctum / OAuth 2.0", desc: "SPA Cookie-based sessiyalar, Bearer API Tokenlar, HMAC webhooks, CSRF va OWASP himoyasi.", tags: ["Sanctum", "OAuth 2.0", "HMAC", "OWASP Top 10"], slug: "laravel-sanctum", icon: "shield" },
+    { title: "Pest & PHPUnit", ver: "Pest v2/v3 · PHPUnit 10+", desc: "Unit, Feature va Architecture testing (`arch()`), Mocking, Fake va TDD metodologiyasi.", tags: ["Pest PHP", "PHPUnit 10", "Arch Testing", "TDD"], slug: "pest", icon: "flask" },
+    { title: "PHPStan & Larastan", ver: "Level 8 / Max", desc: "Statik kod tahlili, qat'iy tiplar nazorati, yashirin buglarni CI bosqichidayoq aniqlash.", tags: ["Larastan", "Level 8+", "Strict Types", "CI/CD"], slug: "phpstan", icon: "check" },
+    { title: "DDD & Clean Architecture", ver: "Hexagonal / DDD", desc: "Entities, Value Objects, Aggregate Roots, Dependency Inversion va Bounded Contexts.", tags: ["DDD", "Clean Arch", "SOLID", "Patterns"], slug: "domain-driven-design-ddd", icon: "layers" },
+  ];
+
+
+  /* Texnologiyalar steki: bir qatorli karusel (hover'da to'xtaydi) */
+  function stkCard(x, clone) {
+    return `<li${clone ? ' class="stk-clone" aria-hidden="true"' : ""}><a class="stk" href="#/s/${x.slug}"${clone ? ' tabindex="-1"' : ""}>
+      <div>
+        <div class="stk-head"><span class="stk-ic">${icon(x.icon)}</span><em>${esc(x.ver)}</em></div>
+        <h3>${esc(x.title)}</h3>
+        <p>${esc(x.desc)}</p>
+        <div class="stk-tags">${x.tags.map((g) => `<span>${esc(g)}</span>`).join("")}</div>
+      </div>
+      <div class="stk-foot"><span>Xaritada o'rganish</span><b>Ko'rish ${icon("arrow-right", "ic ic-sm")}</b></div>
+    </a></li>`;
+  }
+  function stkRow(items) {
+    return `<div class="stk-row"><ul class="stk-track">${items.map((x) => stkCard(x, false)).join("")}${items.map((x) => stkCard(x, true)).join("")}</ul></div>`;
   }
 
   /* Roadmap (16 bo'lim, ilon izi) */
@@ -507,9 +546,9 @@
           <ul class="stack-legend">${STATUSES.map((x, i) => `<li data-st="${i}"><i class="st-dot"></i>${x.label}<b>${st.counts[i]}</b></li>`).join("")}</ul>
           <ul class="level-bars">${CAREER_LEVELS.map((lvl) => {
             const ls = statsFor(subs.filter((x) => levelOf(x) === lvl.id));
-            return `<li><a href="#/levels?lvl=${lvl.id}" style="--lvl-color:${lvl.color}">
+            return `<li><div class="lvl-row" style="--lvl-color:${lvl.color}">
               <span class="name">${esc(lvl.label)}</span><b>${pct(ls.progress)}%</b>
-              <span class="mini-bar"><i style="width:${pct(ls.progress)}%"></i></span></a></li>`;
+              <span class="mini-bar"><i style="width:${pct(ls.progress)}%"></i></span></div></li>`;
           }).join("")}</ul>
         </section>
         <section class="dash-card dash-continue" aria-label="Davom ettirish">
@@ -528,7 +567,6 @@
       <section class="lp-section" aria-label="Nimalar bor">
         <div class="dash-tiles">
           <a class="tile" href="#/skills"><span class="tile-ic">${icon("layers")}</span><b>${SKILLS.length}</b><h3>Skillar</h3><p>${subs.length} mavzu: tavsif, amaliy topshiriq, qabul mezonlari</p></a>
-          <a class="tile" href="#/levels"><span class="tile-ic">${icon("target")}</span><b>${CAREER_LEVELS.length}</b><h3>Darajalar xaritasi</h3><p>Junior dan Lead gacha talab qilinadigan mavzular</p></a>
           <a class="tile" href="#/interview"><span class="tile-ic">${icon("help")}</span><b>${iqAll.length}</b><h3>Intervyu savollari</h3><p>Model javob va Senior maslahatlari bilan</p></a>
           <a class="tile" href="#/quiz"><span class="tile-ic">${icon("sparkles")}</span><b>${testsAll}</b><h3>Texnik testlar</h3><p>A/B/C/D variantli, Senior tushuntirishi bilan</p></a>
         </div>
@@ -537,6 +575,11 @@
       <section class="lp-section" aria-label="Yo'l xaritasi">
         <div class="lp-head"><h2>16 bo'lim, bitta yo'l</h2><p>PHP va Laravel asoslaridan boshlab arxitektura va jamoa boshqaruvigacha. Har bir bekatda bir nechta skill bor.</p></div>
         ${roadmapHtml()}
+      </section>
+
+      <section class="lp-section" aria-label="Texnologiyalar steki">
+        <div class="lp-head"><h2>Texnologiyalar steki</h2><p>Xaritada qamrab olingan asosiy texnologiyalar va ularning zamonaviy versiyalari.</p></div>
+        <div class="stk-marquee">${stkRow(TECH_STACK)}</div>
       </section>
 
       ${authed ? "" : `
@@ -611,12 +654,14 @@
 
   let filter = "all";
   let levelFilter = "all";
+  /* Global daraja filtri (sidebar): tanlansa subskill ro'yxatlarida mahalliy daraja tugmalari bloklanadi */
+  const globalLevels = new Set((store.get(KEYS.levels, []) || []).filter((id) => CAREER_LEVELS.some((l) => l.id === id)));
   const FILTERS = [
     ["all", "Barchasi"], ["todo", "Boshlanmagan"], ["wip", "O'rganilmoqda"], ["done", "Ishonchli"],
   ];
   const passes = (st, lvl) => {
     const stOk = filter === "all" || (filter === "todo" && st === 0) || (filter === "wip" && st === 1) || (filter === "done" && st === 2);
-    const lvlOk = levelFilter === "all" || levelFilter === lvl;
+    const lvlOk = globalLevels.size ? globalLevels.has(lvl) : (levelFilter === "all" || levelFilter === lvl);
     return stOk && lvlOk;
   };
 
@@ -670,9 +715,9 @@
             <div class="seg" role="group" aria-label="Status bo'yicha filtr">
               ${FILTERS.map(([k, l]) => `<button data-filter="${k}" aria-pressed="${filter === k}">${l}</button>`).join("")}
             </div>
-            <div class="level-seg" role="group" aria-label="Daraja bo'yicha filtr">
-              <button data-level-filter="all" aria-pressed="${levelFilter === "all"}">Barchasi</button>
-              ${CAREER_LEVELS.map((lvl) => `<button data-level-filter="${lvl.id}" aria-pressed="${levelFilter === lvl.id}">${lvl.label}</button>`).join("")}
+            <div class="level-seg${globalLevels.size ? " is-global" : ""}" role="group" aria-label="Daraja bo'yicha filtr"${globalLevels.size ? ` title="Global daraja filtri yoqilgan (chapdagi tugmalar)"` : ""}>
+              <button data-level-filter="all" aria-pressed="${!globalLevels.size && levelFilter === "all"}"${globalLevels.size ? " disabled" : ""}>Barchasi</button>
+              ${CAREER_LEVELS.map((lvl) => `<button data-level-filter="${lvl.id}" aria-pressed="${globalLevels.size ? globalLevels.has(lvl.id) : levelFilter === lvl.id}"${globalLevels.size ? " disabled" : ""}>${lvl.label}</button>`).join("")}
             </div>
             <button class="icon-btn" data-expand-all aria-label="Hammasini ochish / yopish" title="Hammasini ochish / yopish">${icon("expand")}</button>
           </div>
@@ -694,6 +739,7 @@
         if (li.hidden) {
           filter = "all";
           levelFilter = "all";
+          if (globalLevels.size) { globalLevels.clear(); store.set(KEYS.levels, []); syncLevelUI(); }
           $$("[data-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.filter === "all")));
           $$("[data-level-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.levelFilter === "all")));
           applyFilter();
@@ -702,6 +748,21 @@
         requestAnimationFrame(() => li.scrollIntoView({ block: "start" }));
       }
     }
+  }
+
+  function syncLevelUI() {
+    const on = globalLevels.size > 0;
+    $$("[data-glevel]").forEach((b) => b.setAttribute("aria-pressed", String(globalLevels.has(b.dataset.glevel))));
+    const seg = $(".level-seg");
+    if (seg) {
+      seg.classList.toggle("is-global", on);
+      if (on) seg.title = "Global daraja filtri yoqilgan (chapdagi tugmalar)"; else seg.removeAttribute("title");
+    }
+    $$("[data-level-filter]").forEach((b) => {
+      const id = b.dataset.levelFilter;
+      b.disabled = on;
+      b.setAttribute("aria-pressed", String(on ? globalLevels.has(id) : levelFilter === id));
+    });
   }
 
   function applyFilter() {
@@ -734,7 +795,6 @@
     li.querySelector("[data-cycle]").setAttribute("aria-label", `Status: ${STATUSES[st].label}. Keyingisiga o'tkazish`);
     $$(".status-picker [data-set]", li).forEach((b) => b.setAttribute("aria-checked", String(Number(b.dataset.set) === st)));
     refreshSkillStats(SUB_BY_ID[id].skill);
-    updateRoadmapTabs();
   }
 
   /* view-level event delegation (skill page) */
@@ -754,8 +814,17 @@
         return;
       }
     }
+    const gl = t.closest("[data-glevel]");
+    if (gl) {
+      const id = gl.dataset.glevel;
+      if (globalLevels.has(id)) globalLevels.delete(id); else globalLevels.add(id);
+      store.set(KEYS.levels, Array.from(globalLevels));
+      syncLevelUI();
+      applyFilter();
+      return;
+    }
     const lf = t.closest("[data-level-filter]");
-    if (lf) {
+    if (lf && !lf.disabled) {
       levelFilter = lf.dataset.levelFilter;
       $$("[data-level-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b === lf)));
       applyFilter();
@@ -783,9 +852,23 @@
       }
       return;
     }
-    const iqCheck = t.closest("[data-iq-check]");
-    if (iqCheck) {
-      toggleMasteredIq(iqCheck.dataset.iqCheck);
+    const iqRate = t.closest("[data-iq-rate]");
+    if (iqRate) { rateIq(iqRate.dataset.iqRate, Number(iqRate.dataset.r)); return; }
+    const iqModeBtn = t.closest("[data-iq-mode]");
+    if (iqModeBtn) {
+      iqMode = iqModeBtn.dataset.iqMode;
+      if (iqMode === "today" && !iqTodayIds.length) iqPickToday(5);
+      $$("[data-iq-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.iqMode === iqMode)));
+      const ctrl = $("#iq-controls"); if (ctrl) ctrl.hidden = iqMode !== "all";
+      const bar = $("#iq-today-bar"); if (bar) { bar.hidden = iqMode !== "today"; bar.innerHTML = iqMode === "today" ? iqTodayBarHtml() : ""; }
+      filterInterviewList();
+      return;
+    }
+    const iqMore = t.closest("[data-iq-more]");
+    if (iqMore) {
+      iqPickToday(5);
+      const bar = $("#iq-today-bar"); if (bar) bar.innerHTML = iqTodayBarHtml();
+      filterInterviewList();
       return;
     }
     const iqBookmark = t.closest("[data-iq-bookmark]");
@@ -895,7 +978,7 @@
       const q = (window.INTERVIEW_QUESTIONS || []).find((x) => x.id === qId);
       if (q) {
         const ans = Array.isArray(q.answer) ? q.answer.join("\n") : q.answer;
-        const full = `Savol: ${q.title}\n\nJavob:\n${ans}\n\n${q.tip ? "Senior Maslahati: " + q.tip : ""}`;
+        const full = `Savol: ${q.title}\n\n${q.code ? q.code + "\n\n" : ""}Javob:\n${ans}\n\n${q.tip ? "Senior Maslahati: " + q.tip : ""}`;
         copyText(full);
         toast("Savol va javob nusxalandi");
       }
@@ -975,98 +1058,6 @@
     $(`.status-picker [data-set="${st}"]`, li).focus();
   });
 
-  function updateRoadmapTabs() {
-    const all = allSubs();
-    CAREER_LEVELS.forEach((lvl) => {
-      const s = statsFor(all.filter((x) => levelOf(x) === lvl.id));
-      const pctEl = $(`[data-roadmap-pct="${lvl.id}"]`);
-      const barEl = $(`[data-roadmap-bar="${lvl.id}"]`);
-      const countEl = $(`[data-roadmap-count="${lvl.id}"]`);
-      if (pctEl) pctEl.textContent = `${pct(s.progress)}%`;
-      if (barEl) barEl.style.width = `${pct(s.progress)}%`;
-      if (countEl) countEl.textContent = `${s.total} ta mavzu · ${s.done} o'zlashtirildi`;
-    });
-  }
-
-  /* ------------------------------------------------------------------ *
-   * Career Levels Roadmap View
-   * ------------------------------------------------------------------ */
-  let currentRoadmapLvl = "junior";
-
-  function renderLevels(targetLvl) {
-    if (targetLvl && CAREER_LEVELS.some((c) => c.id === targetLvl)) {
-      currentRoadmapLvl = targetLvl;
-    }
-    const all = allSubs();
-    const curLevelObj = CAREER_LEVELS.find((c) => c.id === currentRoadmapLvl) || CAREER_LEVELS[0];
-    const lvlSubs = all.filter((x) => levelOf(x) === currentRoadmapLvl);
-    const lvlStats = statsFor(lvlSubs);
-
-    const skillGroups = [];
-    const seenSkills = new Map();
-    lvlSubs.forEach((sub) => {
-      if (!seenSkills.has(sub.skill)) {
-        const item = { skill: sub.skill, subs: [] };
-        seenSkills.set(sub.skill, item);
-        skillGroups.push(item);
-      }
-      seenSkills.get(sub.skill).subs.push(sub);
-    });
-
-    view().innerHTML = `
-      ${loadErrorBlock()}
-      <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Bosh sahifa</a><span class="sep">/</span><span aria-current="page">Darajalar xaritasi</span></nav>
-      <header class="skill-head reveal" style="margin-bottom:var(--sp-5)">
-        <div class="idx">CAREER ROADMAP</div>
-        <h1>Darajalar xaritasi</h1>
-        <p class="lead" style="margin-top:8px">Junior, Middle, Senior va Lead bosqichlarida talab qilinadigan barcha ko'nikmalarning saralangan to'liq xaritasi.</p>
-      </header>
-
-      <div class="roadmap-tabs" role="tablist" aria-label="Darajalar">
-        ${CAREER_LEVELS.map((lvl) => {
-          const s = statsFor(all.filter((x) => levelOf(x) === lvl.id));
-          const isActive = lvl.id === currentRoadmapLvl;
-          return `
-            <a class="roadmap-tab-btn" href="#/levels?lvl=${lvl.id}" role="tab" aria-selected="${isActive}" style="--lvl-color:${lvl.color}">
-              <div class="roadmap-tab-head">
-                <span class="roadmap-tab-title">${icon(lvl.icon, "ic ic-sm")} ${lvl.label}</span>
-                <span class="roadmap-tab-pct" data-roadmap-pct="${lvl.id}">${pct(s.progress)}%</span>
-              </div>
-              <div class="bar"><i data-roadmap-bar="${lvl.id}" style="width:${pct(s.progress)}%;background:${lvl.color}"></i></div>
-              <div style="font-size:12px;color:var(--text-3);margin-top:2px" data-roadmap-count="${lvl.id}">${s.total} ta mavzu · ${s.done} o'zlashtirildi</div>
-            </a>
-          `;
-        }).join("")}
-      </div>
-
-      <div class="section-head" style="margin-top:var(--sp-6)">
-        <div>
-          <span class="kicker">${curLevelObj.badge} DARAJASIDAGI MAVZULAR</span>
-          <h2>${esc(curLevelObj.name)} — ${lvlSubs.length} ta mavzu</h2>
-          <p>${esc(curLevelObj.desc)}</p>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button class="icon-btn" data-expand-all aria-label="Hammasini ochish / yopish" title="Hammasini ochish / yopish">${icon("expand")}</button>
-        </div>
-      </div>
-
-      <div class="roadmap-content">
-        ${skillGroups.map(({ skill, subs }) => `
-          <div class="roadmap-skill-group">
-            <div class="roadmap-group-header">
-              <a href="#/s/${skill.slug}">
-                <span class="mono-dim" style="font-family:var(--mono);font-size:13px">${pad(skill.num)}.</span>
-                <span>${esc(skill.title)}</span>
-                <span class="chip" style="font-size:11px">${subs.length} ta subskill</span>
-              </a>
-              <a class="btn btn-sm" href="#/s/${skill.slug}" style="text-decoration:none">${icon("arrow-right", "ic ic-sm")} Skill sahifasi</a>
-            </div>
-            <ul class="subs roadmap-group-subs">${subs.map(subItem).join("")}</ul>
-          </div>
-        `).join("")}
-      </div>`;
-  }
-
   /* ------------------------------------------------------------------ *
    * Interview Questions & Answers View
    * ------------------------------------------------------------------ */
@@ -1088,6 +1079,85 @@
     { id: "testing", label: "Testlash" },
     { id: "devops", label: "DevOps & Server" }
   ];
+
+  const IQ_TYPES = { bug: "Kod xatosi", scenario: "Production holati", behavioral: "Behavioral" };
+  function iqById(id) { return (window.INTERVIEW_QUESTIONS || []).find((q) => q.id === id); }
+
+  function iqPickToday(n) {
+    const qs = window.INTERVIEW_QUESTIONS || [];
+    const today = dayStr();
+    const taken = new Set(iqTodayIds);
+    const due = qs.filter((q) => !taken.has(q.id) && iqSrs[q.id] && iqSrs[q.id].due <= today)
+      .sort((a, b) => iqSrs[a.id].due.localeCompare(iqSrs[b.id].due));
+    const LV = { junior: 0, middle: 1, senior: 2, lead: 3 };
+    const fresh = qs.map((q, i) => ({ q, i })).filter(({ q }) => !taken.has(q.id) && !iqSrs[q.id] && !masteredIq.has(q.id))
+      .sort((a, b) => (statusOf(a.q.subskillId) === 1 ? 0 : 1) - (statusOf(b.q.subskillId) === 1 ? 0 : 1)
+        || (LV[a.q.level] ?? 1) - (LV[b.q.level] ?? 1) || a.i - b.i)
+      .map(({ q }) => q);
+    iqTodayIds.push(...[...due, ...fresh].slice(0, n).map((q) => q.id));
+  }
+
+  function iqTodayBarHtml() {
+    const today = dayStr();
+    const items = iqTodayIds.map(iqById).filter(Boolean);
+    const dueN = items.filter((q) => iqSrs[q.id] && iqSrs[q.id].due <= today).length;
+    const doneN = items.filter((q) => iqSrs[q.id] && iqSrs[q.id].last === today).length;
+    return `<span><b>${items.length}</b> savol</span><span><b>${dueN}</b> takrorlash</span><span><b>${items.length - dueN}</b> yangi</span><span><b>${doneN}</b> bugun baholandi</span>
+      <button class="btn btn-sm" data-iq-more>${icon("sparkles", "ic ic-sm")} Yana 5 ta</button>`;
+  }
+
+  function iqRateHtml(q) {
+    const s = iqSrs[q.id];
+    const btn = (r, label) => `<button type="button" data-iq-rate="${q.id}" data-r="${r}" aria-pressed="${!!s && s.r === r}">${label}</button>`;
+    return `<span class="iq-rate-label">Qanchalik bildingiz?</span>
+      <div class="iq-rate" role="group" aria-label="Javobni baholang">${btn(0, "Bilmadim")}${btn(1, "Qisman")}${btn(2, "Bildim")}</div>
+      <span class="iq-next">${s ? `Keyingi takrorlash: ${s.due}` : ""}</span>`;
+  }
+
+  function syncSubFromQuestions(subId) {
+    if (!subId || !SUB_BY_ID[subId]) return;
+    const qs = (window.INTERVIEW_QUESTIONS || []).filter((q) => q.subskillId === subId);
+    if (!qs.length) return;
+    const st = statusOf(subId);
+    const allMastered = qs.every((q) => iqSrs[q.id] && iqSrs[q.id].box >= 3);
+    const anyRated = qs.some((q) => iqSrs[q.id]);
+    if (allMastered && st < 2) setStatus(subId, 2);
+    else if (anyRated && st === 0) setStatus(subId, 1);
+    updateSidebarProgress(SUB_BY_ID[subId].skill.slug);
+  }
+
+  function rateIq(id, r) {
+    const q = iqById(id); if (!q) return;
+    const cur = iqSrs[id] || { box: 0 };
+    let box, days;
+    if (r === 2) { box = Math.min(5, Math.max(2, (cur.box || 0) + 1)); days = SRS_DAYS[box]; }
+    else if (r === 1) { box = Math.max(1, cur.box || 1); days = Math.max(1, Math.round(SRS_DAYS[box] / 2)); }
+    else { box = 1; days = 1; }
+    iqSrs[id] = { box, due: dayStr(days), last: dayStr(), r };
+    store.set(KEYS.srs, iqSrs);
+    if (r === 2 && box >= 3) masteredIq.add(id); else if (r === 0) masteredIq.delete(id);
+    store.set(KEYS.questions, Array.from(masteredIq));
+    syncSubFromQuestions(q.subskillId);
+    refreshIqCard(id);
+    updateIqStats();
+    const bar = $("#iq-today-bar"); if (bar && iqMode === "today") bar.innerHTML = iqTodayBarHtml();
+  }
+
+  function refreshIqCard(id) {
+    const card = $(`#${CSS.escape(id)}`); const q = iqById(id);
+    if (!card || !q) return;
+    const wrap = $(".iq-rate-wrap", card); if (wrap) wrap.innerHTML = iqRateHtml(q);
+    const isDone = masteredIq.has(id);
+    let doneTag = card.querySelector(".tag-done");
+    if (isDone && !doneTag) {
+      const meta = card.querySelector(".iq-meta");
+      if (meta) meta.insertAdjacentHTML("beforeend", `<span class="tag-done" style="color:var(--accent-text);font-weight:600;display:inline-flex;align-items:center;gap:3px">${icon("check", "ic ic-sm")} O'zlashtirildi</span>`);
+    } else if (!isDone && doneTag) doneTag.remove();
+    $$(`.iq-card[data-sub="${q.subskillId}"] .mini-st`).forEach((el) => {
+      const s = statusOf(q.subskillId); el.dataset.st = String(s);
+      el.innerHTML = `<i class="st-dot"></i>${STATUSES[s].label}`;
+    });
+  }
 
   function toggleMasteredIq(id) {
     if (masteredIq.has(id)) {
@@ -1146,6 +1216,7 @@
 
   function getIqFilteredList() {
     const questions = window.INTERVIEW_QUESTIONS || [];
+    if (iqMode === "today" && !iqSubFilter) return iqTodayIds.map(iqById).filter(Boolean);
     return questions.filter((q) => {
       const matchLvl = iqFilterLevel === "all" || q.level === iqFilterLevel;
       const matchCat = iqFilterCat === "all" || q.category === iqFilterCat;
@@ -1212,6 +1283,10 @@
   function renderInterviewItems() {
     const filtered = getIqFilteredList();
 
+    if (!filtered.length && iqMode === "today" && !iqSubFilter) {
+      return `<div class="empty iq-empty"><h3>Bugungi to'plam bo'sh</h3><p>Takrorlash kerak yoki yangi savol qolmadi. Barcha savollarni ko'rib chiqishingiz mumkin.</p>
+        <button class="btn btn-sm" data-iq-mode="all">Barcha savollar</button></div>`;
+    }
     if (!filtered.length) {
       return `
         <div class="empty" style="padding:var(--sp-8) var(--sp-4);background:var(--surface);border:1px dashed var(--border);border-radius:var(--r-lg);margin-top:var(--sp-4)">
@@ -1230,13 +1305,14 @@
       const cleanNum = q.id.replace("iq-", "");
 
       return `
-        <article class="iq-card ${isOpen ? "open" : ""}" id="${q.id}" data-id="${q.id}" data-level="${q.level}">
+        <article class="iq-card ${isOpen ? "open" : ""}" id="${q.id}" data-id="${q.id}" data-level="${q.level}" data-sub="${esc(q.subskillId || "")}">
           <button class="iq-card-header" data-iq-toggle="${q.id}" aria-expanded="${isOpen}">
             <span class="iq-badge ${q.level}">${q.level}</span>
             <div class="iq-title-wrap">
               <div class="iq-title">${esc(q.title)}</div>
               <div class="iq-meta">
                 <span class="tag-cat">${esc(q.categoryLabel)}</span>
+                ${q.type && IQ_TYPES[q.type] ? `<span class="tag-type" data-type="${q.type}">${IQ_TYPES[q.type]}</span>` : ""}
                 ${SUB_BY_ID[q.subskillId] ? `<span>·</span>
                 <span class="iq-sub">${esc(q.subskillId)} ${inline(SUB_BY_ID[q.subskillId].title)}</span>
                 <span class="mini-st" data-st="${statusOf(q.subskillId)}"><i class="st-dot"></i>${STATUSES[statusOf(q.subskillId)].label}</span>` : ""}
@@ -1247,6 +1323,7 @@
             <span class="iq-chev">${icon("chev-down", "ic")}</span>
           </button>
           <div class="iq-card-body">
+            ${q.code ? `<pre class="iq-code" data-lang="php"><code>${highlight(q.code)}</code></pre>` : ""}
             ${iqPracticeMode ? `
               <div class="iq-practice-prompt" id="prompt-${q.id}">
                 <p><strong>${icon("target", "ic ic-sm")} Sinov rejimi:</strong> Savolga avval o'zingiz mustaqil javob berishga urinib ko'ring, so'ngra model javob bilan tekshiring.</p>
@@ -1276,9 +1353,7 @@
             `}
             <div class="iq-card-foot">
               <div class="iq-card-actions-left">
-                <button class="iq-check-btn ${isMastered ? "done" : ""}" data-iq-check="${q.id}">
-                  ${icon(isMastered ? "check" : "target", "ic ic-sm")} ${isMastered ? "O'zlashtirildi" : "O'zlashtirish"}
-                </button>
+                <div class="iq-rate-wrap">${iqRateHtml(q)}</div>
                 <button class="iq-bookmark-btn ${isBookmarked ? "active" : ""}" data-iq-bookmark="${q.id}" title="${isBookmarked ? "Sevimlilardan o'chirish" : "Sevimlilarga saqlash"}">
                   ${icon("sparkles", "ic ic-sm")}
                 </button>
@@ -1319,6 +1394,8 @@
 
   function renderInterview() {
     const questions = window.INTERVIEW_QUESTIONS || [];
+    if (iqSubFilter) iqMode = "all";
+    if (iqMode === "today" && !iqTodayIds.length) iqPickToday(5);
     const total = questions.length || 1;
     const doneCount = Array.from(masteredIq).filter((id) => questions.some((q) => q.id === id)).length;
     const remainingCount = Math.max(0, questions.length - doneCount);
@@ -1358,14 +1435,12 @@
         </div>
       </header>
 
-      <section class="iq-controls reveal" aria-label="Boshqaruv va qidiruv">
-        <div class="iq-search-row">
-          <div class="iq-search-box">
-            ${icon("search", "ic")}
-            <input type="search" id="iq-search-input" placeholder="Savol, texnologiya yoki kalit so'zni qidiring (masalan: N+1, idempotency, redis, lock)..." value="${esc(iqSearchQuery)}" />
-            ${iqSearchQuery ? `<button class="iq-search-clear" data-iq-clear-search aria-label="Qidiruvni tozalash">${icon("close", "ic ic-sm")}</button>` : ""}
-          </div>
-          <div class="iq-tools">
+      <div class="iq-modebar">
+        <div class="seg" role="group" aria-label="Ko'rinish">
+          <button data-iq-mode="today" aria-pressed="${iqMode === "today"}">Bugun</button>
+          <button data-iq-mode="all" aria-pressed="${iqMode === "all"}">Barcha savollar <span class="count-chip">${questions.length}</span></button>
+        </div>
+        <div class="iq-tools">
             <button class="iq-tool-btn primary" data-iq-start-mock title="Jonli intervyu simulyatori (Mock test)">
               ${icon("rocket", "ic ic-sm")}
               <span>Mock Imtihon</span>
@@ -1374,6 +1449,16 @@
               ${icon("help", "ic ic-sm")}
               <span>Sinov rejimi</span>
             </button>
+        </div>
+      </div>
+      <div class="iq-today-bar" id="iq-today-bar" ${iqMode === "today" ? "" : "hidden"}>${iqMode === "today" ? iqTodayBarHtml() : ""}</div>
+
+      <section class="iq-controls reveal" id="iq-controls" aria-label="Boshqaruv va qidiruv" ${iqMode === "all" ? "" : "hidden"}>
+        <div class="iq-search-row">
+          <div class="iq-search-box">
+            ${icon("search", "ic")}
+            <input type="search" id="iq-search-input" placeholder="Savol, texnologiya yoki kalit so'zni qidiring (masalan: N+1, idempotency, redis, lock)..." value="${esc(iqSearchQuery)}" />
+            ${iqSearchQuery ? `<button class="iq-search-clear" data-iq-clear-search aria-label="Qidiruvni tozalash">${icon("close", "ic ic-sm")}</button>` : ""}
           </div>
         </div>
 
@@ -2276,6 +2361,7 @@ const searchInp = $("#iq-search-input");
     clearInterval(mockTimer);
     const q = mockQuestions[mockIdx];
     mockScores.push({ q, score: Number(points) });
+    rateIq(q.id, Number(points) >= 10 ? 2 : Number(points) >= 5 ? 1 : 0);
     mockIdx++;
     renderMockQuestion();
   }
@@ -2293,6 +2379,10 @@ const searchInp = $("#iq-search-input");
     else if (pctScore < 80) verdict = "Yaxshi natija! Ayrim arxitektura va baza savollarini takrorlab oling.";
 
     const weakQuestions = mockScores.filter(x => x.score < 10).map(x => x.q);
+    const byCat = {};
+    mockScores.forEach((x) => { const k = x.q.categoryLabel || x.q.category; (byCat[k] = byCat[k] || { s: 0, n: 0 }); byCat[k].s += x.score; byCat[k].n++; });
+    const cats = Object.entries(byCat).map(([k, v]) => ({ k, n: v.n, p: Math.round((v.s / (v.n * 10)) * 100) })).sort((a, b) => a.p - b.p);
+    const weakCats = cats.filter((c) => c.p < 70).slice(0, 3).map((c) => c.k);
 
     overlay.innerHTML = `
       <div class="mock-modal">
@@ -2306,6 +2396,12 @@ const searchInp = $("#iq-search-input");
           <h3>${totalScore} / ${maxScore} ball</h3>
           <p>${verdict}</p>
 
+          <ul class="mock-cats" aria-label="Bo'limlar bo'yicha natija">${cats.map((c) => `
+            <li class="${c.p < 70 ? "weak" : ""}"><span class="mc-name">${esc(c.k)} <small>${c.n} savol</small></span>
+              <span class="mc-bar"><i style="width:${c.p}%"></i></span><b>${c.p}%</b></li>`).join("")}
+          </ul>
+          ${weakCats.length ? `<p class="mock-weak">Zaif joylar: <b>${weakCats.map(esc).join(", ")}</b>. Quyidagi savollarning mavzu havolalari orqali xaritada o'rganing; ular avtomatik takrorlash rejasiga ham tushdi.</p>` : ""}
+
           ${weakQuestions.length ? `
             <div style="font:600 12px var(--mono);text-transform:uppercase;color:var(--text-3);text-align:left;margin-bottom:8px">
               Takrorlash tavsiya etiladigan savollar (${weakQuestions.length} ta):
@@ -2316,6 +2412,7 @@ const searchInp = $("#iq-search-input");
                 return `
                   <div class="mock-review-item">
                     <span style="flex:1;min-width:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">${esc(wq.title)}</span>
+                    ${wq.skillSlug ? `<a class="mock-study" href="#/s/${wq.skillSlug}/${wq.subskillId || ""}" data-mock-close>Mavzu ${icon("arrow-right", "ic ic-sm")}</a>` : ""}
                     <button class="iq-bookmark-btn ${isBookmarked ? "active" : ""}" data-iq-bookmark="${wq.id}" title="Sevimlilarga saqlash">
                       ${icon("sparkles", "ic ic-sm")}
                     </button>
@@ -2346,7 +2443,6 @@ const searchInp = $("#iq-search-input");
   function route() {
     const hash = decodeURIComponent(location.hash || "#/");
     const m = hash.match(/^#\/s\/([^/]+)(?:\/(.+))?$/);
-    const mLevels = hash.match(/^#\/levels(?:\?lvl=([a-z]+))?$/);
     const mInterview = hash.match(/^#\/interview(?:\?(.*))?$/);
     const mQuiz = hash.match(/^#\/quiz(?:\?(.*))?$/);
     document.body.classList.remove("nav-open");
@@ -2378,14 +2474,10 @@ const searchInp = $("#iq-search-input");
       renderSkill(s, m[2]);
       markActive("skills", s.slug);
       if (!m[2]) window.scrollTo(0, 0);
-    } else if (mLevels) {
-      document.title = "Darajalar xaritasi · Laravel Skill Map";
-      renderLevels(mLevels[1] || "junior");
-      markActive("levels");
-      window.scrollTo(0, 0);
     } else if (mInterview) {
       document.title = "Intervyu Savol-Javoblari · Laravel Skill Map";
       iqSubFilter = ((mInterview[1] || "").match(/(?:^|&)sub=([\d.]+)/) || [])[1] || "";
+      iqTodayIds = [];
       renderInterview();
       markActive("interview");
       window.scrollTo(0, 0);
@@ -2635,7 +2727,7 @@ const searchInp = $("#iq-search-input");
    * Accounts: mahalliy baza (IndexedDB). Email + parol (PBKDF2), har bir hisobga
    * alohida progress, intervyu, saqlanganlar va test natijalari.
    * ------------------------------------------------------------------ */
-  const USER_KEYS = { progress: KEYS.progress, questions: KEYS.questions, bookmarks: KEYS.bookmarks, quiz: KEYS.quiz, last: KEYS.last };
+  const USER_KEYS = { progress: KEYS.progress, questions: KEYS.questions, bookmarks: KEYS.bookmarks, quiz: KEYS.quiz, last: KEYS.last, srs: KEYS.srs };
   const USER_KEY_SET = new Set(Object.values(USER_KEYS));
   let authMode = "login";
 
@@ -2698,6 +2790,7 @@ const searchInp = $("#iq-search-input");
       bookmarks: store.get(KEYS.bookmarks, []),
       quiz: store.get(KEYS.quiz, {}),
       last: store.get(KEYS.last, ""),
+      srs: store.get(KEYS.srs, {}),
     };
   }
   async function saveUserData() {
@@ -2717,6 +2810,7 @@ const searchInp = $("#iq-search-input");
     localStorage.setItem(KEYS.bookmarks, JSON.stringify(d.bookmarks || []));
     localStorage.setItem(KEYS.quiz, JSON.stringify(d.quiz || {}));
     localStorage.setItem(KEYS.last, JSON.stringify(d.last || ""));
+    localStorage.setItem(KEYS.srs, JSON.stringify(d.srs || {}));
     localStorage.setItem(KEYS.progressV, JSON.stringify(PROGRESS_VERSION));
   }
   function reloadState() {
@@ -2725,6 +2819,8 @@ const searchInp = $("#iq-search-input");
     masteredIq = new Set(store.get(KEYS.questions, []));
     bookmarkedIq = new Set(store.get(KEYS.bookmarks, []));
     quizScores = store.get(KEYS.quiz, {}) || {};
+    iqSrs = store.get(KEYS.srs, {}) || {};
+    iqTodayIds = [];
   }
   function updateUserUI() {
     document.body.dataset.auth = currentUser ? "in" : "out";
