@@ -1,0 +1,97 @@
+/* Chuqur dars: 18.15. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("18.15", {
+  "lesson": [
+    "### Nega rate limiting",
+    "- **Himoya:** brute-force (login, OTP, parolni tiklash), scraping, DoS urinishlari.",
+    "- **Adolat:** bitta mijozning xato tsikli yoki og'ir integratsiyasi boshqalarga xalaqit bermasligi.",
+    "- **Xarajat nazorati:** SMS yuborish, tashqi to'lovli API'lar, AI chaqiruvlari.",
+    "- **Biznes:** tarif rejalari (free — 60/daqiqa, pro — 1000/daqiqa).",
+    "",
+    "### Kalit tanlash",
+    "Limit kimga qo'llanadi:",
+    "- Autentifikatsiyalangan so'rovlar: **foydalanuvchi ID yoki token**. Bir korporativ NAT ortidagi yuzlab xodim bir IP'dan chiqadi, IP bo'yicha limit ularni birga bloklaydi.",
+    "- Mehmon so'rovlar: **IP**. Proxy yoki load balancer ortida haqiqiy IP `X-Forwarded-For` dan olinadi. Laravel'da `TrustProxies` to'g'ri sozlangan bo'lishi shart, aks holda barcha so'rovlar bitta (proxy) IP'dan kelgandek ko'rinadi yoki hujumchi header'ni soxtalashtiradi.",
+    "- Login uchun: **email + IP** kombinatsiyasi. Bitta akkauntga turli IP'lardan va bitta IP'dan turli akkauntlarga hujumni ham cheklaydi.",
+    "",
+    "### Endpoint bo'yicha farqli limitlar",
+    "- Login, OTP, parolni tiklash: juda qat'iy (5 urinish / daqiqa).",
+    "- SMS yuborish: telefon raqami bo'yicha (1 ta / daqiqa, 5 ta / soat).",
+    "- Oddiy o'qish: yumshoqroq (60–300 / daqiqa).",
+    "- Og'ir eksport yoki qidiruv: alohida, past limit.",
+    "",
+    "### Algoritmlar",
+    "- **Fixed window:** har daqiqada hisoblagich. Sodda, lekin oyna chegarasida ikki baravar \"portlash\" mumkin (59-soniyada 60 ta va 61-soniyada yana 60 ta).",
+    "- **Sliding window:** oxirgi 60 soniyani hisoblaydi, silliqroq.",
+    "- **Token bucket:** chelak bir tekis to'ladi, qisqa portlashlarga ruxsat beradi.",
+    "",
+    "Laravel'ning `RateLimiter` asosan fixed window'ga yaqin ishlaydi va ko'p holatlar uchun yetarli.",
+    "",
+    "### Javob",
+    "`429 Too Many Requests` va:",
+    "- `Retry-After: 30` (soniya) — mijoz qachon qayta urinishi mumkin.",
+    "- `X-RateLimit-Limit`, `X-RateLimit-Remaining` (Laravel avtomatik qo'shadi). IETF draft `RateLimit-*` ham bor.",
+    "",
+    "### Taqsimlangan tizimda",
+    "Bir nechta app server bo'lsa, hisoblagich **umumiy** saqlanishi kerak: Redis. `file` yoki `array` cache driver'ida har server o'z hisoblagichiga ega bo'ladi va limit amalda N baravar oshadi (18.21).",
+    "",
+    "### Qatlamlar",
+    "Ilova darajasidagi limit yagona himoya emas. Nginx `limit_req`, Cloudflare yoki API Gateway oldingi qatorda arzonroq to'xtatadi. Ilova esa biznes darajasidagi aniq limitlarni (foydalanuvchi, tarif) qo'llaydi."
+  ],
+  "examples": [
+    {
+      "title": "Limitlarni e'lon qilish",
+      "lang": "php",
+      "code": [
+        "// AppServiceProvider::boot()",
+        "RateLimiter::for('api', function (Request $request) {",
+        "    $user = $request->user();",
+        "",
+        "    return $user",
+        "        ? Limit::perMinute($user->plan->requestsPerMinute())->by('user:' . $user->id)",
+        "        : Limit::perMinute(30)->by('ip:' . $request->ip());",
+        "});",
+        "",
+        "RateLimiter::for('login', function (Request $request) {",
+        "    $email = Str::lower((string) $request->input('email'));",
+        "",
+        "    return [",
+        "        Limit::perMinute(5)->by($email . '|' . $request->ip()),",
+        "        Limit::perMinute(30)->by('ip:' . $request->ip()),",
+        "    ];",
+        "});",
+        "",
+        "RateLimiter::for('sms', fn (Request $r) => [",
+        "    Limit::perMinute(1)->by('sms:' . $r->input('phone')),",
+        "    Limit::perHour(5)->by('sms:' . $r->input('phone')),",
+        "]);"
+      ]
+    },
+    {
+      "title": "Route'larda qo'llash va qo'lda ishlatish",
+      "lang": "php",
+      "code": [
+        "Route::post('login', LoginController::class)->middleware('throttle:login');",
+        "Route::post('otp/send', SendOtpController::class)->middleware('throttle:sms');",
+        "Route::middleware(['auth:sanctum', 'throttle:api'])->group(function () {",
+        "    Route::apiResource('orders', OrderController::class);",
+        "});",
+        "",
+        "// Qo'lda: faqat muvaffaqiyatsiz urinishlarni sanash",
+        "$key = 'otp-verify:' . $request->input('phone');",
+        "abort_if(RateLimiter::tooManyAttempts($key, 5), 429, 'Juda ko\\'p urinish');",
+        "",
+        "if (! $otp->verify($request->input('code'))) {",
+        "    RateLimiter::hit($key, decaySeconds: 600);",
+        "    abort(422, 'Kod noto\\'g\\'ri');",
+        "}",
+        "RateLimiter::clear($key);"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Proxy ortida `TrustProxies` ni sozlamaslik: barcha foydalanuvchilar bitta IP'ga yig'iladi va birga bloklanadi.",
+    "Klasterda `file` cache driver bilan rate limiting: har server alohida hisoblaydi.",
+    "Login va OTP uchun umumiy API limitidan foydalanish: brute-force uchun juda yumshoq.",
+    "`429` da `Retry-After` bermaslik: mijozlar to'xtovsiz qayta urinadi."
+  ]
+});

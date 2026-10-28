@@ -1,0 +1,98 @@
+/* Chuqur dars: 21.15. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("21.15", {
+  "lesson": [
+    "### O'rnatish (Laravel 11+, Passport 12+)",
+    "1. `php artisan install:api --passport` — paket, migratsiyalar va `api` route fayli. Yoki qo'lda `composer require laravel/passport` va `php artisan passport:install`.",
+    "2. Shifrlash kalitlari: `php artisan passport:keys` → `storage/oauth-private.key`, `storage/oauth-public.key`. Production'da Git'da emas, `PASSPORT_PRIVATE_KEY` va `PASSPORT_PUBLIC_KEY` env orqali.",
+    "3. User modelida `use Laravel\\Passport\\HasApiTokens;` (Passport'niki, Sanctum'niki emas). Passport 13 da `OAuthenticatable` interfeysi ham kerak.",
+    "4. `config/auth.php`: `'api' => ['driver' => 'passport', 'provider' => 'users']`.",
+    "5. Rozilik ekrani view'i: `Passport::authorizationView('auth.oauth.authorize')`.",
+    "",
+    "### Client'lar",
+    "- **Authorization Code (confidential):** `passport:client` — secret beriladi (bir marta ko'rsatiladi, hash bilan saqlanadi).",
+    "- **Authorization Code (public, PKCE):** `passport:client --public`.",
+    "- **Client Credentials:** `passport:client --client`.",
+    "- **Personal Access:** `passport:client --personal` — foydalanuvchining shaxsiy token'lari uchun.",
+    "- Dasturiy: `ClientRepository` orqali (hamkorlar o'zi ro'yxatdan o'tadigan developer portal uchun).",
+    "",
+    "### Endpoint'lar",
+    "Passport avtomatik ro'yxatdan o'tkazadi: `GET /oauth/authorize` (rozilik), `POST /oauth/authorize` va `DELETE /oauth/authorize` (ruxsat berish yoki rad), `POST /oauth/token` (barcha grant'lar), shuningdek token va client boshqaruvi uchun JSON API (versiyaga qarab).",
+    "",
+    "### Scope'lar va muddat",
+    "21.7 va 21.6 da ko'rilganidek: `Passport::tokensCan()`, `setDefaultScope()`, `tokensExpireIn()`, `refreshTokensExpireIn()`.",
+    "",
+    "### Resource server sifatida",
+    "- `auth:api` guard: JWT imzosini va `oauth_access_tokens.revoked` ni tekshiradi.",
+    "- `scopes:` va `scope:` middleware.",
+    "- M2M uchun `client` middleware (21.4).",
+    "- `$request->user()->token()` — joriy access token modeli (`scopes`, `client_id`, `revoke()`).",
+    "",
+    "### Boshqa servislar Passport token'larini tekshirishi",
+    "Passport access token'lari RS256 JWT. Boshqa mikroservis ularni `oauth-public.key` bilan lokal tekshira oladi (20.7). Lekin u holda bekor qilishni ko'rmaydi (21.9): qisqa muddat yoki introspection kerak. Passport standart RFC 7662 introspection'ni default'da bermaydi.",
+    "",
+    "### Testlarda",
+    "- `Passport::actingAs($user, ['orders:read'])`.",
+    "- `Passport::actingAsClient($client, ['inventory:write'])`.",
+    "",
+    "### Production tekshiruv ro'yxati",
+    "- Kalitlar env yoki secret manager'da, rotatsiya rejasi bilan.",
+    "- Default 1 yillik access token muddati qisqartirilgan.",
+    "- Password va implicit grant'lar o'chirilgan.",
+    "- `passport:purge` scheduler'da.",
+    "- `/oauth/token` ga rate limit (`throttle`).",
+    "- Client'lar va ularning redirect URI'lari nazorat ostida."
+  ],
+  "examples": [
+    {
+      "title": "Sozlash",
+      "lang": "php",
+      "code": [
+        "// app/Models/User.php",
+        "use Laravel\\Passport\\HasApiTokens;",
+        "",
+        "class User extends Authenticatable",
+        "{",
+        "    use HasApiTokens, Notifiable;",
+        "}",
+        "",
+        "// AppServiceProvider::boot()",
+        "Passport::tokensCan([",
+        "    'orders:read' => 'Buyurtmalarni ko\\'rish',",
+        "    'orders:write' => 'Buyurtma yaratish',",
+        "]);",
+        "Passport::tokensExpireIn(now()->addMinutes(30));",
+        "Passport::refreshTokensExpireIn(now()->addDays(14));",
+        "Passport::authorizationView('auth.oauth.authorize');",
+        "",
+        "// routes/console.php",
+        "Schedule::command('passport:purge')->daily();",
+        "",
+        "// routes/api.php",
+        "Route::middleware(['auth:api', 'scopes:orders:read'])->get('/v1/orders', [OrderController::class, 'index']);"
+      ]
+    },
+    {
+      "title": "Testlar",
+      "lang": "php",
+      "code": [
+        "use Laravel\\Passport\\Passport;",
+        "",
+        "it('allows orders:read token', function () {",
+        "    Passport::actingAs(User::factory()->create(), ['orders:read']);",
+        "    $this->getJson('/api/v1/orders')->assertOk();",
+        "});",
+        "",
+        "it('rejects token without scope', function () {",
+        "    Passport::actingAs(User::factory()->create(), ['profile']);",
+        "    $this->getJson('/api/v1/orders')->assertForbidden();",
+        "});"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Sanctum va Passport'ning `HasApiTokens` trait'larini adashtirish.",
+    "`oauth-*.key` fayllarini Git'ga commit qilish.",
+    "Default access token muddatini (1 yil) production'da qoldirish.",
+    "`/oauth/token` endpoint'ini rate limit'siz qoldirish."
+  ]
+});

@@ -1,0 +1,95 @@
+/* Chuqur dars: 17.19. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("17.19", {
+  "lesson": [
+    "### Muammo",
+    "Monolitda bitta DB va bitta `DB::transaction` atomiklikni beradi. Mikroservislarda \"buyurtma berish\" uch servisni o'z ichiga oladi: Orders (o'z DB'si), Inventory (o'z DB'si), Payments (tashqi shlyuz). Ularni bitta ACID tranzaksiya bilan qamrab bo'lmaydi. Har bir servis faqat o'z ma'lumoti uchun javob beradi.",
+    "",
+    "### 2PC (Two-Phase Commit)",
+    "Koordinator barcha ishtirokchilardan \"tayyormisiz?\" (prepare) so'raydi, hammasi \"ha\" desa, \"commit\" buyrug'ini beradi. Kuchli izchillik beradi, lekin:",
+    "- Sekin: bir nechta tarmoq aylanishi, lock'lar butun jarayon davomida ushlanadi.",
+    "- Mo'rt: koordinator \"prepare\" va \"commit\" o'rtasida qulasa, ishtirokchilar noaniq holatda lock bilan qoladi.",
+    "- Ko'p zamonaviy tizimlar (HTTP API'lar, broker'lar) XA'ni qo'llamaydi.",
+    "",
+    "Amalda mikroservislarda kam ishlatiladi.",
+    "",
+    "### Saga",
+    "Uzun biznes jarayon **lokal tranzaksiyalar ketma-ketligi**ga bo'linadi. Har qadam o'z servisida atomik. Biror qadam muvaffaqiyatsiz bo'lsa, oldingi qadamlar **kompensatsiya amallari** bilan teskari qilinadi: to'lovni qaytarish, zaxirani bo'shatish, buyurtmani bekor qilish.",
+    "",
+    "Kompensatsiya \"rollback\" emas. Bu yangi biznes amal va izi qoladi (refund yozuvi). Ba'zi amallarni kompensatsiya qilib bo'lmaydi (yuborilgan email), shuning uchun ularni saganing oxiriga qo'ying.",
+    "",
+    "Ikki uslub:",
+    "- **Orkestratsiya:** markaziy orkestrator (masalan, Orders servisidagi `PlaceOrderSaga`) har qadamni chaqiradi va holatni saqlaydi. Jarayon bir joyda ko'rinadi, debug oson.",
+    "- **Xoreografiya:** har servis event'larga javob beradi (`OrderCreated` → Inventory zaxira qiladi → `StockReserved` → Payments...). Markaz yo'q va bog'liqlik kam, lekin umumiy jarayonni kuzatish qiyin.",
+    "",
+    "### Eventual consistency",
+    "Saga va event'lar bilan tizim **oxir-oqibat** izchil bo'ladi, lekin oraliqda nomuvofiqlik bor: buyurtma \"yaratilgan\", lekin to'lov hali \"tekshirilmoqda\". Bu oraliq holatlar biznes jarayonida va UI'da aniq ko'rsatilishi kerak: \"To'lov tasdiqlanmoqda\".",
+    "",
+    "### CAP va PACELC",
+    "- **CAP:** tarmoq bo'linishi (P) bo'lganda izchillik (C) yoki mavjudlik (A) tanlanadi.",
+    "- **PACELC:** bo'linish bo'lmaganda ham kechikish (L) va izchillik (C) o'rtasida tanlov bor.",
+    "",
+    "Moliya tizimi C'ni, ijtimoiy lenta A va L'ni afzal ko'radi.",
+    "",
+    "### Amaliy vositalar",
+    "- **Outbox** (17.18): xabar yo'qolmasin.",
+    "- **Idempotent iste'molchilar** (17.17): xabar takrorlansa ham xavfsiz.",
+    "- **Holat mashinalari:** har saga va agregatning aniq holatlari va ruxsat etilgan o'tishlari.",
+    "- **Timeout'lar:** javob kelmagan qadam uchun.",
+    "- **Reconciliation job'lari:** tizimlar o'rtasidagi farqlarni muntazam topish va tuzatish.",
+    "- **Correlation ID:** bitta saganing barcha xabarlarini log'larda bog'lash."
+  ],
+  "examples": [
+    {
+      "title": "Saga oqimi",
+      "lang": "text",
+      "code": [
+        "Muvaffaqiyatli yo'l:",
+        "  CreateOrder(pending) -> ReserveStock -> ChargePayment -> ConfirmOrder -> SendEmail",
+        "",
+        "ChargePayment muvaffaqiyatsiz:",
+        "  ReleaseStock <- CancelOrder(payment_failed)",
+        "",
+        "ConfirmOrder muvaffaqiyatsiz (to'lov o'tgan):",
+        "  RefundPayment -> ReleaseStock -> CancelOrder(failed)"
+      ]
+    },
+    {
+      "title": "Oddiy orkestrator",
+      "lang": "php",
+      "code": [
+        "final class PlaceOrderSaga",
+        "{",
+        "    public function run(Order $order): void",
+        "    {",
+        "        $order->transitionTo(OrderState::Pending);",
+        "",
+        "        try {",
+        "            $reservation = $this->inventory->reserve($order->id, $order->lines());",
+        "        } catch (OutOfStock) {",
+        "            $order->transitionTo(OrderState::Rejected);",
+        "            return;",
+        "        }",
+        "",
+        "        try {",
+        "            $this->payments->charge($order->id, $order->total, idempotencyKey: \"order-{$order->id}\");",
+        "        } catch (PaymentFailed) {",
+        "            $this->inventory->release($reservation);      // kompensatsiya",
+        "            $order->transitionTo(OrderState::PaymentFailed);",
+        "            return;",
+        "        }",
+        "",
+        "        $order->transitionTo(OrderState::Confirmed);",
+        "        OrderConfirmed::dispatch($order)->afterCommit();",
+        "    }",
+        "}"
+      ],
+      "note": "Haqiqiy tizimda har qadam natijasi DB'da saqlanadi, shunda orkestrator qulasa ham saga qayerda to'xtagani ma'lum va u davom ettiriladi."
+    }
+  ],
+  "pitfalls": [
+    "Mikroservislar orasida monolitdagidek atomik tranzaksiya kutish.",
+    "Kompensatsiya amallarini rejalashtirmaslik: qadam yiqilganda tizim noaniq holatda qoladi.",
+    "Oraliq holatlarni foydalanuvchidan yashirish: \"buyurtma tasdiqlandi\" deyilib, keyin bekor qilinadi.",
+    "Kompensatsiya qilib bo'lmaydigan amalni (email, yetkazib berish) saganing boshiga qo'yish."
+  ]
+});

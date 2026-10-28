@@ -1,0 +1,98 @@
+/* Chuqur dars: 20.19. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("20.19", {
+  "lesson": [
+    "### Autentifikatsiya kontekstida",
+    "Umumiy rate limiting 18.15 va 18.21 da ko'rildi. Autentifikatsiya va avtorizatsiya bilan bog'liq endpoint'lar alohida, qat'iyroq siyosat talab qiladi, chunki ular hujumchilarning birinchi nishoni va ba'zilari to'g'ridan-to'g'ri pul xarajatiga olib keladi.",
+    "",
+    "### Endpoint'lar bo'yicha",
+    "| Endpoint | Kalit | Limit (namuna) |",
+    "|---|---|---|",
+    "| Login | email+IP, IP, email | 5/daq, 30/daq, 20/soat |",
+    "| Parolni tiklash so'rovi | email, IP | 3/soat, 10/soat |",
+    "| Parolni tiklash (token bilan) | token, IP | 5 urinish |",
+    "| OTP yuborish (SMS) | telefon, IP, global | 1/daq + 5/soat, 20/soat, umumiy kunlik byudjet |",
+    "| OTP tekshirish | telefon yoki sessiya | 5 urinish / kod |",
+    "| Ro'yxatdan o'tish | IP | 5/soat |",
+    "| Token yangilash | foydalanuvchi | 30/daq |",
+    "| Oddiy API | foydalanuvchi yoki token | tarif bo'yicha |",
+    "",
+    "### SMS bombing va xarajat hujumlari",
+    "OTP endpoint'i alohida xavf: har so'rov SMS yuboradi va bu pul. Hujum turlari:",
+    "- **SMS bombing:** begona telefonga yuzlab SMS — qurbonni bezovta qilish.",
+    "- **Toll fraud (IRSF):** hujumchi o'zi nazorat qiladigan qimmat xalqaro raqamlarga SMS yuborishga majburlaydi va operatordan daromad oladi. Sizning hisobingiz minglab dollarga oshadi.",
+    "",
+    "Himoya:",
+    "- Telefon raqami bo'yicha qat'iy limit (1/daqiqa, 5/soat).",
+    "- IP bo'yicha limit.",
+    "- **Global** soatlik va kunlik byudjet: umumiy SMS soni chegaradan oshsa, alert va vaqtincha to'xtatish.",
+    "- Mamlakat va prefiks allowlist: faqat kerakli mamlakatlar (`+998`).",
+    "- Shubhali holatda CAPTCHA.",
+    "- Bitta sessiya yoki qurilmadan ko'p turli raqamlarga yuborishni cheklash.",
+    "",
+    "### Saqlash va izchillik",
+    "Limitlar **umumiy** Redis'da (klasterda har server alohida hisoblamasligi uchun, 18.21). Kalitlarda normallashtirilgan qiymatlar: email kichik harfda, telefon E.164 formatida (`+998901234567`). Aks holda `Ali@x.uz` va `ali@x.uz` alohida hisoblanadi.",
+    "",
+    "### Javob",
+    "`429` + `Retry-After`. Login va OTP uchun javob matni ham bir xil va ma'lumot oshkor qilmasin (\"Juda ko'p urinish, X daqiqadan keyin qayta urining\").",
+    "",
+    "### Muvaffaqiyatda tozalash",
+    "To'g'ri login yoki to'g'ri OTP kiritilganda shu foydalanuvchi uchun urinishlar hisoblagichini tozalang (`RateLimiter::clear`). Aks holda haqiqiy foydalanuvchi ham keyingi xatoda tez bloklanadi."
+  ],
+  "examples": [
+    {
+      "title": "OTP yuborish limitlari",
+      "lang": "php",
+      "code": [
+        "RateLimiter::for('otp-send', function (Request $request) {",
+        "    $phone = PhoneNumber::normalize($request->input('phone'));   // +998901234567",
+        "",
+        "    return [",
+        "        Limit::perMinute(1)->by(\"otp:phone:{$phone}\"),",
+        "        Limit::perHour(5)->by(\"otp:phone:{$phone}\"),",
+        "        Limit::perHour(20)->by(\"otp:ip:{$request->ip()}\"),",
+        "        Limit::perHour(2000)->by('otp:global')",
+        "            ->response(function () {",
+        "                Log::critical('OTP global byudjet tugadi');",
+        "                return response()->json(['message' => 'Xizmat vaqtincha mavjud emas'], 503);",
+        "            }),",
+        "    ];",
+        "});",
+        "",
+        "Route::post('auth/otp', SendOtpController::class)->middleware('throttle:otp-send');"
+      ]
+    },
+    {
+      "title": "OTP tekshirish: urinishlar va tozalash",
+      "lang": "php",
+      "code": [
+        "public function verify(VerifyOtpRequest $request)",
+        "{",
+        "    $phone = PhoneNumber::normalize($request->phone);",
+        "    $key = \"otp-verify:{$phone}\";",
+        "",
+        "    if (RateLimiter::tooManyAttempts($key, 5)) {",
+        "        Cache::forget(\"otp:{$phone}\");   // kodni bekor qilish",
+        "        abort(429, 'Juda ko\\'p urinish. Yangi kod so\\'rang.');",
+        "    }",
+        "",
+        "    $expected = Cache::get(\"otp:{$phone}\");",
+        "",
+        "    if (! $expected || ! hash_equals($expected, $request->code)) {",
+        "        RateLimiter::hit($key, 600);",
+        "        abort(422, 'Kod noto\\'g\\'ri');",
+        "    }",
+        "",
+        "    RateLimiter::clear($key);",
+        "    Cache::forget(\"otp:{$phone}\");",
+        "    // ...",
+        "}"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "OTP endpoint'ida faqat IP bo'yicha limit: bitta raqamga turli IP'lardan SMS bombing.",
+    "Global SMS byudjetisiz ishlash: toll fraud'da katta hisob.",
+    "Kalitlarda normallashtirilmagan email yoki telefon: limit chetlab o'tiladi.",
+    "OTP'ni `==` bilan solishtirish: `hash_equals()` vaqt hujumlaridan himoya qiladi."
+  ]
+});

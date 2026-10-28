@@ -1,0 +1,95 @@
+/* Chuqur dars: 20.4. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("20.4", {
+  "lesson": [
+    "### API key nima",
+    "API key — **ilova yoki integratsiyani** (odatda foydalanuvchini emas) identifikatsiya qiluvchi uzoq muddatli maxfiy kalit. Klassik misollar: to'lov shlyuzi kaliti, SMS provayder kaliti, xarita API kaliti, sizning API'ngizga ulanadigan hamkor kompaniya.",
+    "",
+    "Mos keladi: server-server integratsiyalari, oddiy B2B API'lar, ichki servislar. Mos kelmaydi: oxirgi foydalanuvchi nomidan ishlaydigan uchinchi tomon ilovalari (OAuth kerak, 20.6), brauzer yoki mobil ilova ichiga joylashtirish (kalitni har kim chiqarib oladi).",
+    "",
+    "### Xavfsiz dizayn",
+    "1. **Bir marta ko'rsatish:** kalit faqat yaratilganda ko'rsatiladi. Keyin \"tiklab\" bo'lmaydi, faqat yangisini yaratish mumkin.",
+    "2. **Hash bilan saqlash:** DB'da `hash('sha256', $key)`. Qidiruv uchun prefiks yoki alohida ochiq ID qismi.",
+    "3. **Prefiks:** `sk_live_`, `sk_test_` (Stripe uslubi). Foydalari: kalit turi va muhiti ko'rinadi; GitHub secret scanning va gitleaks sizib chiqqan kalitni naqsh bo'yicha topadi; support kalitning faqat prefiksi va oxirgi 4 belgisini ko'rib aniqlay oladi.",
+    "4. **Scope'lar:** kalit faqat kerakli amallarga ega (`orders:read`).",
+    "5. **Cheklovlar:** IP allowlist, ruxsat etilgan domenlar (brauzer kalitlari uchun), muhit (test/live).",
+    "6. **Rotatsiya:** bir vaqtda ikki faol kalit bo'lishi mumkin (eski va yangi), shunda mijoz to'xtovsiz almashtiradi. Keyin eskisi bekor qilinadi.",
+    "7. **Muddat va faollik:** `last_used_at`, `expires_at`. Uzoq ishlatilmagan kalitlar haqida ogohlantirish.",
+    "8. **Audit:** kalit yaratish, bekor qilish va har chaqiruv (klient ID bilan) log'da.",
+    "",
+    "### Uzatish",
+    "- Header'da: `Authorization: Bearer sk_live_...` yoki `X-API-Key: ...`. **URL query'da emas** (20.5).",
+    "- Faqat HTTPS.",
+    "",
+    "### Kalit sizib chiqsa",
+    "Eng keng tarqalgan sabablar: Git'ga commit, frontend bundle'ga tushishi, log'lar, skrinshotlar, Slack xabarlari. Rejalashtirilgan javob:",
+    "1. Darhol bekor qilish (dashboard'da bitta tugma).",
+    "2. Yangisini berish.",
+    "3. Audit log'dan sizgandan keyingi faollikni tekshirish.",
+    "4. Git tarixidan olib tashlash yetarli emas: kalit allaqachon ko'rilgan deb hisoblang.",
+    "",
+    "### API key va foydalanuvchi",
+    "Kalit tashkilot yoki ilovaga tegishli bo'lsin, aniq xodimga emas. Xodim ketganda integratsiya to'xtab qolmaydi. Lekin kim yaratganini audit uchun saqlang."
+  ],
+  "examples": [
+    {
+      "title": "Kalit yaratish va saqlash",
+      "lang": "php",
+      "code": [
+        "final class IssueApiKey",
+        "{",
+        "    public function handle(Organization $org, array $scopes, string $env = 'live'): string",
+        "    {",
+        "        $secret = Str::random(40);",
+        "        $plain = \"sk_{$env}_{$secret}\";",
+        "",
+        "        $org->apiKeys()->create([",
+        "            'prefix' => substr($plain, 0, 12),",
+        "            'last_four' => substr($plain, -4),",
+        "            'hash' => hash('sha256', $plain),",
+        "            'scopes' => $scopes,",
+        "            'environment' => $env,",
+        "            'created_by' => auth()->id(),",
+        "        ]);",
+        "",
+        "        return $plain;   // faqat bir marta ko'rsatiladi",
+        "    }",
+        "}"
+      ]
+    },
+    {
+      "title": "Kalitni tekshiruvchi middleware",
+      "lang": "php",
+      "code": [
+        "final class AuthenticateApiKey",
+        "{",
+        "    public function handle(Request $request, Closure $next, string ...$scopes): Response",
+        "    {",
+        "        $plain = $request->bearerToken() ?? $request->header('X-API-Key');",
+        "        abort_unless($plain, 401);",
+        "",
+        "        $key = ApiKey::where('hash', hash('sha256', $plain))",
+        "            ->whereNull('revoked_at')",
+        "            ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()))",
+        "            ->first();",
+        "",
+        "        abort_unless($key, 401);",
+        "        abort_unless($key->allowsIp($request->ip()), 403, 'IP ruxsat etilmagan');",
+        "        abort_unless(array_diff($scopes, $key->scopes) === [], 403, 'Scope yetarli emas');",
+        "",
+        "        $key->forceFill(['last_used_at' => now()])->saveQuietly();",
+        "        $request->attributes->set('api_key', $key);",
+        "",
+        "        return $next($request);",
+        "    }",
+        "}"
+      ],
+      "note": "Har so'rovda `last_used_at` ni yozish yuqori yukda qimmat. Uni keshda yig'ib, vaqti-vaqti bilan yozing."
+    }
+  ],
+  "pitfalls": [
+    "API key'ni frontend yoki mobil ilova ichiga joylashtirish: har kim chiqarib oladi.",
+    "Kalitni DB'da ochiq saqlash va dashboard'da qayta ko'rsatish.",
+    "Rotatsiya imkoniyatisiz bitta kalit: almashtirish integratsiyani to'xtatadi.",
+    "Kalitni Git'dan o'chirib, uni bekor qilmaslik."
+  ]
+});

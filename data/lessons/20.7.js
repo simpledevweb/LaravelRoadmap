@@ -1,0 +1,96 @@
+/* Chuqur dars: 20.7. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("20.7", {
+  "lesson": [
+    "### Tuzilishi",
+    "JWT (JSON Web Token, RFC 7519) — uch qismdan iborat, nuqta bilan ajratilgan base64url satr: `header.payload.signature`.",
+    "- **Header:** algoritm va tur: `{\"alg\": \"RS256\", \"typ\": \"JWT\", \"kid\": \"2025-06\"}`.",
+    "- **Payload:** claim'lar (da'volar).",
+    "- **Signature:** header va payload'ning imzosi.",
+    "",
+    "Odatiy JWT — **JWS** (imzolangan): payload **shifrlanmagan**, base64 dekodlash bilan har kim o'qiydi. Imzo faqat o'zgartirilmaganini kafolatlaydi. Shifrlangan variant — **JWE**, kam ishlatiladi.",
+    "",
+    "### Standart claim'lar",
+    "- `iss` (issuer): kim bergan.",
+    "- `sub` (subject): kim haqida (foydalanuvchi ID).",
+    "- `aud` (audience): kimga mo'ljallangan (qaysi API).",
+    "- `exp` (expiration): muddat tugashi (Unix vaqt).",
+    "- `iat` (issued at), `nbf` (not before).",
+    "- `jti` (JWT ID): noyob identifikator, bekor qilish ro'yxati uchun.",
+    "- Maxsus: `scope`, `roles`, `tenant_id`.",
+    "",
+    "### Imzo algoritmlari",
+    "- **HS256** (HMAC + umumiy maxfiy kalit): imzolovchi va tekshiruvchi bir kalitni biladi. Bitta servis uchun.",
+    "- **RS256 / ES256** (asimmetrik): authorization server shaxsiy kalit bilan imzolaydi, API'lar **ochiq** kalit bilan tekshiradi. Ochiq kalitlar JWKS endpoint'ida (`/.well-known/jwks.json`). Mikroservislar uchun to'g'ri tanlov: har servisga maxfiy kalit tarqatish shart emas.",
+    "",
+    "### Tekshirish — eng ko'p xato shu yerda",
+    "Server har JWT uchun **hammasini** tekshirishi kerak:",
+    "1. **Imzo** to'g'ri va kalit ishonchli manbadan (`kid` bo'yicha).",
+    "2. **Algoritm** kutilgan ro'yxatda. `alg: none` ni hech qachon qabul qilmang. RS256 kutilgan joyda HS256 ni qabul qilmang (\"algorithm confusion\" hujumi: ochiq kalit HMAC maxfiy kaliti sifatida ishlatiladi).",
+    "3. **`exp`** o'tmagan, `nbf` kelgan (biroz soat farqi — leeway — bilan).",
+    "4. **`iss`** kutilgan server.",
+    "5. **`aud`** — aynan shu API. Aks holda boshqa servis uchun berilgan token sizda ham ishlaydi.",
+    "",
+    "Yaxshi kutubxona (`firebase/php-jwt`, `lcobucci/jwt`) ishlating va o'zingiz yozmang.",
+    "",
+    "### Afzallik va kamchiliklar",
+    "**Afzallik:** stateless tekshiruv (DB yo'q), servislar o'rtasida oson, ichida kerakli ma'lumot bor.",
+    "",
+    "**Kamchiliklar:**",
+    "- **Bekor qilish qiyin:** muddati tugaguncha amal qiladi. Yechim: qisqa muddat (5–15 daqiqa) + refresh token, yoki `jti` denylist (bu esa statelessni yo'qotadi).",
+    "- **Eskirgan ma'lumot:** token'dagi rollar foydalanuvchi huquqi olib tashlangandan keyin ham amal qiladi.",
+    "- **Hajm:** cookie yoki header'da katta.",
+    "- **Maxfiylik:** payload ochiq. Parol, shaxsiy ma'lumot qo'ymang.",
+    "",
+    "### Laravel'da qachon",
+    "Birinchi tomon ilovalari uchun Sanctum'ning opaque token'lari odatda soddaroq va xavfsizroq. JWT kerak bo'ladi: tashqi IdP (Keycloak, Auth0, OneID) token'larini qabul qilish, mikroservislar o'rtasida token tarqatish, Passport (u access token'larni JWT formatida beradi)."
+  ],
+  "examples": [
+    {
+      "title": "Dekodlangan JWT",
+      "lang": "json",
+      "code": [
+        "// header",
+        "{ \"alg\": \"RS256\", \"typ\": \"JWT\", \"kid\": \"2025-06\" }",
+        "",
+        "// payload (hammaga o'qiladi!)",
+        "{",
+        "  \"iss\": \"https://auth.example.uz\",",
+        "  \"sub\": \"01J0ZJ...\",",
+        "  \"aud\": \"orders-api\",",
+        "  \"exp\": 1749550800,",
+        "  \"iat\": 1749549900,",
+        "  \"jti\": \"9f1c...\",",
+        "  \"scope\": \"orders:read orders:write\"",
+        "}"
+      ]
+    },
+    {
+      "title": "To'liq tekshiruv (firebase/php-jwt)",
+      "lang": "php",
+      "code": [
+        "use Firebase\\JWT\\JWK;",
+        "use Firebase\\JWT\\JWT;",
+        "",
+        "$jwks = Cache::remember('jwks', 3600, fn () => Http::get('https://auth.example.uz/.well-known/jwks.json')->json());",
+        "JWT::$leeway = 30;   // soat farqi",
+        "",
+        "try {",
+        "    // Kalitlar o'z algoritmi bilan: alg algoritm chalkashligiga yo'l qo'yilmaydi",
+        "    $claims = JWT::decode($token, JWK::parseKeySet($jwks, defaultAlg: 'RS256'));",
+        "} catch (Throwable $e) {",
+        "    abort(401, 'Token yaroqsiz');",
+        "}",
+        "",
+        "abort_unless($claims->iss === 'https://auth.example.uz', 401);",
+        "abort_unless(in_array('orders-api', (array) $claims->aud, true), 401);"
+      ],
+      "note": "Kutubxona imzo, `exp`, `nbf` va `iat` ni tekshiradi. `iss` va `aud` ni o'zingiz tekshirishingiz kerak."
+    }
+  ],
+  "pitfalls": [
+    "`alg: none` yoki kutilmagan algoritmni qabul qilish: imzosiz token o'tib ketadi.",
+    "`aud` ni tekshirmaslik: boshqa servis uchun berilgan token sizning API'ngizda ham ishlaydi.",
+    "Payload'ga maxfiy ma'lumot qo'yish: u shifrlanmagan.",
+    "Uzoq muddatli JWT va bekor qilish mexanizmisiz: o'g'irlangan token kunlab ishlaydi."
+  ]
+});

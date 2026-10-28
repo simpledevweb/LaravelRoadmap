@@ -1,0 +1,96 @@
+/* Chuqur dars: 25.5. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("25.5", {
+  "lesson": [
+    "### Hayot sikli metodlari",
+    "PHPUnit har test atrofida maxsus metodlarni chaqiradi:",
+    "- `setUpBeforeClass()` (statik) — klassdagi birinchi testdan oldin **bir marta**.",
+    "- `setUp()` — **har** testdan oldin.",
+    "- test metodi.",
+    "- `tearDown()` — **har** testdan keyin (test yiqilsa ham).",
+    "- `tearDownAfterClass()` (statik) — oxirgi testdan keyin bir marta.",
+    "",
+    "PHPUnit 10+ da atributlar ham bor: `#[Before]`, `#[After]`, `#[BeforeClass]`, `#[AfterClass]` — istalgan nomli metodlarga.",
+    "",
+    "### Har test yangi obyekt",
+    "PHPUnit **har test metodi uchun test klassining yangi nusxasini** yaratadi. Shuning uchun `$this->calculator` kabi xususiyatlar testlar orasida avtomatik ulashilmaydi: `setUp()` ularni har safar qayta yaratadi. Statik xususiyatlar esa ulashiladi va xavfli (25.14).",
+    "",
+    "### Laravel'da",
+    "- `setUp()` ni override qilsangiz, **birinchi qator** `parent::setUp();` bo'lishi shart. U ilovani yaratadi, trait'larni (`RefreshDatabase`, `WithFaker`) ishga tushiradi. Usiz `config()`, factory'lar va facade'lar ishlamaydi.",
+    "- `tearDown()` da `parent::tearDown();` **oxirida**: u ilovani yopadi, Mockery'ni tekshiradi va xotirani tozalaydi.",
+    "- `setUpBeforeClass()` da Laravel ilovasi hali yo'q: u yerda framework ishlatib bo'lmaydi.",
+    "- Laravel trait hook'lari: `setUpTraitName()` metodi trait ulangan har test oldidan avtomatik chaqiriladi.",
+    "",
+    "### setUp'ga nima qo'yish kerak",
+    "- Ko'pchilik testlarda **aynan bir xil** va testning mohiyatiga taalluqli bo'lmagan tayyorgarlik: tekshirilayotgan obyektni yaratish (SUT), umumiy fake'lar (`Queue::fake()`, `Storage::fake('s3')`), vaqtni qotirish.",
+    "- Har test uchun **turli** narsalar — testning o'zida.",
+    "",
+    "### tearDown qachon kerak",
+    "Laravel ko'p narsani avtomatik tozalaydi (DB tranzaksiyasi, fake'lar, Mockery). Qo'lda kerak bo'ladi:",
+    "- testda yaratilgan haqiqiy fayllar (`Storage::fake` ishlatilmagan bo'lsa),",
+    "- global holat o'zgarishlari (statik xususiyatlar, `putenv`, `setlocale`, `date_default_timezone_set`),",
+    "- `Carbon::setTestNow()` (Laravel `travel` dan foydalansangiz, avtomatik qaytariladi).",
+    "",
+    "### Ehtiyot: yashirin bog'liqliklar",
+    "Juda katta `setUp()` testlarni tushunishni qiyinlashtiradi: test o'qiganda \"bu foydalanuvchi qayerdan keldi, nima uchun admin?\" degan savollar paydo bo'ladi. Yordamchi metodlar (`createPaidOrder()`) ko'pincha yaxshiroq: test nima tayyorlanganini aniq ko'rsatadi."
+  ],
+  "examples": [
+    {
+      "title": "Laravel feature testda setUp",
+      "lang": "php",
+      "code": [
+        "final class CheckoutTest extends TestCase",
+        "{",
+        "    use RefreshDatabase;",
+        "",
+        "    private User $customer;",
+        "",
+        "    protected function setUp(): void",
+        "    {",
+        "        parent::setUp();          // birinchi!",
+        "",
+        "        Queue::fake();",
+        "        Storage::fake('s3');",
+        "        $this->travelTo(Carbon::parse('2025-06-10 10:00:00'));",
+        "",
+        "        $this->customer = User::factory()->create();",
+        "    }",
+        "",
+        "    public function test_creates_invoice_pdf(): void",
+        "    {",
+        "        $order = Order::factory()->for($this->customer)->paid()->create();",
+        "",
+        "        $this->actingAs($this->customer)->postJson(\"/api/v1/orders/{$order->id}/invoice\")->assertCreated();",
+        "",
+        "        Storage::disk('s3')->assertExists(\"invoices/{$order->id}.pdf\");",
+        "    }",
+        "}"
+      ]
+    },
+    {
+      "title": "Global holatni tiklash",
+      "lang": "php",
+      "code": [
+        "private string $originalTz;",
+        "",
+        "protected function setUp(): void",
+        "{",
+        "    parent::setUp();",
+        "    $this->originalTz = date_default_timezone_get();",
+        "    date_default_timezone_set('Asia/Tashkent');",
+        "}",
+        "",
+        "protected function tearDown(): void",
+        "{",
+        "    date_default_timezone_set($this->originalTz);",
+        "    parent::tearDown();       // oxirida!",
+        "}"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "`parent::setUp()` ni chaqirmaslik yoki undan oldin framework ishlatish: `Target class [config] does not exist` kabi xatolar.",
+    "`setUpBeforeClass()` da factory yoki DB ishlatish.",
+    "Barcha testlar uchun keraksiz ma'lumotlarni `setUp` ga to'plash: testlar sekin va tushunarsiz.",
+    "Global holatni (timezone, statik xususiyatlar) o'zgartirib, `tearDown` da tiklamaslik."
+  ]
+});

@@ -1,0 +1,95 @@
+/* Chuqur dars: 17.14. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("17.14", {
+  "lesson": [
+    "### Tranzaksiya chegarasi nima",
+    "Chegara — qaysi amallar birgalikda atomik bo'lishi kerakligi haqidagi qaror: tranzaksiya qayerda boshlanadi va qayerda tugaydi. Noto'g'ri chegara ikki xil xatoga olib keladi:",
+    "- **Juda tor:** bog'liq yozuvlar alohida tranzaksiyalarda. O'rtada xato bo'lsa, qisman saqlangan, buzilgan holat qoladi (buyurtma bor, itemlar yo'q).",
+    "- **Juda keng:** keraksiz ishlar tranzaksiya ichida. Lock'lar uzoq ushlanadi, MVCC tozalash to'xtaydi va parallel so'rovlar kutadi.",
+    "",
+    "### Asosiy qoida",
+    "**Bitta biznes amal (use case) = bitta tranzaksiya.** \"Buyurtma berish\", \"pul o'tkazish\", \"foydalanuvchini ro'yxatdan o'tkazish\" — har biri bitta atomik birlik.",
+    "",
+    "### Qayerda boshlanadi",
+    "Tranzaksiya **application service** yoki **action** darajasida boshlanadi, chunki faqat shu qatlam use case'ning to'liq tarkibini biladi. Model, repository yoki observer ichida emas: ular faqat bir qismni ko'radi va boshqa kontekstda qayta ishlatilganda noto'g'ri chegara hosil qiladi. Controller'da ham mumkin, lekin action/service klassi qayta ishlatish va test uchun qulayroq.",
+    "",
+    "### Ichida nima bo'ladi",
+    "Faqat **DB yozuvlari** va ularga zarur o'qishlar (lock bilan):",
+    "- Asosiy yozuvlar (`orders`, `order_items`).",
+    "- Atomar yangilashlar (`stock`, `balance`).",
+    "- Outbox yozuvi (17.18).",
+    "",
+    "### Oldin nima bo'ladi",
+    "- Kirish validatsiyasi (FormRequest).",
+    "- Lock talab qilmaydigan o'qishlar va hisob-kitoblar (narxlar, chegirmalar).",
+    "- Tashqi ma'lumotni olish (kurs, manzil tekshiruvi).",
+    "- Fayllarni vaqtinchalik joyga yuklash.",
+    "",
+    "### Keyin nima bo'ladi",
+    "- Email, SMS, push bildirishnomalar.",
+    "- Tashqi API chaqiruvlari (17.16).",
+    "- Job dispatch, event broadcast.",
+    "- Keshni tozalash, qidiruv indeksini yangilash.",
+    "",
+    "Laravel vositalari: `->afterCommit()` (job, listener), `ShouldHandleEventsAfterCommit` (observer), `DB::afterCommit()`. Ular ochiq tranzaksiya bo'lsa commit'ni kutadi, bo'lmasa darhol bajariladi. Shuning uchun action boshqa tranzaksiya ichidan chaqirilsa ham to'g'ri ishlaydi.",
+    "",
+    "### Kompozitsiya",
+    "Action A o'z `DB::transaction` ini ochadi. Action B ham. B ni A ichida chaqirsangiz, B ning tranzaksiyasi savepoint bo'ladi (17.4) va umumiy chegara A ning tranzaksiyasi. Bu odatda to'g'ri, lekin B ichidagi `afterCommit` ishlari A tugaguncha kechikishini unutmang."
+  ],
+  "examples": [
+    {
+      "title": "To'g'ri chegara",
+      "lang": "php",
+      "code": [
+        "final class PlaceOrder",
+        "{",
+        "    public function __construct(private PricingService $pricing) {}",
+        "",
+        "    public function handle(Customer $customer, Cart $cart): Order",
+        "    {",
+        "        // Oldin: validatsiya va hisob-kitob",
+        "        $this->ensureItemsAvailable($cart);",
+        "        $lines = $this->pricing->price($cart);",
+        "",
+        "        // Ichida: faqat DB yozuvlari",
+        "        $order = DB::transaction(function () use ($customer, $lines) {",
+        "            $order = $customer->orders()->create(['total' => $lines->sum('total')]);",
+        "            $order->items()->createMany($lines->toArray());",
+        "            foreach ($lines as $line) {",
+        "                $this->decrementStock($line->productId, $line->qty);",
+        "            }",
+        "            return $order;",
+        "        });",
+        "",
+        "        // Keyin: yon ta'sirlar",
+        "        OrderPlaced::dispatch($order);",
+        "",
+        "        return $order;",
+        "    }",
+        "}"
+      ]
+    },
+    {
+      "title": "Noto'g'ri chegaralar",
+      "lang": "php",
+      "code": [
+        "// Juda tor: repository har biri o'z tranzaksiyasida",
+        "$order = $this->orders->create($data);          // commit",
+        "$this->items->createMany($order, $items);        // xato -> buyurtma itemlarsiz qoladi",
+        "",
+        "// Juda keng: hamma narsa ichida",
+        "DB::transaction(function () use ($order) {",
+        "    $pdf = $this->invoicePdf->render($order);    // 3 soniya",
+        "    Storage::disk('s3')->put(...$pdf);           // tarmoq",
+        "    Mail::to($order->customer)->send(...);       // tarmoq",
+        "    $order->update(['invoiced_at' => now()]);",
+        "});"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Tranzaksiyani model yoki repository ichida ochish: use case darajasida chegara noaniq bo'ladi.",
+    "Email, fayl yuklash va tashqi API'ni tranzaksiya ichiga qo'yish.",
+    "Bog'liq yozuvlarni alohida tranzaksiyalarda saqlab, qisman holat qoldirish.",
+    "Ichki action'ning `afterCommit` ishi tashqi tranzaksiya tugaguncha kechikishini hisobga olmaslik."
+  ]
+});

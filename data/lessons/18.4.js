@@ -1,0 +1,95 @@
+/* Chuqur dars: 18.4. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("18.4", {
+  "lesson": [
+    "### Status kod — mijoz uchun signal",
+    "Status kod javob body'sini o'qimasdan nima bo'lganini bildiradi. Mijoz kodi, retry mexanizmlari, keshlar va monitoring shunga qarab qaror qabul qiladi. Hamma narsaga `200` qaytarib, body'da `{\"success\": false}` yozish bu semantikani yo'q qiladi: monitoring xatolarni ko'rmaydi, retry ishlamaydi, mijoz har javobni tahlil qilishi kerak.",
+    "",
+    "### 2xx — muvaffaqiyat",
+    "- `200 OK` — umumiy muvaffaqiyat, body bilan.",
+    "- `201 Created` — resurs yaratildi. `Location` header'ida yangi resurs URL'i.",
+    "- `202 Accepted` — so'rov qabul qilindi, lekin asinxron bajariladi (navbatga qo'yildi). Holatni tekshirish uchun URL qaytaring.",
+    "- `204 No Content` — muvaffaqiyat, body yo'q (DELETE, ba'zi PATCH).",
+    "",
+    "### 3xx — yo'naltirish",
+    "- `301`/`308` — doimiy ko'chirish (308 metodni saqlaydi).",
+    "- `302`/`307` — vaqtinchalik.",
+    "- `304 Not Modified` — `If-None-Match` bilan ETag mos keldi, kesh dolzarb (18.19).",
+    "",
+    "### 4xx — mijoz xatosi",
+    "- `400 Bad Request` — so'rov buzilgan (noto'g'ri JSON, noto'g'ri format).",
+    "- `401 Unauthorized` — autentifikatsiya yo'q yoki token yaroqsiz. Nomi chalg'ituvchi: aslida \"unauthenticated\".",
+    "- `403 Forbidden` — kimligingiz ma'lum, lekin ruxsat yo'q.",
+    "- `404 Not Found` — resurs yo'q. Begona resursni yashirish uchun ham ishlatiladi (403 o'rniga, mavjudligini oshkor qilmaslik uchun).",
+    "- `405 Method Not Allowed` — URL bor, metod noto'g'ri.",
+    "- `409 Conflict` — holat ziddiyati: optimistic lock (17.11), dublikat, parallel so'rov.",
+    "- `410 Gone` — resurs doimiy o'chirilgan.",
+    "- `412 Precondition Failed` — `If-Match` mos kelmadi.",
+    "- `415 Unsupported Media Type` — `Content-Type` qo'llanmaydi.",
+    "- `422 Unprocessable Content` — so'rov to'g'ri tuzilgan, lekin validatsiya yoki biznes qoidasi rad etdi. Laravel validatsiyasi default'da shu.",
+    "- `429 Too Many Requests` — rate limit, `Retry-After` bilan.",
+    "",
+    "### 5xx — server xatosi",
+    "- `500` — kutilmagan xato.",
+    "- `502`/`504` — gateway yoki upstream muammosi, timeout.",
+    "- `503 Service Unavailable` — vaqtincha mavjud emas (texnik ishlar, ortiqcha yuk), `Retry-After` bilan.",
+    "",
+    "**Qoida:** 4xx — mijoz so'rovni o'zgartirmasdan qayta yuborsa, natija o'zgarmaydi. 5xx (va 429) — qayta urinish mantiqiy. Retry mexanizmlari aynan shunga tayanadi.",
+    "",
+    "### Laravel'da",
+    "`abort(403)`, `abort_if()`, `abort_unless()`. Exception'lar avtomatik: `ModelNotFoundException` → 404, `AuthenticationException` → 401, `AuthorizationException` → 403, `ValidationException` → 422, `ThrottleRequestsException` → 429. Biznes xatolari uchun o'z exception'ingizni `render()` bilan kerakli kodga bog'lang."
+  ],
+  "examples": [
+    {
+      "title": "To'g'ri kodlar bilan controller",
+      "lang": "php",
+      "code": [
+        "public function store(StoreOrderRequest $request): JsonResponse",
+        "{",
+        "    $order = $this->placeOrder->handle($request->user(), $request->validated());",
+        "",
+        "    return OrderResource::make($order)",
+        "        ->response()",
+        "        ->setStatusCode(201)",
+        "        ->header('Location', route('orders.show', $order));",
+        "}",
+        "",
+        "public function destroy(Order $order): Response",
+        "{",
+        "    $this->authorize('delete', $order);",
+        "    $order->delete();",
+        "",
+        "    return response()->noContent();   // 204",
+        "}",
+        "",
+        "public function export(Request $request): JsonResponse",
+        "{",
+        "    $job = ExportOrders::dispatch($request->user());",
+        "",
+        "    return response()->json(['status_url' => route('exports.show', $job->id)], 202);",
+        "}"
+      ]
+    },
+    {
+      "title": "Biznes xatosini kodga bog'lash",
+      "lang": "php",
+      "code": [
+        "final class InsufficientBalance extends DomainException",
+        "{",
+        "    public function render(Request $request): JsonResponse",
+        "    {",
+        "        return response()->json([",
+        "            'message' => 'Balans yetarli emas',",
+        "            'code' => 'insufficient_balance',",
+        "        ], 422);",
+        "    }",
+        "}"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Barcha javoblarga `200` va body'da `success: false`.",
+    "401 va 403 ni adashtirish: 401 — kim ekaningiz noma'lum, 403 — ruxsat yo'q.",
+    "Validatsiya xatosiga 500 yoki biznes rad etishiga 400 qaytarish: mijoz xatoni to'g'ri tasniflay olmaydi.",
+    "`201` da `Location` header'ini va yaratilgan resursni qaytarmaslik."
+  ]
+});

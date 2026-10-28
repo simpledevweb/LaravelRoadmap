@@ -1,0 +1,97 @@
+/* Chuqur dars: 13.19. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("13.19", {
+  "lesson": [
+    "### Nega tranzaksiya",
+    "Biznes amali ko'pincha bir nechta yozuvdan iborat: buyurtma yaratish, mahsulot qoldig'ini kamaytirish, to'lovni yozish. Ikkinchi qadamda xato bo'lsa, birinchisi qolib ketmasligi kerak. Tranzaksiya \"hammasi yoki hech narsa\" kafolatini beradi (ACID'dagi A — atomicity).",
+    "",
+    "### DB::transaction",
+    "`DB::transaction(function () { ... })`:",
+    "- Yopilma muvaffaqiyatli tugasa: `COMMIT`.",
+    "- Har qanday exception chiqsa: `ROLLBACK` va exception qayta tashlanadi.",
+    "- Yopilma qaytargan qiymat natija sifatida qaytadi.",
+    "- Ikkinchi argument `attempts`: deadlock yoki serialization xatosida (`40001`, `40P01`) yopilmani qayta bajarish soni.",
+    "",
+    "Qo'lda boshqarish: `DB::beginTransaction()`, `DB::commit()`, `DB::rollBack()`. `try/catch/finally` bilan ehtiyotkorlik talab qiladi. Yopilma varianti afzal.",
+    "",
+    "### Ichma-ich tranzaksiyalar",
+    "Ichki `DB::transaction()` haqiqiy yangi tranzaksiya ochmaydi, **savepoint** yaratadi. Ichki qismda exception bo'lib, uni tashqi kod ushlasa, faqat savepoint'gacha rollback bo'ladi. Tashqi tranzaksiya davom etadi. `DB::transactionLevel()` joriy chuqurlikni ko'rsatadi.",
+    "",
+    "### Ulanishlar",
+    "`DB::transaction` default ulanishda ishlaydi. Model boshqa ulanishda bo'lsa (`$connection = 'billing'`), `DB::connection('billing')->transaction(...)` kerak. Ikki xil DB ulanishi o'rtasida atomar tranzaksiya yo'q. Bunday holatda outbox pattern yoki saga kerak.",
+    "",
+    "### Tranzaksiya va yon ta'sirlar",
+    "Tranzaksiya faqat DB'ni qaytaradi. Email, HTTP so'rov, queue'ga yuborilgan job, Redis'dagi kesh **qaytmaydi**. Ikki xavfli holat:",
+    "1. Tranzaksiya ichida job dispatch qilindi, worker uni commit'dan oldin oldi va yozuvni topmadi (`ModelNotFoundException`).",
+    "2. Email yuborildi, keyin rollback bo'ldi: mijoz mavjud bo'lmagan buyurtma haqida xabar oldi.",
+    "",
+    "Yechimlar: `DB::afterCommit(fn () => ...)`, job'da `->afterCommit()`, `config/queue.php` da `after_commit => true`, observer'da `ShouldHandleEventsAfterCommit`.",
+    "",
+    "### Tranzaksiyani qisqa tuting",
+    "Ochiq tranzaksiya lock'larni ushlab turadi va PostgreSQL'da VACUUM'ni to'xtatadi (11.10). Tranzaksiya ichida tashqi API chaqirmang, fayl yuklamang va foydalanuvchi kiritishini kutmang. Avval tashqi ishni bajaring yoki tayyorlang, keyin qisqa tranzaksiyada faqat DB yozuvlarini qiling.",
+    "",
+    "### Testlarda",
+    "`RefreshDatabase` har testni tranzaksiyaga o'raydi. Shu sababli kod ichidagi `DB::transaction` savepoint bo'ladi va `afterCommit` callback'lari Laravel tomonidan to'g'ri boshqariladi (Laravel 8.x+)."
+  ],
+  "examples": [
+    {
+      "title": "Buyurtma yaratish",
+      "lang": "php",
+      "code": [
+        "final class PlaceOrder",
+        "{",
+        "    public function handle(Customer $customer, array $items): Order",
+        "    {",
+        "        $order = DB::transaction(function () use ($customer, $items) {",
+        "            $order = $customer->orders()->create(['status' => OrderStatus::Pending, 'total' => 0]);",
+        "",
+        "            foreach ($items as $item) {",
+        "                $affected = Product::whereKey($item['product_id'])",
+        "                    ->where('stock', '>=', $item['qty'])",
+        "                    ->decrement('stock', $item['qty']);",
+        "",
+        "                if ($affected === 0) {",
+        "                    throw new OutOfStockException($item['product_id']);",
+        "                }",
+        "",
+        "                $order->items()->create($item);",
+        "            }",
+        "",
+        "            $order->update(['total' => $order->items()->sum(DB::raw('qty * price'))]);",
+        "",
+        "            return $order;",
+        "        }, attempts: 3);",
+        "",
+        "        SendOrderConfirmation::dispatch($order)->afterCommit();",
+        "",
+        "        return $order;",
+        "    }",
+        "}"
+      ],
+      "note": "Bu yerda dispatch tranzaksiyadan tashqarida. Agar `PlaceOrder` tashqi tranzaksiya ichida chaqirilsa, `afterCommit()` tashqi commit'ni kutadi."
+    },
+    {
+      "title": "Tashqi API'ni tranzaksiyadan chiqarish",
+      "lang": "php",
+      "code": [
+        "// YOMON: to'lov shlyuzi 10 soniya javob bermasa, lock'lar 10 soniya ushlanadi",
+        "DB::transaction(function () use ($order) {",
+        "    $charge = $gateway->charge($order->total);",
+        "    $order->update(['status' => 'paid', 'charge_id' => $charge->id]);",
+        "});",
+        "",
+        "// YAXSHI",
+        "$charge = $gateway->charge($order->total, idempotencyKey: \"order-{$order->id}\");",
+        "DB::transaction(function () use ($order, $charge) {",
+        "    $order->update(['status' => 'paid', 'charge_id' => $charge->id]);",
+        "    $order->payments()->create(['amount' => $charge->amount, 'external_id' => $charge->id]);",
+        "});"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Tranzaksiya ichida job dispatch qilish (`afterCommit` siz): worker yozuvni commit'dan oldin qidiradi va topmaydi.",
+    "Exception'ni yopilma ichida ushlab, yutib yuborish: Laravel commit qiladi va qisman yozilgan ma'lumot qoladi.",
+    "Boshqa ulanishdagi modelni default `DB::transaction` himoya qiladi deb o'ylash.",
+    "Tranzaksiya ichida sekin tashqi chaqiruvlar: lock'lar uzoq ushlanadi va parallel so'rovlar navbatga turadi."
+  ]
+});

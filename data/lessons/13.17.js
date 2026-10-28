@@ -1,0 +1,95 @@
+/* Chuqur dars: 13.17. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("13.17", {
+  "lesson": [
+    "### Soft delete nima",
+    "Yozuv jismonan o'chirilmaydi. `deleted_at` ustuniga vaqt yoziladi va default so'rovlardan yashiriladi. Yoqish: modelda `use SoftDeletes;`, migratsiyada `$table->softDeletes();` (yoki `softDeletesTz()`).",
+    "",
+    "### Ishlash mexanizmi",
+    "- `$post->delete()` → `UPDATE posts SET deleted_at = now()`.",
+    "- `SoftDeletingScope` global scope (13.14) barcha so'rovlarga `whereNull('deleted_at')` qo'shadi.",
+    "- `withTrashed()`: o'chirilganlarni ham qo'shish. `onlyTrashed()`: faqat o'chirilganlar.",
+    "- `$post->trashed()`: tekshirish. `$post->restore()`: tiklash. `$post->forceDelete()`: haqiqiy o'chirish.",
+    "- Route model binding: `Route::get(...)->withTrashed()` (Laravel 9+).",
+    "- Event'lar: `deleting/deleted` (soft delete'da ham), `trashed` (Laravel 10+), `restoring/restored`, `forceDeleting/forceDeleted`.",
+    "",
+    "### Qachon kerak",
+    "- Tasodifiy o'chirishdan tiklash (\"Savatchaga qaytarish\").",
+    "- Audit va huquqiy talablar: buyurtma o'chsa ham hisob-faktura qolishi kerak.",
+    "- Boshqa jadvallar ishora qiladigan yozuvlar: o'chirilgan foydalanuvchining eski izohlari.",
+    "",
+    "Qachon kerak emas: vaqtinchalik ma'lumot (session, token, kesh), juda ko'p o'chiriladigan jadvallar, **GDPR \"unutilish huquqi\"** — shaxsiy ma'lumot haqiqatan o'chirilishi yoki anonimlashtirilishi kerak.",
+    "",
+    "### Yashirin muammolar",
+    "1. **Unique constraint:** `email` unique bo'lsa, o'chirilgan foydalanuvchining email'i bilan qayta ro'yxatdan o'tib bo'lmaydi. Yechim: PostgreSQL'da partial unique indeks `WHERE deleted_at IS NULL` (11.6). MySQL'da `(email, deleted_at)` yoki generated ustun.",
+    "2. **Munosabatlar:** `belongsTo` o'chirilgan otani default ko'rmaydi. `$comment->post` `null` qaytaradi va sahifa yiqilishi mumkin. Kerak bo'lsa: `->withTrashed()` munosabatda.",
+    "3. **Kaskad yo'q:** DB'dagi `ON DELETE CASCADE` ishlamaydi, chunki aslida `UPDATE`. Bolalarni `deleting` event'ida soft delete qiling yoki `askedio/laravel-soft-cascade` kabi paket.",
+    "4. **Validatsiya:** `Rule::unique('users')->withoutTrashed()` kerak, aks holda o'chirilganlar ham hisobga olinadi.",
+    "5. **Query builder:** `DB::table()` global scope'ni bilmaydi va o'chirilganlarni ham qaytaradi.",
+    "6. **Hajm va indekslar:** jadval o'sib boradi. Indekslarga `deleted_at` ni hisobga oling yoki partial indeks.",
+    "",
+    "### Tozalash",
+    "Uzoq saqlash shart bo'lmasa, eski soft-deleted yozuvlarni muntazam o'chiring. `Prunable` trait: `prunable()` metodi `onlyTrashed()->where('deleted_at', '<', now()->subDays(90))` qaytaradi, `model:prune` buyrug'i esa scheduler'da ishlaydi."
+  ],
+  "examples": [
+    {
+      "title": "Soft delete, partial unique va prune",
+      "lang": "php",
+      "code": [
+        "class User extends Authenticatable",
+        "{",
+        "    use SoftDeletes, Prunable;",
+        "",
+        "    public function prunable(): Builder",
+        "    {",
+        "        return static::onlyTrashed()->where('deleted_at', '<', now()->subDays(90));",
+        "    }",
+        "",
+        "    protected function pruning(): void",
+        "    {",
+        "        Storage::delete($this->avatar_path);",
+        "    }",
+        "}",
+        "",
+        "// Migratsiya (PostgreSQL)",
+        "DB::statement('CREATE UNIQUE INDEX users_email_alive ON users (lower(email)) WHERE deleted_at IS NULL');",
+        "",
+        "// Validatsiya",
+        "'email' => ['required', 'email', Rule::unique('users')->withoutTrashed()],",
+        "",
+        "// routes/console.php",
+        "Schedule::command('model:prune')->daily();"
+      ]
+    },
+    {
+      "title": "Kaskad va tiklash",
+      "lang": "php",
+      "code": [
+        "class Project extends Model",
+        "{",
+        "    use SoftDeletes;",
+        "",
+        "    protected static function booted(): void",
+        "    {",
+        "        static::deleting(function (Project $project) {",
+        "            if (! $project->isForceDeleting()) {",
+        "                $project->tasks()->each(fn (Task $t) => $t->delete());",
+        "            }",
+        "        });",
+        "",
+        "        static::restoring(fn (Project $p) => $p->tasks()->onlyTrashed()->restore());",
+        "    }",
+        "}",
+        "",
+        "$project = Project::withTrashed()->findOrFail($id);",
+        "$project->restore();"
+      ],
+      "note": "`restoring` ichida loyiha bilan birga o'chirilmagan (avvalroq alohida o'chirilgan) vazifalar ham tiklanishi mumkin. Kerak bo'lsa, `deleted_at` vaqti bo'yicha filtrlang."
+    }
+  ],
+  "pitfalls": [
+    "Oddiy unique indeksni qoldirish: o'chirilgan email bilan qayta ro'yxatdan o'tishda `duplicate key` xatosi.",
+    "Shaxsiy ma'lumotni soft delete bilan \"o'chirdik\" deb hisoblash: GDPR va mahalliy qonunchilik talablari bajarilmaydi.",
+    "`DB::table()` yoki raw so'rovda o'chirilganlarni filtrlashni unutish.",
+    "Soft-deleted otaga ishora qiluvchi munosabat `null` qaytarishini hisobga olmaslik: view'da `Attempt to read property on null`."
+  ]
+});

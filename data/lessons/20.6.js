@@ -1,0 +1,96 @@
+/* Chuqur dars: 20.6. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("20.6", {
+  "lesson": [
+    "### Muammo",
+    "\"Hisobchi\" ilovasi sizning bankingizdagi tranzaksiyalarni o'qishi kerak. Eski yo'l: foydalanuvchi ilovaga bank login va parolini beradi. Xavflari: ilova hamma narsani qila oladi (pul o'tkazish ham), parol uchinchi tomonda saqlanadi, kirishni faqat parolni o'zgartirib bekor qilish mumkin.",
+    "",
+    "**OAuth 2.0** (RFC 6749) — **delegatsiyalangan avtorizatsiya** freymvorki: foydalanuvchi ilovaga parolini bermasdan, **cheklangan huquqlar** (scope) bilan va istalgan vaqtda bekor qilinadigan kirish beradi.",
+    "",
+    "### Rollar",
+    "- **Resource Owner:** foydalanuvchi, ma'lumot egasi.",
+    "- **Client:** kirish so'rayotgan ilova (Hisobchi).",
+    "- **Authorization Server:** foydalanuvchini autentifikatsiya qiladi, rozilik so'raydi va token beradi (Laravel Passport, Keycloak, Auth0).",
+    "- **Resource Server:** himoyalangan API, token'ni qabul qiladi (sizning Laravel API'ngiz).",
+    "",
+    "### Asosiy grant (flow) turlari",
+    "**Authorization Code + PKCE** — eng muhim va tavsiya etilgan:",
+    "1. Client foydalanuvchini authorization server'ga yo'naltiradi: `/oauth/authorize?client_id=...&redirect_uri=...&scope=transactions:read&state=...&code_challenge=...`.",
+    "2. Foydalanuvchi login qiladi va \"Hisobchi tranzaksiyalaringizni o'qishiga ruxsat berasizmi?\" savoliga rozilik beradi.",
+    "3. Server `redirect_uri` ga bir martalik **authorization code** bilan qaytaradi.",
+    "4. Client code'ni (va `code_verifier` ni) `/oauth/token` ga yuborib, **access token** (va refresh token) oladi.",
+    "5. Client API'ga `Authorization: Bearer <access_token>` bilan murojaat qiladi.",
+    "",
+    "**PKCE** (RFC 7636): client tasodifiy `code_verifier` yaratadi va uning hash'ini (`code_challenge`) 1-qadamda yuboradi. 4-qadamda asl qiymatni ko'rsatadi. Yo'lda ushlangan code PKCE'siz ishlatib bo'lmaydi. OAuth 2.1 da barcha client'lar uchun majburiy.",
+    "",
+    "**Client Credentials:** foydalanuvchi yo'q, servis o'z nomidan ishlaydi (server-server). Client ID va secret bilan token oladi.",
+    "",
+    "**Refresh Token:** muddati tugagan access token'ni foydalanuvchi ishtirokisiz yangilash (20.15).",
+    "",
+    "**Device Code:** klaviaturasiz qurilmalar (TV, CLI).",
+    "",
+    "### Eskirgan grant'lar",
+    "- **Implicit:** token to'g'ridan-to'g'ri URL fragment'ida qaytadi. Sizib chiqish xavfi. OAuth 2.1 da olib tashlangan.",
+    "- **Password (ROPC):** foydalanuvchi parolini client'ga beradi. OAuth'ning butun maqsadiga zid. Olib tashlangan.",
+    "",
+    "### OAuth autentifikatsiya emas",
+    "OAuth \"bu ilova nimaga kira oladi\" degan savolga javob beradi, \"foydalanuvchi kim\" degan savolga emas. Autentifikatsiya va \"Google bilan kirish\" uchun uning ustiga qurilgan **OpenID Connect (OIDC)** ishlatiladi: qo'shimcha `id_token` (JWT) foydalanuvchi ma'lumotlari bilan va `openid` scope.",
+    "",
+    "### Laravel'da",
+    "- OAuth **server** bo'lish: Laravel Passport (20.9).",
+    "- Tashqi provayder bilan login (**client** bo'lish): Laravel Socialite (Google, GitHub, OneID)."
+  ],
+  "examples": [
+    {
+      "title": "Authorization Code + PKCE oqimi",
+      "lang": "text",
+      "code": [
+        "1. Client:  code_verifier = random(64)",
+        "            code_challenge = BASE64URL(SHA256(code_verifier))",
+        "",
+        "2. Brauzer -> GET https://auth.example.uz/oauth/authorize",
+        "     ?response_type=code&client_id=hisobchi",
+        "     &redirect_uri=https://hisobchi.uz/callback",
+        "     &scope=transactions:read&state=xyz",
+        "     &code_challenge=E9Mel...&code_challenge_method=S256",
+        "",
+        "3. Foydalanuvchi login + rozilik",
+        "",
+        "4. 302 -> https://hisobchi.uz/callback?code=SplxlO...&state=xyz",
+        "",
+        "5. Client -> POST /oauth/token",
+        "     grant_type=authorization_code&code=SplxlO...",
+        "     &redirect_uri=...&client_id=hisobchi&code_verifier=dBjft...",
+        "",
+        "6. <- { access_token, token_type: Bearer, expires_in: 3600, refresh_token }"
+      ]
+    },
+    {
+      "title": "Socialite: tashqi provayder bilan kirish",
+      "lang": "php",
+      "code": [
+        "Route::get('auth/google', fn () => Socialite::driver('google')->redirect());",
+        "",
+        "Route::get('auth/google/callback', function () {",
+        "    $google = Socialite::driver('google')->user();",
+        "",
+        "    $user = User::updateOrCreate(",
+        "        ['google_id' => $google->getId()],",
+        "        ['name' => $google->getName(), 'email' => $google->getEmail()],",
+        "    );",
+        "",
+        "    Auth::login($user);",
+        "    request()->session()->regenerate();",
+        "",
+        "    return redirect('/dashboard');",
+        "});"
+      ],
+      "note": "Socialite `state` parametrini avtomatik boshqaradi (CSRF himoyasi). Email bo'yicha mavjud akkauntga avtomatik ulashda ehtiyot bo'ling: provayder email'ni tasdiqlaganini tekshiring."
+    }
+  ],
+  "pitfalls": [
+    "Implicit yoki Password grant'ni yangi loyihada ishlatish.",
+    "PKCE'siz authorization code: ushlangan code bilan token olish mumkin.",
+    "`state` parametrini tekshirmaslik: login CSRF hujumi.",
+    "OAuth access token'ni foydalanuvchi identifikatsiyasi sifatida ishlatish: buning uchun OIDC `id_token`."
+  ]
+});

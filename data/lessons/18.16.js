@@ -1,0 +1,97 @@
+/* Chuqur dars: 18.16. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("18.16", {
+  "lesson": [
+    "### Ikki alohida savol",
+    "- **Autentifikatsiya:** so'rovni kim yubordi? Javob bo'lmasa — `401`.",
+    "- **Avtorizatsiya:** bu foydalanuvchi aynan shu amalni shu resursda bajara oladimi? Javob \"yo'q\" bo'lsa — `403` (yoki resurs mavjudligini yashirish uchun `404`).",
+    "",
+    "### Autentifikatsiya usullari",
+    "- **Sanctum personal access token:** mobil ilovalar va oddiy API mijozlari uchun. `Authorization: Bearer <id>|<token>`. DB'da token hash'i saqlanadi, abilities va muddati bor. Laravel API'lari uchun default tanlov.",
+    "- **Sanctum SPA (cookie):** bir xil domendagi frontend uchun. Session cookie + CSRF. Token'ni JavaScript'da saqlash shart emas va XSS'da o'g'irlanmaydi.",
+    "- **OAuth 2.0 (Passport yoki tashqi IdP):** uchinchi tomon ilovalari foydalanuvchi nomidan ishlashi, SSO, client credentials (21.x).",
+    "- **JWT:** stateless token, servislar o'rtasida. Bekor qilish (revocation) murakkab (22.x).",
+    "- **API key:** servis-servis yoki oddiy integratsiyalar. Hash bilan saqlang va rotatsiya qiling.",
+    "- **mTLS:** yuqori xavfsizlikli servis-servis aloqasi.",
+    "",
+    "Har qanday token faqat **HTTPS** orqali va **header'da**, URL'da emas.",
+    "",
+    "### Avtorizatsiya qatlamlari",
+    "1. **Token doirasi (scope/ability):** token nima qila oladi. Sanctum: `$user->createToken('mobile', ['orders:read', 'orders:write'])`, tekshirish `abilities:` / `ability:` middleware yoki `$request->user()->tokenCan('orders:write')`.",
+    "2. **Rol va ruxsat:** foydalanuvchi umuman bu amalni qila oladimi (admin, menejer). Gate'lar yoki `spatie/laravel-permission`.",
+    "3. **Obyekt darajasi:** **aynan shu** buyurtma shu foydalanuvchiga tegishlimi? Policy: `$this->authorize('view', $order)`.",
+    "",
+    "### IDOR — eng keng tarqalgan API zaifligi",
+    "**Insecure Direct Object Reference** (OWASP API Security Top 10 da birinchi o'rin, BOLA). Foydalanuvchi `/api/orders/42` ni `/api/orders/43` ga o'zgartiradi va boshqa birovning buyurtmasini ko'radi, chunki controller faqat \"login qilganmi\" ni tekshirgan.",
+    "",
+    "Himoya:",
+    "- Har `show`, `update`, `destroy` da policy.",
+    "- So'rovni foydalanuvchi doirasida qurish: `$request->user()->orders()->findOrFail($id)`. Begona resurs uchun avtomatik 404.",
+    "- **Ro'yxatlarda ham filtrlash:** `index` faqat foydalanuvchiga tegishli yozuvlarni qaytarsin.",
+    "- Tenant global scope (13.14).",
+    "- UUID yoki ULID ID'lar sanab chiqishni qiyinlashtiradi, lekin avtorizatsiya o'rnini **bosmaydi**.",
+    "",
+    "### Mass assignment orqali ruxsat oshirish",
+    "`PATCH /api/users/me {\"role\": \"admin\"}`. FormRequest validatsiyasi va `$fillable` (13.4) bilan himoya. Ruxsatga bog'liq maydonlarni oddiy profil endpoint'ida qabul qilmang."
+  ],
+  "examples": [
+    {
+      "title": "Token abilities va policy",
+      "lang": "php",
+      "code": [
+        "// Token berish",
+        "$token = $user->createToken('mobile-app', ['orders:read', 'orders:write'], now()->addDays(30));",
+        "",
+        "// Route'lar",
+        "Route::middleware('auth:sanctum')->group(function () {",
+        "    Route::get('orders', [OrderController::class, 'index'])->middleware('ability:orders:read');",
+        "    Route::post('orders', [OrderController::class, 'store'])->middleware('abilities:orders:write');",
+        "    Route::get('orders/{order}', [OrderController::class, 'show'])->middleware('ability:orders:read');",
+        "});",
+        "",
+        "// Policy",
+        "class OrderPolicy",
+        "{",
+        "    public function view(User $user, Order $order): bool",
+        "    {",
+        "        return $order->customer_id === $user->customer_id || $user->isStaff();",
+        "    }",
+        "}"
+      ],
+      "note": "Laravel 11+ da middleware alias'lari `bootstrap/app.php` ichida `$middleware->alias(['abilities' => CheckAbilities::class, 'ability' => CheckForAnyAbility::class])` bilan ro'yxatdan o'tkaziladi."
+    },
+    {
+      "title": "IDOR'dan himoya",
+      "lang": "php",
+      "code": [
+        "// ZAIF: faqat login tekshirilgan",
+        "public function show(Order $order) { return OrderResource::make($order); }",
+        "",
+        "// TO'G'RI: policy",
+        "public function show(Order $order)",
+        "{",
+        "    $this->authorize('view', $order);",
+        "    return OrderResource::make($order);",
+        "}",
+        "",
+        "// TO'G'RI: so'rov foydalanuvchi doirasida (begona -> 404)",
+        "public function index(Request $request)",
+        "{",
+        "    return OrderResource::collection($request->user()->orders()->latest()->paginate());",
+        "}",
+        "",
+        "// Test",
+        "it('hides other users orders', function () {",
+        "    $order = Order::factory()->create();",
+        "    Sanctum::actingAs(User::factory()->create(), ['orders:read']);",
+        "    $this->getJson(\"/api/orders/{$order->id}\")->assertForbidden();",
+        "});"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Faqat `auth:sanctum` bilan cheklanib, obyekt darajasidagi tekshiruvni unutish (IDOR).",
+    "`index` endpoint'ida barcha yozuvlarni qaytarib, faqat `show` ni himoyalash.",
+    "UUID ID'larni avtorizatsiya o'rnini bosadi deb hisoblash.",
+    "Token'larni muddatsiz va cheksiz abilities (`['*']`) bilan berish."
+  ]
+});

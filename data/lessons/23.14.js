@@ -1,0 +1,95 @@
+/* Chuqur dars: 23.14. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("23.14", {
+  "lesson": [
+    "### Ikki xil savol",
+    "- **Token ability:** \"Bu **token** (va u ifodalaydigan ilova, skript, qurilma) nima qila oladi?\" Foydalanuvchi o'z token'iga bergan cheklov.",
+    "- **Avtorizatsiya (policy, gate, rol):** \"Bu **foydalanuvchi** aynan shu resursda shu amalni qila oladimi?\" Tizim beradigan huquq.",
+    "",
+    "Yakuniy ruxsat — **ikkalasining kesishmasi** (20.16):",
+    "`ruxsat = foydalanuvchi_ruxsati(amal, resurs) ∧ token_ability(amal)`",
+    "",
+    "### Misollar",
+    "| Foydalanuvchi | Token abilities | `orders:write` amal | Natija |",
+    "|---|---|---|---|",
+    "| Menejer (ruxsat bor) | `orders:read` | yozish | **rad** (token cheklangan) |",
+    "| Viewer (ruxsat yo'q) | `*` | yozish | **rad** (foydalanuvchi huquqi yo'q) |",
+    "| Menejer | `orders:read, orders:write` | o'z tenant'idagi buyurtma | ruxsat |",
+    "| Menejer | `orders:write` | boshqa tenant buyurtmasi | **rad** (obyekt doirasi) |",
+    "",
+    "Ability **foydalanuvchi huquqini kengaytirmaydi**. Viewer o'ziga `*` token yaratsa ham, admin bo'lib qolmaydi.",
+    "",
+    "### SPA'dagi tuzoq",
+    "Session orqali kirgan foydalanuvchida `TransientToken`: **`tokenCan()` har doim `true`** (23.4). Agar kod faqat `tokenCan()` ni tekshirsa, SPA foydalanuvchisi uchun himoya umuman yo'q. Shuning uchun:",
+    "- `tokenCan()` hech qachon **yagona** tekshiruv emas.",
+    "- Asosiy avtorizatsiya doim policy yoki gate orqali.",
+    "- `tokenCan()` faqat qo'shimcha cheklov sifatida.",
+    "",
+    "### Qayerda nimani tekshirish",
+    "- **Route middleware `ability:`** — tez, erta rad etish. Lekin faqat HTTP kirish nuqtasi.",
+    "- **Policy** — obyekt darajasi va foydalanuvchi ruxsati. Ichida `tokenCan()` ham. Har kirish nuqtasidan ishlaydi.",
+    "- **Ro'yxatlar** — so'rov doirasi (`visibleTo($user)`, 20.12).",
+    "",
+    "### Qachon ability foydali",
+    "- Integratsiya token'lari: hisobot skripti faqat `reports:read`. Sizib chiqsa, zarar kichik.",
+    "- Uchinchi tomon vositalari (Zapier, CI) foydalanuvchi nomidan tor huquq bilan.",
+    "- Mobil ilova versiyalari: eski ilova versiyasi token'iga yangi xavfli abilities berilmagan.",
+    "",
+    "### Qachon ortiqcha",
+    "Faqat o'z SPA'ngiz va bitta mobil ilova bo'lsa, abilities ko'pincha `['*']` yoki bitta umumiy ro'yxat bo'ladi va haqiqiy cheklov policy'larda. Bu normal. Muhimi — policy'lar to'liq bo'lishi."
+  ],
+  "examples": [
+    {
+      "title": "To'g'ri birlashtirish",
+      "lang": "php",
+      "code": [
+        "// NOTO'G'RI: faqat ability. SPA foydalanuvchisi uchun doim true!",
+        "abort_unless($request->user()->tokenCan('orders:write'), 403);",
+        "$order->update($data);",
+        "",
+        "// NOTO'G'RI: faqat rol. Cheklangan integratsiya token'i ham yoza oladi",
+        "abort_unless($request->user()->can('orders.update'), 403);",
+        "",
+        "// TO'G'RI: policy ichida ikkalasi va obyekt doirasi",
+        "class OrderPolicy",
+        "{",
+        "    public function update(User $user, Order $order): bool",
+        "    {",
+        "        return $user->can('orders.update')",
+        "            && $user->tokenCan('orders:write')",
+        "            && $order->tenant_id === $user->tenant_id;",
+        "    }",
+        "}",
+        "",
+        "// Controller",
+        "$this->authorize('update', $order);"
+      ]
+    },
+    {
+      "title": "Test: ikkala o'lchov",
+      "lang": "php",
+      "code": [
+        "it('denies manager with read-only token', function () {",
+        "    $manager = User::factory()->withRole('manager')->create();",
+        "    $order = Order::factory()->for($manager->tenant)->create();",
+        "    Sanctum::actingAs($manager, ['orders:read']);",
+        "",
+        "    $this->patchJson(\"/api/v1/orders/{$order->public_id}\", ['note' => 'x'])->assertForbidden();",
+        "});",
+        "",
+        "it('denies viewer even with full token', function () {",
+        "    $viewer = User::factory()->withRole('viewer')->create();",
+        "    $order = Order::factory()->for($viewer->tenant)->create();",
+        "    Sanctum::actingAs($viewer, ['*']);",
+        "",
+        "    $this->patchJson(\"/api/v1/orders/{$order->public_id}\", ['note' => 'x'])->assertForbidden();",
+        "});"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "`tokenCan()` ni yagona avtorizatsiya sifatida ishlatish: SPA session'ida doim `true`.",
+    "Ability'ni foydalanuvchi huquqini kengaytiruvchi deb tushunish.",
+    "Faqat route middleware'da ability tekshirib, job yoki boshqa kirish nuqtalarida o'tkazib yuborish.",
+    "Policy'larni yozmasdan, abilities bilan cheklanish."
+  ]
+});

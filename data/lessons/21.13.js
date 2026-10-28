@@ -1,0 +1,96 @@
+/* Chuqur dars: 21.13. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("21.13", {
+  "lesson": [
+    "### Manbalar",
+    "OAuth 2.0 (2012) dan beri ko'plab hujumlar topildi va tavsiyalar o'zgardi. Joriy holat ikki hujjatda:",
+    "- **RFC 9700 — OAuth 2.0 Security Best Current Practice** (2025).",
+    "- **OAuth 2.1** (draft): OAuth 2.0 + barcha muhim kengaytmalar va BCP, eskirgan qismlar olib tashlangan.",
+    "",
+    "### Asosiy tavsiyalar",
+    "**Flow'lar**",
+    "- **Authorization Code + PKCE** barcha client'lar uchun (21.3). `S256`, `plain` emas.",
+    "- **Implicit grant ishlatilmaydi** (token URL fragment'ida sizadi).",
+    "- **Resource Owner Password grant ishlatilmaydi** (client parolni ko'radi, MFA va phishing himoyasi yo'q).",
+    "- M2M uchun Client Credentials (21.4).",
+    "",
+    "**Redirect va front channel**",
+    "- `redirect_uri` aniq moslik (21.11).",
+    "- `state` yoki PKCE bilan CSRF himoyasi (21.12).",
+    "- Authorization code bir martalik va qisqa muddatli. Qayta ishlatilsa, berilgan token'larni bekor qilish.",
+    "- Token'lar hech qachon URL'da yoki query parametrda.",
+    "- Mix-up hujumlariga qarshi (bir nechta AS bilan ishlovchi client'larda): callback'dagi `iss` parametri (RFC 9207) yoki har AS uchun alohida redirect URI.",
+    "",
+    "**Token'lar**",
+    "- Qisqa muddatli access token'lar (21.6).",
+    "- **Audience cheklash:** token'da `aud` va RS uni tekshiradi. Bir RS uchun berilgan token boshqasida ishlamasin. `resource` parametri (RFC 8707) bilan client aniq RS uchun token so'raydi.",
+    "- **Minimal scope'lar** (21.7).",
+    "- **Refresh token'lar:** public client'lar uchun rotatsiya + reuse detection yoki sender-constrained (DPoP, mTLS).",
+    "- Yuqori xavfli kontekstda **sender-constrained access token'lar** (DPoP RFC 9449, mTLS RFC 8705): o'g'irlangan token boshqa joyda ishlamaydi.",
+    "",
+    "**Client autentifikatsiyasi**",
+    "- Confidential client'lar uchun `private_key_jwt` yoki mTLS afzal, umumiy secret'dan ko'ra.",
+    "- Public client'larda secret yo'q va unga tayanilmaydi.",
+    "",
+    "**Infratuzilma**",
+    "- Barcha endpoint'lar faqat TLS.",
+    "- AS sahifalari clickjacking'dan himoyalangan (`frame-ancestors`).",
+    "- AS metadata (RFC 8414, `/.well-known/oauth-authorization-server` yoki OIDC discovery): client'lar endpoint va imkoniyatlarni qo'lda yozmaydi.",
+    "- **Open redirector** yo'q: AS'ning o'zi ham, client ham.",
+    "",
+    "### SPA uchun",
+    "Brauzer ichida token saqlash o'rniga **BFF** pattern (21.2). Agar to'g'ridan-to'g'ri brauzer client bo'lsa: PKCE, qisqa access token, refresh token rotatsiyasi, qat'iy CSP.",
+    "",
+    "### FAPI",
+    "Bank va Open Banking kabi yuqori xavfsizlik talab qiladigan sohalar uchun **FAPI 2.0** profili: PAR (Pushed Authorization Requests, RFC 9126), DPoP yoki mTLS, `private_key_jwt` va boshqa qat'iy qoidalar."
+  ],
+  "examples": [
+    {
+      "title": "Tekshiruv ro'yxati",
+      "lang": "text",
+      "code": [
+        "[ ] Faqat authorization_code (+PKCE S256), client_credentials, refresh_token",
+        "[ ] implicit va password grant'lar o'chirilgan",
+        "[ ] redirect_uri aniq moslik, faqat HTTPS",
+        "[ ] state tekshiriladi, code bir martalik va <= 10 daqiqa",
+        "[ ] access token <= 60 daqiqa, aud tekshiriladi",
+        "[ ] refresh token rotatsiyasi + reuse detection",
+        "[ ] client'ga ruxsat etilgan scope'lar cheklangan",
+        "[ ] token'lar URL va log'larda yo'q",
+        "[ ] AS sahifalarida frame-ancestors 'none'",
+        "[ ] SPA uchun BFF yoki qat'iy CSP"
+      ]
+    },
+    {
+      "title": "Passport'da eskirgan grant'lar o'chirilganini tekshirish",
+      "lang": "php",
+      "code": [
+        "// AppServiceProvider::boot()",
+        "// Passport 12+ da password va implicit grant'lar default'da o'chirilgan.",
+        "// Ularni yoqmang:",
+        "// Passport::enablePasswordGrant();   // yo'q",
+        "// Passport::enableImplicitGrant();   // yo'q",
+        "",
+        "Passport::tokensExpireIn(now()->addMinutes(30));",
+        "Passport::refreshTokensExpireIn(now()->addDays(14));",
+        "",
+        "// AS sahifalari uchun (global middleware)",
+        "final class DenyFraming",
+        "{",
+        "    public function handle(Request $request, Closure $next): Response",
+        "    {",
+        "        $response = $next($request);",
+        "        $response->headers->set('Content-Security-Policy', \"frame-ancestors 'none'\");",
+        "        return $response;",
+        "    }",
+        "}"
+      ],
+      "note": "Grant'larni yoqish metodlari Passport versiyasiga qarab farq qiladi. Middleware'ni `bootstrap/app.php` da `$middleware->append(DenyFraming::class)` bilan qo'shing."
+    }
+  ],
+  "pitfalls": [
+    "Eski qo'llanmalarga qarab implicit yoki password grant'ni ishlatish.",
+    "Bir nechta resource server bo'lganda `aud` cheklovini qo'llamaslik.",
+    "Public client'lar uchun refresh token'larni rotatsiyasiz berish.",
+    "AS yoki client'da open redirect qoldirish."
+  ]
+});

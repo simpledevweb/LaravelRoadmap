@@ -1,0 +1,95 @@
+/* Chuqur dars: 18.19. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("18.19", {
+  "lesson": [
+    "### API tezligi nimadan iborat",
+    "Javob vaqti = tarmoq + TLS + framework bootstrap + autentifikatsiya + DB so'rovlari + biznes mantiq + serializatsiya + javob uzatish. Ko'p hollarda eng katta ulush **DB so'rovlari** va **javob hajmi**.",
+    "",
+    "### 1. DB qatlami",
+    "- N+1: `with()`, `withCount()` (13.12, 13.23).",
+    "- Indekslar va sargable shartlar (16.x).",
+    "- Kerakli ustunlar (16.9).",
+    "- Katta to'plamlarda cursor paginatsiya (18.11).",
+    "",
+    "### 2. Javob hajmi",
+    "- Paginatsiya majburiy, `per_page` chegarasi bilan.",
+    "- `fields` parametri bilan maydon tanlash (18.10).",
+    "- Ro'yxatlarda katta matn va ichma-ich obyektlarni qaytarmaslik. To'liq ma'lumot `show` endpoint'ida.",
+    "- **Siqish:** gzip yoki brotli Nginx darajasida. JSON 70–90% ga kichrayadi. Mobil tarmoqlar uchun katta farq.",
+    "",
+    "### 3. HTTP keshlash",
+    "- `Cache-Control: public, max-age=300`: ommaviy ma'lumotnomalar CDN va brauzerda keshlanadi va serverga umuman kelmaydi.",
+    "- **ETag + `If-None-Match`:** server javob hash'ini `ETag` sifatida beradi. Mijoz keyingi so'rovda uni yuboradi. O'zgarmagan bo'lsa, `304 Not Modified` body'siz. Tarmoq trafigi tejaladi, lekin server baribir ma'lumotni hisoblashi kerak (agar ETag arzon hisoblanmasa, masalan `max(updated_at)` dan).",
+    "- Shaxsiy ma'lumot: `private` yoki `no-store`.",
+    "",
+    "### 4. Server tomonidagi kesh",
+    "Og'ir va tez-tez o'qiladigan natijalar: `Cache::remember()` (16.17). Kalitda foydalanuvchi va parametrlar.",
+    "",
+    "### 5. Og'ir ishni navbatga",
+    "Eksport, hisobot, ommaviy email, rasm qayta ishlash — so'rov ichida emas. `202 Accepted` + holat URL'i yoki webhook bilan natija. Foydalanuvchi soniyalar emas, millisekundlar kutadi.",
+    "",
+    "### 6. Framework darajasi",
+    "- Production: `php artisan optimize` (config, route, event, view keshlari), `composer install --optimize-autoloader --no-dev`.",
+    "- **OPcache** yoqilgan va `opcache.validate_timestamps=0` (deploy'da reset).",
+    "- **Laravel Octane** (Swoole, RoadRunner, FrankenPHP): ilova xotirada qoladi va har so'rovda bootstrap qilinmaydi. Javob vaqti sezilarli kamayadi, lekin holat oqishiga (static, singleton) ehtiyot bo'lish kerak.",
+    "",
+    "### 7. \"Chatty\" API",
+    "Mobil ilova bitta ekran uchun 10 ta ketma-ket so'rov yuborsa, har biri tarmoq kechikishini qo'shadi (mobil tarmoqda 100–300 ms). Yechim: `include` parametri, ekran uchun agregatsiya endpoint'i (BFF — Backend for Frontend) yoki GraphQL.",
+    "",
+    "### O'lchash",
+    "Endpoint bo'yicha p50, p95, p99 kechikish, javob hajmi, so'rov uchun DB so'rovlari soni. Vositalar: Telescope, APM (Sentry, New Relic), Nginx `$request_time` log'lari. Sekin endpoint'lar ro'yxatini muntazam ko'rib chiqing (16.18)."
+  ],
+  "examples": [
+    {
+      "title": "ETag va kesh header'lari",
+      "lang": "php",
+      "code": [
+        "public function index(Request $request)",
+        "{",
+        "    $version = Category::max('updated_at') . ':' . Category::count();",
+        "    $etag = '\"' . md5($version) . '\"';",
+        "",
+        "    if ($request->header('If-None-Match') === $etag) {",
+        "        return response()->noContent(304)->setEtag($etag);",
+        "    }",
+        "",
+        "    $categories = Cache::remember(\"categories:{$etag}\", 3600, fn () => Category::orderBy('name')->get());",
+        "",
+        "    return CategoryResource::collection($categories)",
+        "        ->response()",
+        "        ->setEtag(trim($etag, '\"'))",
+        "        ->setPublic()",
+        "        ->setMaxAge(300);",
+        "}"
+      ],
+      "note": "Laravel'ning `cache.headers:public;max_age=300;etag` middleware'i javob body'sidan ETag'ni avtomatik hisoblaydi, lekin bunda body baribir to'liq hisoblanadi."
+    },
+    {
+      "title": "Og'ir ishni 202 bilan navbatga",
+      "lang": "php",
+      "code": [
+        "public function store(ExportRequest $request)",
+        "{",
+        "    $export = Export::create([",
+        "        'user_id' => $request->user()->id,",
+        "        'filters' => $request->validated(),",
+        "        'status' => 'queued',",
+        "    ]);",
+        "",
+        "    GenerateExport::dispatch($export);",
+        "",
+        "    return response()->json([",
+        "        'id' => $export->id,",
+        "        'status' => 'queued',",
+        "        'status_url' => route('exports.show', $export),",
+        "    ], 202);",
+        "}"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Ro'yxat endpoint'larida paginatsiyasiz barcha yozuvlarni qaytarish.",
+    "Shaxsiy javoblarga `public` kesh header'i: CDN boshqa foydalanuvchiga beradi.",
+    "Og'ir eksportni sinxron bajarish: timeout va band FPM worker'lar.",
+    "Production'da `php artisan optimize` va OPcache'siz ishlash."
+  ]
+});

@@ -1,0 +1,76 @@
+/* Chuqur dars: 24.15. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("24.15", {
+  "lesson": [
+    "### Ikki tomonda timeout",
+    "**Inbound:** provayder sizning javobingizni ma'lum vaqt kutadi (Stripe ~10 s, GitHub ~10 s, ko'plar 5–30 s). Undan oshsa — muvaffaqiyatsiz deb hisoblab, qayta yuboradi. Siz ishni tugatgan bo'lsangiz ham. Yechim: navbat (24.14) va endpoint javobi millisekundlarda.",
+    "",
+    "**Outbound:** siz mijoz serveriga yuborganda **o'zingiz** timeout belgilaysiz. Usiz bitta osilib qolgan mijoz serveri worker'laringizni soatlab band qiladi.",
+    "",
+    "### Outbound timeout turlari",
+    "1. **Connect timeout:** TCP ulanish va TLS handshake uchun (2–5 soniya). Server javob bermasa yoki mavjud bo'lmasa, tez xato.",
+    "2. **Umumiy (request) timeout:** so'rov boshidan javob oxirigacha (10–30 soniya). Mijozlarga \"10 soniya ichida javob bering\" deb hujjatda yozing va biroz zaxira bilan (15 s) belgilang.",
+    "3. **Job timeout** (`$timeout`): HTTP timeout'dan kattaroq, aks holda Laravel worker'ni o'ldiradi.",
+    "4. **Queue `retry_after`:** job timeout'dan kattaroq, aks holda job ikki marta parallel bajariladi.",
+    "",
+    "Ketma-ketlik: `connect_timeout < timeout < job $timeout < retry_after`.",
+    "",
+    "### Sekin javoblar va \"slowloris\"",
+    "Zararli yoki noto'g'ri sozlangan mijoz serveri javobni juda sekin (bayt-baytlab) yuborishi mumkin. Umumiy timeout bunday holatda ham ulanishni uzadi. Javob body'sining hajmini ham cheklang: katta javobni o'qish xotira va vaqtni yeydi.",
+    "",
+    "### Timeout — muvaffaqiyatsizlikmi?",
+    "Timeout'da natija **noma'lum**: mijoz so'rovni olgan va qayta ishlagan bo'lishi mumkin, faqat javobi kechikkan. Shuning uchun:",
+    "- Timeout — qayta urinish mumkin bo'lgan xato (24.9).",
+    "- Qayta urinish **bir xil event ID** bilan, mijoz deduplikatsiya qiladi.",
+    "- Mijozlarga \"avval `200` qaytaring, keyin qayta ishlang\" deb tavsiya qiling (24.14 naqshi).",
+    "",
+    "### Endpoint tomonida (inbound) tezlikni ta'minlash",
+    "- Imzo tekshiruvi tez (HMAC mikrosoniyalar).",
+    "- Bitta indekslangan INSERT (unique event ID).",
+    "- Job dispatch (Redis, millisekund).",
+    "- Hech qanday tashqi chaqiruv, og'ir so'rov yoki fayl yozuvi yo'q.",
+    "- Natija: 10–50 ms.",
+    "",
+    "### Circuit breaker",
+    "Bir mijoz endpoint'i doimiy timeout bersa, har yetkazish worker'ni 15 soniyaga band qiladi. Ketma-ket timeout'lardan keyin bu endpoint uchun yetkazishlarni vaqtincha to'xtatish (\"circuit open\") va keyinroq bitta sinov so'rovi bilan tekshirish (24.13 dagi avtomatik o'chirish bilan bog'liq)."
+  ],
+  "examples": [
+    {
+      "title": "Outbound so'rov timeout'lari",
+      "lang": "php",
+      "code": [
+        "final class WebhookSender",
+        "{",
+        "    public function send(WebhookDelivery $delivery): Response",
+        "    {",
+        "        $body = json_encode($delivery->payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);",
+        "        $ts = time();",
+        "        $sig = hash_hmac('sha256', \"{$delivery->event_id}.{$ts}.{$body}\", $delivery->endpoint->secret);",
+        "",
+        "        return Http::connectTimeout(3)",
+        "            ->timeout(15)",
+        "            ->withOptions(['allow_redirects' => false])",
+        "            ->withHeaders([",
+        "                'Content-Type' => 'application/json',",
+        "                'User-Agent' => 'ExampleUz-Webhooks/1.0',",
+        "                'X-Webhook-Id' => $delivery->event_id,",
+        "                'X-Webhook-Timestamp' => $ts,",
+        "                'X-Webhook-Signature' => \"v1={$sig}\",",
+        "            ])",
+        "            ->withBody($body, 'application/json')",
+        "            ->post($delivery->endpoint->url);",
+        "    }",
+        "}",
+        "",
+        "// DeliverWebhook job: public int $timeout = 30;",
+        "// config/queue.php: 'retry_after' => 90"
+      ],
+      "note": "`allow_redirects => false` SSRF'ga qarshi ham muhim (24.19): redirect ichki manzilga yo'naltirishi mumkin."
+    }
+  ],
+  "pitfalls": [
+    "Outbound HTTP so'rovlarda timeout'siz ishlash: worker'lar osilib qoladi.",
+    "Job `$timeout` ni HTTP timeout'dan kichik qilish.",
+    "Timeout'ni muvaffaqiyatsiz va qayta urinish kerak emas deb hisoblash.",
+    "Inbound endpoint'da tashqi API chaqirib, provayder timeout'iga tushish."
+  ]
+});

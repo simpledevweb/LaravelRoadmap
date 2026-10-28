@@ -1,0 +1,77 @@
+/* Chuqur dars: 22.10. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("22.10", {
+  "lesson": [
+    "### JWT bilan sessiya arxitekturasi",
+    "JWT'ning asosiy zaifligi — bekor qilish qiyinligi (22.11). Uni kamaytirishning standart usuli: **qisqa muddatli JWT access token + uzoq muddatli stateful refresh token**. Mexanizm 20.15 va 21.5 da. Bu darsda — JWT bilan bog'liq strategik qarorlar.",
+    "",
+    "### Ikki token, ikki xil tabiat",
+    "| | Access token | Refresh token |",
+    "|---|---|---|",
+    "| Format | JWT (self-contained) | opaque (tasodifiy satr) |",
+    "| Tekshiruv | lokal, DB'siz | AS'da, DB orqali |",
+    "| Muddat | 5–15 daqiqa | kunlar–haftalar |",
+    "| Bekor qilish | qiyin, muddat bilan | darhol (DB'dan o'chirish) |",
+    "| Kimga yuboriladi | har API so'rovida | faqat token endpoint'iga |",
+    "",
+    "Refresh token **JWT bo'lmasligi** yaxshi: uni baribir AS DB'da tekshirishi kerak (rotatsiya, reuse detection, bekor qilish) va JWT'ning stateless afzalligi bu yerda foydasiz, kamchiliklari (ochiq payload, hajm) esa qoladi.",
+    "",
+    "### Natija",
+    "- **Masshtab:** API'lar har so'rovda DB'siz tekshiradi.",
+    "- **Nazorat:** foydalanuvchini bloklash yoki chiqarib yuborish refresh token'ni bekor qilish orqali. Ko'pi bilan access token muddati (masalan, 10 daqiqa) ichida ta'sir qiladi.",
+    "- **Yangilangan claim'lar:** har refresh'da yangi access token joriy rollar va ruxsatlar bilan yaratiladi. Huquq o'zgarishlari access token muddati ichida tarqaladi.",
+    "",
+    "### Strategik qarorlar",
+    "1. **Access token muddati:** qancha qisqa bo'lsa, bekor qilish shuncha tez, lekin AS'ga refresh yuki ko'proq. 5–15 daqiqa odatiy.",
+    "2. **Refresh token rotatsiyasi:** public client'lar uchun majburiy, confidential uchun tavsiya etiladi.",
+    "3. **Reuse detection** va token oilasi (20.15).",
+    "4. **Absolyut va harakatsizlik muddatlari.**",
+    "5. **Qurilma bo'yicha:** har qurilma alohida refresh token oilasi. \"Faol qurilmalar\" ro'yxati refresh token'lar asosida.",
+    "6. **Muhim amallar uchun qo'shimcha tekshiruv:** pul o'tkazish kabi endpoint'larda access token'dan tashqari DB'dagi joriy holatni (akkaunt bloklanmagan, `tokens_valid_after`) tekshirish.",
+    "",
+    "### Brauzerda",
+    "- Access token: JavaScript xotirasida (o'zgaruvchi), `localStorage` emas. Sahifa yangilanganda refresh orqali qayta olinadi.",
+    "- Refresh token: `HttpOnly`, `Secure`, `SameSite=Strict` cookie, `Path` faqat refresh endpoint'iga.",
+    "- Yoki butunlay BFF (21.2): brauzer JWT'ni umuman ko'rmaydi.",
+    "",
+    "### Sliding session va absolyut chegara",
+    "Har refresh yangi refresh token beradi va harakatsizlik muddati qayta boshlanadi. Lekin oila yaratilgan vaqtdan absolyut chegara (30 kun) o'tsa, qayta login. Shunda doimiy faol foydalanuvchi ham vaqti-vaqti bilan autentifikatsiyadan (va kerak bo'lsa MFA'dan) o'tadi."
+  ],
+  "examples": [
+    {
+      "title": "Login va refresh javoblari",
+      "lang": "php",
+      "code": [
+        "private function issue(User $user, string $familyId, CarbonInterface $absoluteExpiry): JsonResponse",
+        "{",
+        "    $access = $this->jwt->sign([",
+        "        'sub' => $user->public_id,",
+        "        'aud' => 'https://api.example.uz',",
+        "        'scope' => implode(' ', $user->defaultScopes()),",
+        "        'ver' => $user->token_version,",
+        "        'exp' => now()->addMinutes(10)->timestamp,",
+        "    ]);",
+        "",
+        "    $refresh = Str::random(64);",
+        "    RefreshToken::create([",
+        "        'user_id' => $user->id,",
+        "        'family_id' => $familyId,",
+        "        'hash' => hash('sha256', $refresh),",
+        "        'expires_at' => min(now()->addDays(14), $absoluteExpiry),",
+        "        'absolute_expires_at' => $absoluteExpiry,",
+        "    ]);",
+        "",
+        "    return response()",
+        "        ->json(['access_token' => $access, 'token_type' => 'Bearer', 'expires_in' => 600])",
+        "        ->cookie('rt', $refresh, 60 * 24 * 14, '/api/auth/refresh', null, true, true, false, 'strict');",
+        "}"
+      ],
+      "note": "Rotatsiya va reuse detection mantiqi 20.15 dagi namunada. `ver` claim'i parol o'zgarganda eski access token'larni API'da rad etish uchun (20.14)."
+    }
+  ],
+  "pitfalls": [
+    "Refresh token'ni ham uzoq muddatli JWT qilish: bekor qilish muammosi ikki baravar.",
+    "Faqat uzoq muddatli access JWT, refresh'siz: bekor qilish imkonsiz.",
+    "Access token'ni `localStorage` da saqlash.",
+    "Refresh'da claim'larni yangilamasdan eski access token'dan nusxalash: huquq o'zgarishlari tarqalmaydi."
+  ]
+});

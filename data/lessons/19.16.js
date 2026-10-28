@@ -1,0 +1,98 @@
+/* Chuqur dars: 19.16. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("19.16", {
+  "lesson": [
+    "### Nega bulk endpoint",
+    "Mijoz 500 ta mahsulot narxini yangilashi kerak. 500 ta alohida `PATCH` so'rovi: 500 ta tarmoq aylanishi, 500 ta autentifikatsiya, rate limit tez tugaydi va jarayon daqiqalab davom etadi. Bulk endpoint ularni bitta so'rovga birlashtiradi.",
+    "",
+    "### Dizayn savollari",
+    "**1. Atomik yoki qisman muvaffaqiyat?**",
+    "- **Atomik (hammasi yoki hech biri):** bitta tranzaksiya. Bitta element xato bo'lsa, hammasi rad etiladi va `422` + qaysi elementlar xato. Moliyaviy va bog'liq ma'lumotlar uchun.",
+    "- **Qisman:** har element mustaqil qayta ishlanadi. Javob har element uchun alohida natija. Import va sinxronizatsiya uchun qulay.",
+    "",
+    "Qisman muvaffaqiyatda umumiy status: `200` (har element natijasi body'da) yoki `207 Multi-Status` (WebDAV'dan). Ko'p API'lar `200` ishlatadi. Muhimi — hujjatda aniq yozish va mijoz har element natijasini tekshirishi kerakligini ta'kidlash.",
+    "",
+    "**2. Hajm chegarasi:** bitta so'rovda maksimal elementlar soni (masalan, 100 yoki 1000) va umumiy body hajmi. Validatsiyada `max:100`.",
+    "",
+    "**3. Sinxron yoki asinxron:** kichik partiya (100 ta) — sinxron. Katta (10 000) — `202 Accepted` va job (19.17).",
+    "",
+    "**4. Idempotentlik:** bulk POST uchun ham Idempotency-Key (19.12). Qisman muvaffaqiyatda qayta yuborish faqat muvaffaqiyatsiz elementlar uchun bo'lsin yoki upsert semantikasi.",
+    "",
+    "**5. Elementlarni aniqlash:** javobdagi natijalar so'rovdagi elementlarga qanday bog'lanadi: `index` (massivdagi o'rni) va/yoki mijoz bergan `client_id`/`external_id`.",
+    "",
+    "**6. Rate limit:** bitta bulk so'rov = bitta so'rovmi yoki N ta? Ko'p API'lar uni elementlar soniga qarab \"og'irroq\" hisoblaydi.",
+    "",
+    "### Sintaksis variantlari",
+    "- `POST /v1/products/batch` va body'da `{\"items\": [...]}`.",
+    "- Har element uchun amal: `{\"operations\": [{\"op\": \"create\", ...}, {\"op\": \"update\", \"id\": ..., ...}, {\"op\": \"delete\", \"id\": ...}]}`.",
+    "- Ommaviy o'chirish: `DELETE /v1/notifications?ids=1,2,3` yoki `POST /v1/notifications/bulk-delete`.",
+    "",
+    "### Server tomonida",
+    "Har elementni validatsiya qiling (19.5 dagi qoidalar `items.*`). Ichkarida `upsert` yoki bulk insert (13.22) ishlating. Lekin model event'lari va observer'lar o'tkazib yuborilishini hisobga oling. Avtorizatsiya har element uchun: 100 ta ID ichida bittasi begona bo'lmasin."
+  ],
+  "examples": [
+    {
+      "title": "Qisman muvaffaqiyat javobi",
+      "lang": "json",
+      "code": [
+        "POST /v1/products/batch",
+        "{ \"items\": [",
+        "  { \"sku\": \"A-1\", \"price\": 15000 },",
+        "  { \"sku\": \"A-2\", \"price\": -5 },",
+        "  { \"sku\": \"A-3\", \"price\": 9900 }",
+        "] }",
+        "",
+        "200 OK",
+        "{",
+        "  \"summary\": { \"total\": 3, \"succeeded\": 2, \"failed\": 1 },",
+        "  \"results\": [",
+        "    { \"index\": 0, \"sku\": \"A-1\", \"status\": 200 },",
+        "    { \"index\": 1, \"sku\": \"A-2\", \"status\": 422, \"errors\": { \"price\": [{ \"code\": \"min\", \"message\": \"0 dan katta bo'lishi kerak\" }] } },",
+        "    { \"index\": 2, \"sku\": \"A-3\", \"status\": 200 }",
+        "  ]",
+        "}"
+      ]
+    },
+    {
+      "title": "Laravel'da qisman bulk yangilash",
+      "lang": "php",
+      "code": [
+        "public function __invoke(Request $request)",
+        "{",
+        "    $request->validate(['items' => ['required', 'array', 'min:1', 'max:500']]);",
+        "",
+        "    $results = [];",
+        "    $valid = [];",
+        "",
+        "    foreach ($request->input('items') as $i => $item) {",
+        "        $v = Validator::make($item, [",
+        "            'sku' => ['required', 'string', Rule::exists('products', 'sku')->where('tenant_id', $request->user()->tenant_id)],",
+        "            'price' => ['required', 'integer', 'min:1'],",
+        "        ]);",
+        "",
+        "        if ($v->fails()) {",
+        "            $results[] = ['index' => $i, 'sku' => $item['sku'] ?? null, 'status' => 422, 'errors' => $v->errors()];",
+        "            continue;",
+        "        }",
+        "",
+        "        $valid[] = [...$v->validated(), 'tenant_id' => $request->user()->tenant_id];",
+        "        $results[] = ['index' => $i, 'sku' => $item['sku'], 'status' => 200];",
+        "    }",
+        "",
+        "    Product::upsert($valid, uniqueBy: ['tenant_id', 'sku'], update: ['price']);",
+        "",
+        "    return response()->json([",
+        "        'summary' => ['total' => count($results), 'succeeded' => count($valid), 'failed' => count($results) - count($valid)],",
+        "        'results' => $results,",
+        "    ]);",
+        "}"
+      ],
+      "note": "Har element uchun alohida `exists` so'rovi bor. Katta partiyalarda barcha SKU'larni bitta `whereIn` bilan oldindan yuklab, xotirada tekshiring."
+    }
+  ],
+  "pitfalls": [
+    "Qisman muvaffaqiyatda umumiy `200` qaytarib, mijoz har element natijasini tekshirmasligi.",
+    "Bulk so'rovga hajm chegarasi qo'ymaslik.",
+    "Avtorizatsiyani faqat birinchi element yoki umumiy darajada tekshirish.",
+    "Natijalarni so'rovdagi elementlarga bog'lash uchun `index` yoki ID bermaslik."
+  ]
+});

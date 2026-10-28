@@ -1,0 +1,96 @@
+/* Chuqur dars: 17.11. Maydonlar: lesson (markdown), examples [{title, lang, code, note}], pitfalls [] */
+registerLesson("17.11", {
+  "lesson": [
+    "### G'oya",
+    "Optimistic locking: \"ziddiyat kam bo'ladi\" deb hisoblab, o'qishda hech narsani qulflamaslik va faqat **yozish paytida** ma'lumot o'qilganidan beri o'zgarmaganini tekshirish. O'zgargan bo'lsa, yozuv rad etiladi va konflikt boshqariladi.",
+    "",
+    "### Mexanizm",
+    "Jadvalga `version` (integer, default 0 yoki 1) ustuni qo'shiladi.",
+    "1. O'qish: `SELECT id, title, body, version FROM documents WHERE id = 7` → `version = 3`.",
+    "2. Foydalanuvchi formani tahrirlaydi (daqiqalar o'tishi mumkin). Versiya formada yashirin maydon sifatida saqlanadi.",
+    "3. Saqlash: `UPDATE documents SET title = ?, body = ?, version = version + 1 WHERE id = 7 AND version = 3`.",
+    "4. Ta'sirlangan qatorlar soni **1** — muvaffaqiyat. **0** — boshqa kimdir oldinroq saqlagan (versiya endi 4), ya'ni konflikt.",
+    "",
+    "Shart va o'zgartirish **bitta atomar `UPDATE`** da bo'lgani uchun race condition yo'q. Avval tekshirib, keyin alohida `UPDATE` qilish noto'g'ri.",
+    "",
+    "### Versiya sifatida nima",
+    "- **Integer `version`:** eng ishonchli.",
+    "- **`updated_at`:** qo'shimcha ustun shart emas, lekin soniya aniqligida bir soniyada ikki o'zgarish ziddiyatni yashiradi. Mikrosoniyali timestamp (`timestamp(6)`) bilan yaxshiroq.",
+    "- **Kontent hash'i:** kam ishlatiladi.",
+    "",
+    "### Afzalliklari",
+    "- Lock yo'q, kutish yo'q, deadlock yo'q.",
+    "- HTTP so'rovlar orasida ishlaydi. Pessimistic lock'ni foydalanuvchi formani to'ldirayotgan 10 daqiqa davomida ushlab bo'lmaydi.",
+    "- Yuqori parallellik, ziddiyat kam bo'lsa.",
+    "",
+    "### Kamchiliklari",
+    "- Ziddiyat ko'p bo'lsa (issiq qator), ko'p yozuv rad etiladi va qayta urinishlar yuki ortadi. Bunday joyda pessimistic yoki atomar UPDATE yaxshiroq.",
+    "- Konfliktni boshqarish UI talab qiladi.",
+    "",
+    "### Konfliktni boshqarish",
+    "- Foydalanuvchiga: \"Hujjatni boshqa foydalanuvchi o'zgartirdi\" va yangi versiyani ko'rsatish, kerak bo'lsa farqini (diff).",
+    "- Avtomatik qayta urinish: faqat o'zgarish mustaqil bo'lsa (qayta o'qib, qayta qo'llash mumkin bo'lsa).",
+    "- Birlashtirish: turli maydonlar o'zgargan bo'lsa.",
+    "",
+    "### API'da: ETag va If-Match",
+    "REST API'da versiya `ETag` header'ida qaytariladi. Mijoz yangilashda `If-Match: \"3\"` yuboradi. Server versiya mos kelmasa, **412 Precondition Failed** (yoki 409 Conflict) qaytaradi. Bu HTTP standartidagi optimistic concurrency."
+  ],
+  "examples": [
+    {
+      "title": "Forma bilan optimistic lock",
+      "lang": "php",
+      "code": [
+        "// Migratsiya",
+        "$table->unsignedInteger('version')->default(1);",
+        "",
+        "// Blade: <input type=\"hidden\" name=\"version\" value=\"{{ $document->version }}\">",
+        "",
+        "public function update(UpdateDocumentRequest $request, Document $document)",
+        "{",
+        "    $affected = Document::whereKey($document->id)",
+        "        ->where('version', $request->integer('version'))",
+        "        ->update([",
+        "            ...$request->safe()->only(['title', 'body']),",
+        "            'version' => DB::raw('version + 1'),",
+        "            'updated_at' => now(),",
+        "        ]);",
+        "",
+        "    abort_if($affected === 0, 409, 'Hujjat boshqa foydalanuvchi tomonidan o\\'zgartirilgan');",
+        "",
+        "    return redirect()->route('documents.show', $document);",
+        "}"
+      ]
+    },
+    {
+      "title": "API: ETag va If-Match",
+      "lang": "php",
+      "code": [
+        "public function show(Document $document)",
+        "{",
+        "    return DocumentResource::make($document)",
+        "        ->response()",
+        "        ->setEtag((string) $document->version);",
+        "}",
+        "",
+        "public function update(Request $request, Document $document)",
+        "{",
+        "    $expected = trim((string) $request->header('If-Match'), '\"');",
+        "    abort_if($expected === '', 428, 'If-Match header kerak');",
+        "",
+        "    $affected = Document::whereKey($document->id)->where('version', (int) $expected)",
+        "        ->update([...$request->only('title', 'body'), 'version' => DB::raw('version + 1')]);",
+        "",
+        "    abort_if($affected === 0, 412, 'Versiya mos kelmadi');",
+        "",
+        "    return DocumentResource::make($document->fresh());",
+        "}"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Versiyani avval `SELECT` bilan tekshirib, keyin alohida `UPDATE` qilish: oradagi vaqtda race condition.",
+    "Ta'sirlangan qatorlar sonini tekshirmaslik: konflikt jim o'tib ketadi.",
+    "Soniya aniqligidagi `updated_at` ni versiya qilish: bir soniyadagi ikki o'zgarish aniqlanmaydi.",
+    "Ziddiyat ko'p bo'lgan issiq qatorga optimistic lock qo'llash: ko'p rad etish va qayta urinishlar."
+  ]
+});
