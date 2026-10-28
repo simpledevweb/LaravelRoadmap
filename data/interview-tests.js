@@ -6,6 +6,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-1",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.4",
     "question": "PHP 8 da `var_dump(0 == 'admin');` kodi qanday natija qaytaradi va nega?",
     "options": [
       {
@@ -33,6 +35,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-2",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.17",
     "question": "Katta hajmdagi ma'lumotlarni o'qiyotganda PHP da 'yield' (Generator) qanday xotira tejamkorligini beradi?",
     "options": [
       {
@@ -60,6 +64,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-3",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.14",
     "question": "Late Static Binding mexanizmida 'self::' va 'static::' kalit so'zlari o'rtasidagi farq nima?",
     "options": [
       {
@@ -87,6 +93,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-4",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.22",
     "question": "PHP da 'WeakMap' strukturasi 'SplObjectStorage' dan qaysi muhim xususiyati bilan farq qiladi?",
     "options": [
       {
@@ -114,6 +122,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-5",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.36",
     "question": "PHP da Copy-on-Write (COW) mexanizmi massiv nusxalanganda qachon yangi xotira (RAM) ajratadi?",
     "options": [
       {
@@ -141,6 +151,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-6",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.26",
     "level": "senior",
     "question": "PHP 8.3 da kiritilgan `json_validate()` funksiyasining `json_decode()` dan foydalanib tekshirishga nisbatan asosiy xotira (memory) afzalligi nima?",
     "options": [
@@ -168,6 +180,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-7",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.16",
     "question": "PHP 8 da kiritilgan Attributes (#[CustomAttribute]) qaysi eski usulning o'rnini rasman egalladi?",
     "options": [
       {
@@ -195,6 +209,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-8",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.4",
     "question": "PHP da 'empty('0')' funksiyasi qanday natija qaytaradi?",
     "options": [
       {
@@ -222,6 +238,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-9",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.11",
     "level": "junior",
     "question": "PHP 8 da kiritilgan Constructor Property Promotion sintaksisi haqida qaysi fikr to'g'ri?",
     "options": [
@@ -249,6 +267,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-10",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.5",
     "level": "junior",
     "question": "PHP da `declare(strict_types=1);` direktivasi qanday ishlaydi va qayerga ta'sir qiladi?",
     "options": [
@@ -276,6 +296,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-11",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.32",
     "level": "middle",
     "question": "PHP 8.0 da kiritilgan `match` ifodasi `switch` operatoridan qaysi asosiy jihati bilan farq qiladi?",
     "options": [
@@ -303,6 +325,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-12",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.33",
     "level": "middle",
     "question": "PHP 8.1 da kiritilgan `readonly` xususiyatlari (properties) bo'yicha qaysi qoida to'g'ri?",
     "options": [
@@ -330,6 +354,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-13",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.7",
     "level": "middle",
     "question": "PHP 8.1 Enums (Backed Enums) haqida qaysi fikr to'g'ri?",
     "options": [
@@ -357,6 +383,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-14",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.40",
     "level": "senior",
     "question": "PHP 8.1 Fibers (Tolalar) mexanizmining asosiy vazifasi va xususiyati nimada?",
     "options": [
@@ -384,6 +412,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-15",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.32",
     "level": "junior",
     "question": "PHP da Nullsafe operatori (`?->`) qanday vazifani bajaradi?",
     "options": [
@@ -411,6 +441,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-16",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.8",
     "level": "senior",
     "question": "PHP da `Closure::bind` yoki `Closure::bindTo` metodlari qanday maqsadlarda ishlatiladi?",
     "options": [
@@ -438,6 +470,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-17",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.12",
     "level": "middle",
     "question": "PHP da `trait` larda metodlar nomlari to'qnashganda (conflict), qaysi kalit so'z orqali ziddiyat hal qilinadi?",
     "options": [
@@ -465,6 +499,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-18",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "solid-principles",
+    "subskillId": "4.3",
     "level": "senior",
     "question": "Liskov Substitution Principle (LSP) ga ko'ra, bola klass ota klass metodini override qilganda parametrlari va qaytarish tipi qanday bo'lishi kerak?",
     "options": [
@@ -492,6 +528,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-19",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.20",
     "level": "middle",
     "question": "PHP da `__invoke()` sehrli metodi (magic method) nima vazifa bajaradi?",
     "options": [
@@ -519,6 +557,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-20",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.23",
     "level": "senior",
     "question": "PHP Garbage Collector da 'Cyclic Reference' (aylanma bog'liqlik) muammosi qanday hal qilinadi?",
     "options": [
@@ -546,6 +586,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-21",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.13",
     "level": "junior",
     "question": "PHP da `final class` yoki `final` metod e'lon qilish nima uchun kerak?",
     "options": [
@@ -573,6 +615,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-22",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.19",
     "level": "middle",
     "question": "PHP da Anonymous Class (Anonim klass) haqida qaysi fikr to'g'ri?",
     "options": [
@@ -600,6 +644,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-23",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.17",
     "level": "middle",
     "question": "PHP da Generator funksiyada `yield from` qanday vazifani bajaradi?",
     "options": [
@@ -627,6 +673,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-24",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.6",
     "level": "senior",
     "question": "PHP 8.2 da kiritilgan DNF (Disjunctive Normal Form) tiplari nimani bildiradi?",
     "options": [
@@ -654,6 +702,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-25",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "object-oriented-programming-oop",
+    "subskillId": "3.6",
     "level": "junior",
     "question": "PHP da Abstract class va Interface o'rtasidagi asosiy farq nima?",
     "options": [
@@ -681,6 +731,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-26",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.20",
     "level": "middle",
     "question": "PHP da `clone` kalit so'zi ishlatilganda va klassda `__clone()` metodi yozilmaganda qanday klonlash sodir bo'ladi?",
     "options": [
@@ -708,6 +760,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-27",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.25",
     "level": "senior",
     "question": "PHP da Opcache va JIT (Just-In-Time) kompilyatori ishlash prinsipi bo'yicha qaysi ta'rif to'g'ri?",
     "options": [
@@ -735,6 +789,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-28",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.4",
     "level": "junior",
     "question": "PHP da `===` (identiklik) va `==` (tenglik) operatorlarining asosiy farqi nimada?",
     "options": [
@@ -762,6 +818,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-29",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.18",
     "level": "senior",
     "question": "PHP da Reflection API yordamida qaysi amalni bajarish mumkin?",
     "options": [
@@ -789,6 +847,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-30",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.9",
     "level": "middle",
     "question": "PHP da Arrow Functions (`fn($x) => $x * 2`) anonim funksiyalardan (`function($x) use (...)`) qaysi qulayligi bilan ajralib turadi?",
     "options": [
@@ -816,6 +876,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-31",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.15",
     "level": "middle",
     "question": "PHP da `try - catch - finally` blokida, agar `try` yoki `catch` ichida `return` bo'lsa, `finally` bloki bajariladimi?",
     "options": [
@@ -843,6 +905,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-32",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "design-patterns",
+    "subskillId": "5.4",
     "level": "senior",
     "question": "PHP da Singleton dizayn patternini to'liq xavfsiz (bulletproof) qilish uchun qaysi sehrli metodlarni yopish (private qilish yoki xato tashlash) lozim?",
     "options": [
@@ -870,6 +934,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-33",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.32",
     "level": "middle",
     "question": "PHP 8.0 da Named Arguments (Nomlangan argumentlar) xususiyati bo'yicha qaysi qoida to'g'ri?",
     "options": [
@@ -897,6 +963,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-34",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "design-patterns",
+    "subskillId": "5.8",
     "level": "senior",
     "question": "PHP da `SplSubject` va `SplObserver` interfeyslari orqali qaysi GoF dizayn patterni realizatsiya qilinadi?",
     "options": [
@@ -924,6 +992,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-35",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.20",
     "level": "middle",
     "question": "PHP da `__get()` va `__set()` sehrli metodlari qachon ishga tushadi?",
     "options": [
@@ -951,6 +1021,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-36",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "composer",
+    "subskillId": "7.6",
     "level": "senior",
     "question": "Composer PSR-4 avtoyuklash (autoloading) spetsifikatsiyasi bo'yicha qaysi qoida to'g'ri?",
     "options": [
@@ -978,6 +1050,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-37",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.4",
     "level": "junior",
     "question": "PHP da `in_array('0', [false, true])` ifodasi PHP 7 da va PHP 8 da qanday natija qaytaradi va nega?",
     "options": [
@@ -1005,6 +1079,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-38",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.33",
     "level": "senior",
     "question": "PHP 8.2 da kiritilgan `readonly class` butun klassga qo'llanilganda qanday cheklovlar vujudga keladi?",
     "options": [
@@ -1032,6 +1108,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-39",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "solid-principles",
+    "subskillId": "4.2",
     "level": "middle",
     "question": "PHP da Open/Closed Principle (OCP) ni buzmasdan yangi to'lov tizimlarini (Click, Payme, Uzum) qo'shishning eng to'g'ri OOP yondashuvi qaysi?",
     "options": [
@@ -1059,6 +1137,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-php-40",
     "category": "php",
     "categoryLabel": "PHP tili",
+    "skillSlug": "php",
+    "subskillId": "1.15",
     "level": "senior",
     "question": "PHP da `Throwable` interfeysi iyerarxiyasida `Error` va `Exception` o'rtasidagi asosiy konseptual farq nimada?",
     "options": [
@@ -1086,6 +1166,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-1",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "database-transactions",
+    "subskillId": "17.3",
     "level": "senior",
     "question": "Laravel da tranzaksiya ichida Job yuborilganda (`DB::transaction(...)`), nega `DB::afterCommit()` ishlatilmasa yoki Job klassiga `public $afterCommit = true;` berilmasa poyga holati (Race Condition) yuzaga kelishi mumkin?",
     "options": [
@@ -1114,6 +1196,7 @@ window.INTERVIEW_TESTS = [
     "category": "laravel",
     "categoryLabel": "Laravel asoslari",
     "skillSlug": "laravel",
+    "subskillId": "2.6",
     "question": "Laravel Service Container da 'bind()', 'singleton()' va 'scoped()' o'rtasidagi farq nima?",
     "options": [
       {
@@ -1142,6 +1225,7 @@ window.INTERVIEW_TESTS = [
     "category": "laravel",
     "categoryLabel": "Laravel asoslari",
     "skillSlug": "laravel",
+    "subskillId": "2.7",
     "question": "Service Provider da 'register()' metodi ichida boshqa xizmatlarning Event yoki DB chaqiruvlarini ishlatish nega xato hisoblanadi?",
     "options": [
       {
@@ -1170,6 +1254,7 @@ window.INTERVIEW_TESTS = [
     "category": "laravel",
     "categoryLabel": "Laravel asoslari",
     "skillSlug": "laravel",
+    "subskillId": "2.13",
     "question": "Laravel Form Request Lifecycle da ushbu metodlar qaysi to'g'ri ketma-ketlikda ishlaydi?",
     "options": [
       {
@@ -1198,6 +1283,7 @@ window.INTERVIEW_TESTS = [
     "category": "laravel",
     "categoryLabel": "Laravel asoslari",
     "skillSlug": "laravel",
+    "subskillId": "2.3",
     "question": "Scoped Route Model Binding nima vazifani bajaradi? ('Route::get('/users/{user}/posts/{post}')->scopeBindings()')",
     "options": [
       {
@@ -1226,6 +1312,7 @@ window.INTERVIEW_TESTS = [
     "category": "laravel",
     "categoryLabel": "Laravel asoslari",
     "skillSlug": "laravel",
+    "subskillId": "2.4",
     "question": "Laravel Middleware da '$response = $next($request);' dan KEYIN yozilgan kod qachon ishga tushadi?",
     "options": [
       {
@@ -1254,6 +1341,7 @@ window.INTERVIEW_TESTS = [
     "category": "laravel",
     "categoryLabel": "Laravel asoslari",
     "skillSlug": "laravel",
+    "subskillId": "2.2",
     "question": "Laravel 11 da Http Kernel, Console Kernel va RouteServiceProvider qayerga ko'chdi?",
     "options": [
       {
@@ -1282,6 +1370,7 @@ window.INTERVIEW_TESTS = [
     "category": "laravel",
     "categoryLabel": "Laravel asoslari",
     "skillSlug": "laravel",
+    "subskillId": "2.3",
     "question": "Laravelda 'Signed URLs' (URL::temporarySignedRoute) qanday xavfsizlik kafolatini beradi?",
     "options": [
       {
@@ -1310,6 +1399,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent ORM",
     "skillSlug": "eloquent-orm",
+    "subskillId": "13.11",
     "question": "Lazy Eager Loading da 'load()' va 'loadMissing()' metodlari o'rtasidagi muhim farq nima?",
     "options": [
       {
@@ -1338,6 +1428,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent ORM",
     "skillSlug": "eloquent-orm",
+    "subskillId": "13.10",
     "question": "Nima uchun production da polimorfik munosabatlar uchun har doim 'Relation::enforceMorphMap()' ishlatilishi shart?",
     "options": [
       {
@@ -1366,6 +1457,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent ORM",
     "skillSlug": "eloquent-orm",
+    "subskillId": "13.23",
     "question": "Katta hajmdagi ma'lumotlarni o'qiyotganda 'chunk()' va 'chunkById()' metodlari orasidagi eng katta xavfsizlik farqi nima?",
     "options": [
       {
@@ -1394,6 +1486,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent ORM",
     "skillSlug": "eloquent-orm",
+    "subskillId": "13.14",
     "question": "Eloquent 'withoutGlobalScope()' metodi qachon va nima maqsadda qo'llaniladi?",
     "options": [
       {
@@ -1422,6 +1515,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent ORM",
     "skillSlug": "eloquent-orm",
+    "subskillId": "13.5",
     "question": "Eloquent Custom Casts (CastsAttributes) interfeysi qanday ikkita metodni amalga oshirishni talab qiladi?",
     "options": [
       {
@@ -1450,6 +1544,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent ORM",
     "skillSlug": "eloquent-orm",
+    "subskillId": "13.17",
     "question": "Model Pruning ('implements Prunable') mexanizmi qanday vazifani bajaradi?",
     "options": [
       {
@@ -1478,6 +1573,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-indexing",
+    "subskillId": "55.4",
     "question": "MySQL da 'Covering Index' (Index-Only Scan) nima va nega u so'rovlarni 10-50 barobargacha tezlashtiradi?",
     "options": [
       {
@@ -1505,7 +1601,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-db-2",
     "category": "eloquent",
     "categoryLabel": "Eloquent & DB",
-    "skillSlug": "database-indexing",
+    "skillSlug": "query-optimization",
+    "subskillId": "16.6",
     "question": "Nima uchun 'SELECT * FROM users WHERE email LIKE '%@gmail.com';' so'rovida 'email' ustunidagi B-Tree indeksi ishlamaydi?",
     "options": [
       {
@@ -1534,6 +1631,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-transactions",
+    "subskillId": "17.10",
     "question": "Pessimistic Locking da 'SELECT ... FOR UPDATE' qanday ishlaydi?",
     "options": [
       {
@@ -1562,6 +1660,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-transactions",
+    "subskillId": "17.6",
     "question": "SQL tranzaksiyalarida 'Dirty Read' anomaliyasi nimani anglatadi?",
     "options": [
       {
@@ -1589,7 +1688,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-db-5",
     "category": "eloquent",
     "categoryLabel": "Eloquent & DB",
-    "skillSlug": "database-optimization",
+    "skillSlug": "database-indexing",
+    "subskillId": "55.11",
     "question": "Index Cardinality nima va past kardinallikka ega ustunlarga (masalan, gender, status) indeks qo'yish nega ko'pincha samarasiz?",
     "options": [
       {
@@ -1618,6 +1718,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent & DB",
     "skillSlug": "sql",
+    "subskillId": "9.5",
     "question": "SQL da 'WITH RECURSIVE' (Recursive CTE) qanday vazifa uchun eng qulay yechim hisoblanadi?",
     "options": [
       {
@@ -1645,7 +1746,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-db-7",
     "category": "eloquent",
     "categoryLabel": "Eloquent & DB",
-    "skillSlug": "database-design",
+    "skillSlug": "database-optimization",
+    "subskillId": "15.17",
     "question": "Database Sharding va Database Partitioning o'rtasidagi asosiy farq nima?",
     "options": [
       {
@@ -1674,6 +1776,7 @@ window.INTERVIEW_TESTS = [
     "category": "eloquent",
     "categoryLabel": "Eloquent & DB",
     "skillSlug": "database-optimization",
+    "subskillId": "15.15",
     "question": "MySQL Read/Write Splitting arxitekturasida 'sticky' ulanish sozlamasi nega kerak?",
     "options": [
       {
@@ -1702,6 +1805,7 @@ window.INTERVIEW_TESTS = [
     "category": "redis",
     "categoryLabel": "Redis va Kesh",
     "skillSlug": "redis",
+    "subskillId": "12.15",
     "question": "Redis 'volatile-lru' va 'allkeys-lru' eviction policy (xotirani bo'shatish siyosati) lari qanday farqlanadi?",
     "options": [
       {
@@ -1729,7 +1833,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-red-2",
     "category": "redis",
     "categoryLabel": "Redis va Kesh",
-    "skillSlug": "caching-strategies",
+    "skillSlug": "redis",
+    "subskillId": "12.4",
     "question": "Cache-Aside (Lazy Loading) kesh strategiyasining ishlash tartibi qanday?",
     "options": [
       {
@@ -1758,6 +1863,7 @@ window.INTERVIEW_TESTS = [
     "category": "redis",
     "categoryLabel": "Redis va Kesh",
     "skillSlug": "redis",
+    "subskillId": "12.2",
     "question": "Redis Streams va Redis Pub/Sub o'rtasidagi eng fundamental farq nima?",
     "options": [
       {
@@ -1785,7 +1891,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-red-4",
     "category": "redis",
     "categoryLabel": "Redis va Kesh",
-    "skillSlug": "caching-strategies",
+    "skillSlug": "redis",
+    "subskillId": "12.6",
     "question": "Kesh tizimlarida 'Cache Stampede' (yoki Dogpiling) muammosi qachon sodir bo'ladi?",
     "options": [
       {
@@ -1814,6 +1921,7 @@ window.INTERVIEW_TESTS = [
     "category": "redis",
     "categoryLabel": "Redis va Kesh",
     "skillSlug": "redis",
+    "subskillId": "12.9",
     "question": "Redis da murakkab amallarni atomik (Race condition siz) bajarish uchun qaysi dasturlash tili skriptlari ishlatiladi?",
     "options": [
       {
@@ -1842,6 +1950,7 @@ window.INTERVIEW_TESTS = [
     "category": "redis",
     "categoryLabel": "Redis va Kesh",
     "skillSlug": "caching-strategies",
+    "subskillId": "54.8",
     "question": "Nima uchun Laravel File yoki Database kesh drayverlarida 'Cache::tags(['users'])->flush()' ishlamaydi?",
     "options": [
       {
@@ -1869,6 +1978,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-async-1",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.15",
     "level": "middle",
     "question": "Laravel da `php artisan queue:work --queue=high,default,low` buyrug'i berilganda navbatlar qaysi tartibda va ustuvorlikda ishlanadi?",
     "options": [
@@ -1896,7 +2007,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-async-2",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
-    "skillSlug": "queues-and-background-jobs",
+    "skillSlug": "event-driven-architecture",
+    "subskillId": "48.17",
     "question": "RabbitMQ va Apache Kafka o'rtasidagi fundamental me'moriy farq nima?",
     "options": [
       {
@@ -1925,6 +2037,7 @@ window.INTERVIEW_TESTS = [
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
     "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.19",
     "question": "Navbat tizimlarida 'Poison Pill' (Zaharli xabar) nima va undan qanday himoyalanamiz?",
     "options": [
       {
@@ -1953,6 +2066,7 @@ window.INTERVIEW_TESTS = [
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
     "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.12",
     "question": "Laravelda 'ShouldBeUnique' va 'ShouldBeUniqueUntilProcessing' interfeyslarining nozik farqi nima?",
     "options": [
       {
@@ -1980,7 +2094,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-async-5",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
-    "skillSlug": "queues-and-background-jobs",
+    "skillSlug": "rabbitmq",
+    "subskillId": "49.5",
     "question": "RabbitMQ da 'Fanout Exchange' xabarni qanday qilib bir nechta navbatlarga yetkazadi?",
     "options": [
       {
@@ -2008,7 +2123,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-async-6",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
-    "skillSlug": "queues-and-background-jobs",
+    "skillSlug": "laravel-horizon",
+    "subskillId": "47.1",
     "question": "Laravel Horizon nima va u faqat qaysi navbat drayveri bilan ishlaydi?",
     "options": [
       {
@@ -2037,6 +2153,7 @@ window.INTERVIEW_TESTS = [
     "category": "security",
     "categoryLabel": "Xavfsizlik",
     "skillSlug": "web-application-security",
+    "subskillId": "51.7",
     "question": "CSRF (Cross-Site Request Forgery) hujumida 'SameSite=Lax' cookie atributi foydalanuvchini qanday himoya qiladi?",
     "options": [
       {
@@ -2065,6 +2182,7 @@ window.INTERVIEW_TESTS = [
     "category": "security",
     "categoryLabel": "Xavfsizlik",
     "skillSlug": "web-application-security",
+    "subskillId": "51.5",
     "question": "SQL Injection ga qarshi 'Prepared Statements' (PDO parametrli so'rovlar) nega 100% himoya beradi?",
     "options": [
       {
@@ -2092,6 +2210,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-sec-3",
     "category": "security",
     "categoryLabel": "Xavfsizlik",
+    "skillSlug": "web-application-security",
+    "subskillId": "51.14",
     "level": "middle",
     "question": "Veb-xavfsizlikda 'Session Fixation' hujumining oldini olish uchun foydalanuvchi tizimga muvaffaqiyatli kirganida (Login) nima uchun `request()->session()->regenerate()` chaqirilishi shart?",
     "options": [
@@ -2119,6 +2239,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-sec-4",
     "category": "security",
     "categoryLabel": "Xavfsizlik",
+    "skillSlug": "web-application-security",
+    "subskillId": "51.6",
     "level": "junior",
     "question": "Laravel Blade shablonlarida `{!! $userInput !!}` va `{{ $userInput }}` sintaksislari o'rtasidagi asosiy xavfsizlik farqi nima?",
     "options": [
@@ -2147,6 +2269,7 @@ window.INTERVIEW_TESTS = [
     "category": "security",
     "categoryLabel": "Xavfsizlik",
     "skillSlug": "web-application-security",
+    "subskillId": "51.18",
     "question": "Content Security Policy (CSP) sarlavhasi (Header) saytni qaysi jiddiy xavfdan himoyalaydi?",
     "options": [
       {
@@ -2175,6 +2298,7 @@ window.INTERVIEW_TESTS = [
     "category": "security",
     "categoryLabel": "Xavfsizlik",
     "skillSlug": "web-application-security",
+    "subskillId": "51.15",
     "question": "Parollarni saqlashda nega 'Argon2id' zamonaviy sanoat standarti hisoblanadi va u Bcrypt dan nimasi bilan ustun?",
     "options": [
       {
@@ -2203,6 +2327,7 @@ window.INTERVIEW_TESTS = [
     "category": "security",
     "categoryLabel": "Xavfsizlik",
     "skillSlug": "web-application-security",
+    "subskillId": "51.8",
     "question": "Server-Side Request Forgery (SSRF) hujumi qanday amalga oshiriladi?",
     "options": [
       {
@@ -2230,6 +2355,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-sec-8",
     "category": "security",
     "categoryLabel": "Xavfsizlik",
+    "skillSlug": "web-application-security",
+    "subskillId": "51.11",
     "level": "senior",
     "question": "Laravel da Mass Assignment zaifligini bartaraf etish va noxush xatolarni developmentdayoq aniqlash uchun `Model::shouldBeStrict()` metodi qaysi qat'iy tekshiruvlarni yoqadi?",
     "options": [
@@ -2257,7 +2384,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-test-1",
     "category": "testing",
     "categoryLabel": "Testlash",
-    "skillSlug": "unit-testing",
+    "skillSlug": "phpunit",
+    "subskillId": "25.6",
     "question": "Test Doubles tushunchasida 'Mock' va 'Stub' o'rtasidagi asosiy farq nima?",
     "options": [
       {
@@ -2285,7 +2413,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-test-2",
     "category": "testing",
     "categoryLabel": "Testlash",
-    "skillSlug": "feature-testing",
+    "skillSlug": "pest",
+    "subskillId": "26.8",
     "question": "Pest PHP da 'Architecture Testing' (arch()->expect(...)) qanday vazifani bajaradi?",
     "options": [
       {
@@ -2313,7 +2442,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-test-3",
     "category": "testing",
     "categoryLabel": "Testlash",
-    "skillSlug": "unit-testing",
+    "skillSlug": "automated-testing",
+    "subskillId": "74.16",
     "question": "Mutation Testing (Infection PHP) nima va nega 100% Code Coverage har doim ham testlar sifatli ekanligini anglatmaydi?",
     "options": [
       {
@@ -2341,7 +2471,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-test-4",
     "category": "testing",
     "categoryLabel": "Testlash",
-    "skillSlug": "feature-testing",
+    "skillSlug": "automated-testing",
+    "subskillId": "74.13",
     "question": "CI/CD jarayonida 'Flaky Tests' (Beqaror testlar) nima degani?",
     "options": [
       {
@@ -2369,7 +2500,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-test-5",
     "category": "testing",
     "categoryLabel": "Testlash",
-    "skillSlug": "unit-testing",
+    "skillSlug": "automated-testing",
+    "subskillId": "74.14",
     "question": "PHPUnit / Pest da minglab testlar yozilganda ularni tezlashtirishning eng samarali yo'li nima?",
     "options": [
       {
@@ -2397,7 +2529,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-test-6",
     "category": "testing",
     "categoryLabel": "Testlash",
-    "skillSlug": "feature-testing",
+    "skillSlug": "laravel",
+    "subskillId": "2.30",
     "question": "Laravelda 'Http::fake()' qanday ishlaydi?",
     "options": [
       {
@@ -2425,7 +2558,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-arch-1",
     "category": "architecture",
     "categoryLabel": "Arxitektura",
-    "skillSlug": "software-architecture",
+    "skillSlug": "domain-driven-design-ddd",
+    "subskillId": "63.4",
     "question": "Domain-Driven Design (DDD) da 'Entity' va 'Value Object' o'rtasidagi asosiy farq nima?",
     "options": [
       {
@@ -2453,7 +2587,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-arch-2",
     "category": "architecture",
     "categoryLabel": "Arxitektura",
-    "skillSlug": "software-architecture",
+    "skillSlug": "event-driven-architecture",
+    "subskillId": "48.12",
     "question": "Mikroservislar arxitekturasida 'Transactional Outbox Pattern' nima muammoni hal qiladi?",
     "options": [
       {
@@ -2481,7 +2616,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-arch-3",
     "category": "architecture",
     "categoryLabel": "Arxitektura",
-    "skillSlug": "software-architecture",
+    "skillSlug": "microservices",
+    "subskillId": "65.13",
     "question": "Taqsimlangan tizimlarda 'Circuit Breaker' patterni qanday vazifani bajaradi?",
     "options": [
       {
@@ -2509,7 +2645,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-arch-4",
     "category": "architecture",
     "categoryLabel": "Arxitektura",
-    "skillSlug": "software-architecture",
+    "skillSlug": "microservices",
+    "subskillId": "65.12",
     "question": "Taqsimlangan tranzaksiyalarda 'Saga Pattern' ning qaysi ikki asosiy turi mavjud?",
     "options": [
       {
@@ -2537,7 +2674,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-arch-5",
     "category": "architecture",
     "categoryLabel": "Arxitektura",
-    "skillSlug": "system-design",
+    "skillSlug": "high-availability",
+    "subskillId": "68.18",
     "question": "Taqsimlangan tizimlarda CAP teoremasiga ko'ra tarmoq uzilishi (Network Partition - P) yuz berganda qaysi ikki xususiyatdan birini tanlashga majburmiz?",
     "options": [
       {
@@ -2566,6 +2704,7 @@ window.INTERVIEW_TESTS = [
     "category": "architecture",
     "categoryLabel": "Arxitektura",
     "skillSlug": "software-architecture",
+    "subskillId": "61.1",
     "question": "CQRS (Command Query Responsibility Segregation) arxitekturasining tub mohiyati nima?",
     "options": [
       {
@@ -2593,7 +2732,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-arch-7",
     "category": "architecture",
     "categoryLabel": "Arxitektura",
-    "skillSlug": "software-architecture",
+    "skillSlug": "solid-principles",
+    "subskillId": "4.3",
     "question": "SOLID tamoyillarida 'Liskov Substitution Principle' (LSP) nimani talab qiladi?",
     "options": [
       {
@@ -2621,6 +2761,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-arch-8",
     "category": "architecture",
     "categoryLabel": "Arxitektura",
+    "skillSlug": "software-architecture",
+    "subskillId": "61.1",
     "level": "senior",
     "question": "Dasturiy arxitekturada 'Event Sourcing' yondashuvining an'anaviy CRUD (State-based) saqlashdan asosiy farqi nima?",
     "options": [
@@ -2649,6 +2791,7 @@ window.INTERVIEW_TESTS = [
     "category": "devops",
     "categoryLabel": "DevOps va Linux",
     "skillSlug": "docker",
+    "subskillId": "36.13",
     "question": "Docker da 'Multi-Stage Build' usuli production image hajmini qanday qilib 1GB dan 70MB gacha qisqartiradi?",
     "options": [
       {
@@ -2677,6 +2820,7 @@ window.INTERVIEW_TESTS = [
     "category": "devops",
     "categoryLabel": "DevOps va Linux",
     "skillSlug": "linux",
+    "subskillId": "38.6",
     "question": "Linux tizimida 'Graceful Shutdown' jarayonida PHP-FPM yoki Workerlarga dastlab qaysi signal yuboriladi?",
     "options": [
       {
@@ -2705,6 +2849,7 @@ window.INTERVIEW_TESTS = [
     "category": "devops",
     "categoryLabel": "DevOps va Linux",
     "skillSlug": "php-fpm",
+    "subskillId": "42.3",
     "question": "PHP-FPM da 'pm = static' va 'pm = dynamic' sozlamalari qachon qaysi biri tanlanadi?",
     "options": [
       {
@@ -2732,7 +2877,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-dev-4",
     "category": "devops",
     "categoryLabel": "DevOps va Linux",
-    "skillSlug": "nginx",
+    "skillSlug": "http-https",
+    "subskillId": "50.7",
     "question": "HTTP/2 va HTTP/3 protokollarining HTTP/1.1 dan eng katta ustunligi nimada?",
     "options": [
       {
@@ -2760,7 +2906,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-dev-5",
     "category": "devops",
     "categoryLabel": "DevOps va Linux",
-    "skillSlug": "cloud-computing",
+    "skillSlug": "high-availability",
+    "subskillId": "68.4",
     "question": "Kubernetes da 'Liveness Probe' va 'Readiness Probe' vazifalari qanday farqlanadi?",
     "options": [
       {
@@ -2789,6 +2936,7 @@ window.INTERVIEW_TESTS = [
     "category": "devops",
     "categoryLabel": "DevOps va Linux",
     "skillSlug": "ci-cd",
+    "subskillId": "43.13",
     "question": "Deploy jarayonida 'Blue-Green Deployment' ning asosiy afzalligi nima?",
     "options": [
       {
@@ -2816,6 +2964,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-1",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "rest-api",
+    "subskillId": "18.3",
     "level": "junior",
     "question": "REST API arxitekturasida qaysi HTTP metodlari 'Idempotent' hisoblanadi (ya'ni bir necha bor bir xil chaqirilganda ham server holati birinchi chaqiruvdagi kabi qoladi)?",
     "options": [
@@ -2843,6 +2993,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-2",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "rest-api",
+    "subskillId": "18.4",
     "level": "junior",
     "question": "REST API da `401 Unauthorized` va `403 Forbidden` HTTP status kodlari o'rtasidagi asosiy farq nima?",
     "options": [
@@ -2870,6 +3022,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-3",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "jwt",
+    "subskillId": "22.11",
     "level": "middle",
     "question": "Stateless JWT (JSON Web Token) autentifikatsiyasida foydalanuvchi tizimdan chiqqanda (Logout) yoki parolini o'zgartirganda eski tokenni zudlik bilan bekor qilishning (Invalidate) eng to'g'ri amaliyoti qaysi?",
     "options": [
@@ -2897,6 +3051,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-4",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "oauth-2-0",
+    "subskillId": "21.3",
     "level": "senior",
     "question": "OAuth 2.0 da SPA (Single Page Application, masalan Vue/React) yoki Mobil ilovalar uchun nima sababdan 'Authorization Code with PKCE' (Proof Key for Code Exchange) oqimi talab etiladi?",
     "options": [
@@ -2924,6 +3080,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-5",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "oauth-2-0",
+    "subskillId": "21.16",
     "level": "middle",
     "question": "Laravel da `Sanctum` va `Passport` paketlari o'rtasidagi asosiy me'moriy farq nima?",
     "options": [
@@ -2951,6 +3109,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-6",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "rest-api",
+    "subskillId": "18.14",
     "level": "middle",
     "question": "REST API da `Idempotency-Key` (Idempotentlik kaliti) sarlavhasi (header) qanday muammoni hal qiladi?",
     "options": [
@@ -2978,6 +3138,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-7",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "http-https",
+    "subskillId": "50.14",
     "level": "senior",
     "question": "Brauzerda CORS (Cross-Origin Resource Sharing) bo'yicha 'Preflight' (OPTIONS) so'rovi qachon avtomatik yuboriladi?",
     "options": [
@@ -3005,6 +3167,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-8",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "rest-api",
+    "subskillId": "18.15",
     "level": "middle",
     "question": "API Rate Limiting da `429 Too Many Requests` javobida qaysi HTTP sarlavhalari (headers) mijozga qachon qayta urinish mumkinligini ma'lum qiladi?",
     "options": [
@@ -3032,6 +3196,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-9",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "rest-api",
+    "subskillId": "18.12",
     "level": "senior",
     "question": "REST API versiyalashda (API Versioning) 'Header-based (Accept header) versioning' ning 'URI versioning (/api/v1)' ga nisbatan asosiy me'moriy afzalligi nima?",
     "options": [
@@ -3059,6 +3225,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-api-10",
     "category": "api",
     "categoryLabel": "REST API & Auth",
+    "skillSlug": "rest-api",
+    "subskillId": "18.3",
     "level": "junior",
     "question": "REST API da `PUT` va `PATCH` metodlari o'rtasidagi asosiy farq nima?",
     "options": [
@@ -3086,6 +3254,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-1",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.3",
     "level": "junior",
     "question": "Laravel da Job klassi asinxron tarzda navbatga (Queue) tushishi uchun qaysi interfeysni implement qilishi shart?",
     "options": [
@@ -3113,6 +3283,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-2",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.16",
     "level": "middle",
     "question": "Laravel da `php artisan queue:work` va `php artisan queue:listen` buyruqlari o'rtasidagi asosiy farq nimada?",
     "options": [
@@ -3140,6 +3312,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-3",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.7",
     "level": "senior",
     "question": "Laravel Queue da `timeout` (vazifaning maksimal bajarilish vaqti) va `retry_after` (qayta urinish oralig'i) konfiguratsiyasida qaysi nozik xato jobning ikki marta bajarilishiga (duplicate execution) olib keladi?",
     "options": [
@@ -3167,6 +3341,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-4",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.14",
     "level": "middle",
     "question": "Navbatdagi vazifalarda (Queues) 'Idempotent Job' tushunchasi nimani anglatadi va nega u muhim?",
     "options": [
@@ -3194,6 +3370,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-5",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.12",
     "level": "senior",
     "question": "Laravel da `ShouldBeUnique` interfeysi ishlatilganda bir vaqtning o'zida bir xil jobning bir nechta nusxasi navbatga tushishining oldi qanday olinadi?",
     "options": [
@@ -3221,6 +3399,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-6",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.9",
     "level": "middle",
     "question": "Laravel da bir nechta mustaqil Job larni parallel yuborib, ularning barchasi tugagach umumiy natijani kutish uchun qaysi mexanizm ishlatiladi?",
     "options": [
@@ -3248,6 +3428,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-7",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.1",
     "level": "junior",
     "question": "Laravel da `dispatchAfterResponse($job)` metodi oddiy `dispatch($job)` dan nimasi bilan farq qiladi?",
     "options": [
@@ -3275,6 +3457,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-8",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.17",
     "level": "senior",
     "question": "Queue workerlar xotira sizishi (Memory Leak) sababli vaqt o'tishi bilan server RAM xotirasini to'ldirib qo'ymasligi uchun qaysi parametrlar ishlatiladi?",
     "options": [
@@ -3302,6 +3486,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-9",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.6",
     "level": "middle",
     "question": "Laravel da Job klassi ichida `public $backoff = [30, 60, 120];` ko'rsatilishi nimani anglatadi?",
     "options": [
@@ -3329,6 +3515,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-queue-10",
     "category": "queue",
     "categoryLabel": "Navbatlar (Queue)",
+    "skillSlug": "queues-and-background-jobs",
+    "subskillId": "46.19",
     "level": "senior",
     "question": "Taqsimlangan navbat tizimlarida 'Dead Letter Queue' (DLQ) nima uchun zarur?",
     "options": [
@@ -3356,6 +3544,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-9",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.6",
     "level": "senior",
     "question": "Laravel Service Container da 'Contextual Binding' nima uchun ishlatiladi?",
     "options": [
@@ -3383,6 +3573,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-10",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.9",
     "level": "senior",
     "question": "Laravel da `Facade` larning ichki ishlash mexanizmi bo'yicha qaysi ta'rif to'liq to'g'ri?",
     "options": [
@@ -3410,6 +3602,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-11",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.27",
     "level": "middle",
     "question": "Laravel da `Macroable` trait qanday imkoniyat beradi?",
     "options": [
@@ -3437,6 +3631,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-12",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.4",
     "level": "senior",
     "question": "Laravel da `Terminable Middleware` ning `terminate($request, $response)` metodi qachon va qanday sharoitda bajariladi?",
     "options": [
@@ -3464,6 +3660,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-13",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.10",
     "level": "junior",
     "question": "Production serverda `php artisan config:cache` bajarilgach, kod ichida `env('SOME_KEY')` funksiyasini to'g'ridan-to'g'ri chaqirish nima uchun `null` qaytaradi?",
     "options": [
@@ -3491,6 +3689,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-14",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "caching-strategies",
+    "subskillId": "54.8",
     "level": "middle",
     "question": "Laravel da `Cache::tags(['users', 'reports'])->flush()` metodining asosiy afzalligi va cheklovi nima?",
     "options": [
@@ -3518,6 +3718,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-15",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.27",
     "level": "senior",
     "question": "Laravel da `Pipeline` dizayn patterni qaysi asosiy tizimlarning asosi hisoblanadi?",
     "options": [
@@ -3545,6 +3747,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-16",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.15",
     "level": "middle",
     "question": "Laravel Authorization tizimida `Policy` va `Gate` o'rtasidagi asosiy me'moriy farq nima?",
     "options": [
@@ -3572,6 +3776,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-17",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.3",
     "level": "junior",
     "question": "Laravel da `Route::fallback(...)` yo'nalishi nima vazifa bajaradi?",
     "options": [
@@ -3599,6 +3805,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-18",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.7",
     "level": "senior",
     "question": "Laravel Service Provider larda 'Deferred Provider' (Kechiktirilgan provayder) qanday ishlaydi va qanday afzallik beradi?",
     "options": [
@@ -3626,6 +3834,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-19",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.13",
     "level": "middle",
     "question": "Laravel Form Request ichida `prepareForValidation()` metodi nima uchun ishlatiladi?",
     "options": [
@@ -3653,6 +3863,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-20",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.3",
     "level": "junior",
     "question": "Laravel da `php artisan route:cache` bajarilganda qaysi turdagi yo'nalishlar xatolik keltirib chiqarishi mumkin?",
     "options": [
@@ -3680,6 +3892,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-21",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.20",
     "level": "senior",
     "question": "Laravel da `Event Discovery` (Hodisalarni avtomatik aniqlash) qanday ishlaydi?",
     "options": [
@@ -3707,6 +3921,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-22",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.21",
     "level": "middle",
     "question": "Laravel Notifications tizimida bildirishnomani bir vaqtning o'zida ham Email, ham SMS, ham Database ga yuborish qanday sozlanadi?",
     "options": [
@@ -3734,6 +3950,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-23",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "rest-api",
+    "subskillId": "18.15",
     "level": "senior",
     "question": "Laravel da `RateLimiter` fasadi orqali dinamik cheklov qo'yishda 'Token Bucket' algoritmi qanday qo'llaniladi?",
     "options": [
@@ -3761,6 +3979,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-24",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.22",
     "level": "middle",
     "question": "Laravel da `Storage::temporaryUrl($path, $expiration)` metodi nima uchun ishlatiladi?",
     "options": [
@@ -3788,6 +4008,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-25",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.18",
     "level": "junior",
     "question": "Laravel Artisan buyruqlarida argument va optsiyalarni (options) ajratish sintaksisi qaysi to'g'ri ko'rsatilgan?",
     "options": [
@@ -3815,6 +4037,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-26",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.15",
     "level": "middle",
     "question": "Laravel da `Gate::before(fn($user, $ability) => ...)` filtri nima maqsadda qo'llaniladi?",
     "options": [
@@ -3842,6 +4066,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-27",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.2",
     "level": "senior",
     "question": "Laravel 11 da ilovani sozlash (`bootstrap/app.php`) qanday o'zgardi?",
     "options": [
@@ -3869,6 +4095,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-28",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "eloquent-orm",
+    "subskillId": "13.5",
     "level": "middle",
     "question": "Laravel da `Custom Cast` (CastsAttributes interfeysi) klassi orqali qanday vazifa bajariladi?",
     "options": [
@@ -3896,6 +4124,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-29",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.29",
     "level": "senior",
     "question": "Laravel da Real-time Broadcasting (Reverb/Pusher) da `PresenceChannel` va `PrivateChannel` o'rtasidagi asosiy farq nima?",
     "options": [
@@ -3923,6 +4153,8 @@ window.INTERVIEW_TESTS = [
     "id": "t-lar-30",
     "category": "laravel",
     "categoryLabel": "Laravel Core",
+    "skillSlug": "laravel",
+    "subskillId": "2.18",
     "level": "junior",
     "question": "Laravel da `route:list` buyrug'i berilganda middleware larni ham ko'rish uchun qaysi parametr qo'shiladi?",
     "options": [
@@ -3945,5 +4177,1252 @@ window.INTERVIEW_TESTS = [
     ],
     "correct": "D",
     "explanation": "php artisan route:list buyrug'iga -v yoki -vv qo'shilsa, har bir yo'nalishga qaysi middleware lar (auth, throttle, custom middleware) biriktirilgani aniq ro'yxatda ko'rsatiladi."
+  },
+  {
+    "id": "t-cmp-1",
+    "category": "composer",
+    "categoryLabel": "Composer",
+    "skillSlug": "composer",
+    "subskillId": "7.2",
+    "question": "Production serverga deploy qilishda qaysi buyruq to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "composer update --no-dev"
+      },
+      {
+        "key": "B",
+        "text": "composer install --no-dev --optimize-autoloader"
+      },
+      {
+        "key": "C",
+        "text": "composer require --no-dev"
+      },
+      {
+        "key": "D",
+        "text": "composer dump-autoload --dev"
+      }
+    ],
+    "correct": "B",
+    "explanation": "`composer install` `composer.lock` dagi aniq versiyalarni o'rnatadi va build takrorlanadigan bo'ladi. `update` esa versiyalarni qayta hal qilib, lock faylni o'zgartiradi: production'da noma'lum kod paydo bo'ladi.",
+    "level": "junior"
+  },
+  {
+    "id": "t-cmp-2",
+    "category": "composer",
+    "categoryLabel": "Composer",
+    "skillSlug": "composer",
+    "subskillId": "7.5",
+    "question": "`\"vendor/pkg\": \"^0.3.1\"` cheklovi qaysi versiyalarga ruxsat beradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": ">=0.3.1 <1.0.0"
+      },
+      {
+        "key": "B",
+        "text": ">=0.3.1 <0.3.2"
+      },
+      {
+        "key": "C",
+        "text": ">=0.3.1 <0.4.0"
+      },
+      {
+        "key": "D",
+        "text": "faqat 0.3.1"
+      }
+    ],
+    "correct": "C",
+    "explanation": "0.x versiyalarda `^` minor raqamni qotiradi, chunki SemVer bo'yicha 0.x da minor yangilanish ham buzuvchi bo'lishi mumkin. Natija: `>=0.3.1 <0.4.0`.",
+    "level": "middle"
+  },
+  {
+    "id": "t-cmp-3",
+    "category": "composer",
+    "categoryLabel": "Composer",
+    "skillSlug": "composer",
+    "subskillId": "7.13",
+    "question": "Composer bog'liqliklaridagi ma'lum xavfsizlik zaifliklarini CI'da aniqlash uchun eng to'g'ri vosita qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`composer validate`"
+      },
+      {
+        "key": "B",
+        "text": "`composer outdated`"
+      },
+      {
+        "key": "C",
+        "text": "`composer diagnose`"
+      },
+      {
+        "key": "D",
+        "text": "`composer audit`"
+      }
+    ],
+    "correct": "D",
+    "explanation": "`composer audit` (Composer 2.4+) o'rnatilgan paketlarni xavfsizlik advisory bazalari bilan solishtiradi va zaiflik topilsa, nolmas exit kod qaytaradi, shuning uchun CI'ni to'xtatadi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-git-1",
+    "category": "git",
+    "categoryLabel": "Git",
+    "skillSlug": "git",
+    "subskillId": "33.8",
+    "question": "Boshqa dasturchilar ham ishlatayotgan main branch'dagi push qilingan commit'ni bekor qilishning xavfsiz usuli qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`git revert <sha>`"
+      },
+      {
+        "key": "B",
+        "text": "`git reset --hard <sha>` va `git push --force`"
+      },
+      {
+        "key": "C",
+        "text": "`git checkout <sha>`"
+      },
+      {
+        "key": "D",
+        "text": "`git commit --amend`"
+      }
+    ],
+    "correct": "A",
+    "explanation": "`revert` teskari o'zgarishli yangi commit yaratadi va tarixni saqlaydi. `reset` + force push umumiy tarixni qayta yozadi va hamkasblarning ishini buzadi.",
+    "level": "junior"
+  },
+  {
+    "id": "t-git-2",
+    "category": "git",
+    "categoryLabel": "Git",
+    "skillSlug": "git",
+    "subskillId": "33.6",
+    "question": "Rebase haqidagi qaysi fikr to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Rebase commit hash'larini o'zgartirmaydi"
+      },
+      {
+        "key": "B",
+        "text": "Rebase commit'larni qayta yozadi, shuning uchun umumiy branch'larni rebase qilmaslik kerak"
+      },
+      {
+        "key": "C",
+        "text": "Rebase faqat merge commit yaratadi"
+      },
+      {
+        "key": "D",
+        "text": "Rebase ziddiyatlarni avtomatik hal qiladi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Rebase commit'larni yangi asos ustiga qayta yaratadi va ular yangi hash oladi. Boshqalar eski commit'larga tayangan bo'lsa, tarix ajralib ketadi. Shaxsiy branch'lar uchun xavfsiz.",
+    "level": "middle"
+  },
+  {
+    "id": "t-git-3",
+    "category": "git",
+    "categoryLabel": "Git",
+    "skillSlug": "git",
+    "subskillId": "33.16",
+    "question": "200 ta commit ichidan regressiyani keltirib chiqargan commit'ni avtomatik topish uchun qaysi buyruq ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`git log --grep`"
+      },
+      {
+        "key": "B",
+        "text": "`git blame`"
+      },
+      {
+        "key": "C",
+        "text": "`git bisect run <test-skript>`"
+      },
+      {
+        "key": "D",
+        "text": "`git reflog`"
+      }
+    ],
+    "correct": "C",
+    "explanation": "`git bisect` binar qidiruv bilan ~8 qadamda topadi. `run` bilan test skripti exit kodiga qarab (0 good, 1–127 bad, 125 skip) jarayon avtomatik bajariladi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-git-4",
+    "category": "git",
+    "categoryLabel": "Git",
+    "skillSlug": "git",
+    "subskillId": "33.17",
+    "question": "`git reset --hard` bilan tasodifan yo'qotilgan commit'larni qanday tiklash mumkin?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Iloji yo'q, ular butunlay o'chadi"
+      },
+      {
+        "key": "B",
+        "text": "`git stash pop`"
+      },
+      {
+        "key": "C",
+        "text": "`git fsck --full` faqat masofaviy repo uchun"
+      },
+      {
+        "key": "D",
+        "text": "`git reflog` dan eski HEAD holatini topib, `git reset --hard <sha>`"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Reflog HEAD va branch'larning barcha harakatlarini (default 90 kun) saqlaydi. Commit'lar garbage collection'gacha obyekt sifatida mavjud, ularni reflog orqali qaytarish mumkin.",
+    "level": "middle"
+  },
+  {
+    "id": "t-gl-1",
+    "category": "gitlab",
+    "categoryLabel": "GitLab",
+    "skillSlug": "gitlab-ci-cd",
+    "subskillId": "44.6",
+    "question": "GitLab CI'da `vendor/` papkasini pipeline'lar orasida qayta ishlatish uchun nima ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`cache` (kalit `composer.lock` bo'yicha)"
+      },
+      {
+        "key": "B",
+        "text": "`artifacts` (doimiy)"
+      },
+      {
+        "key": "C",
+        "text": "`services`"
+      },
+      {
+        "key": "D",
+        "text": "`dependencies: []`"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Cache tezlashtirish uchun va bo'lmasligi ham mumkin. Artifacts esa job natijalarini keyingi bosqichlarga kafolatli uzatadi. `vendor/` odatda cache'da saqlanadi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-gl-2",
+    "category": "gitlab",
+    "categoryLabel": "GitLab",
+    "skillSlug": "gitlab-ci-cd",
+    "subskillId": "44.13",
+    "question": "\"Protected\" deb belgilangan GitLab CI o'zgaruvchisi qaysi pipeline'larda mavjud?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Barcha branch'lardagi pipeline'larda"
+      },
+      {
+        "key": "B",
+        "text": "Faqat masked bo'lsa"
+      },
+      {
+        "key": "C",
+        "text": "Faqat protected branch va tag'lardagi pipeline'larda"
+      },
+      {
+        "key": "D",
+        "text": "Faqat manual job'larda"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Protected o'zgaruvchilar feature branch'larda ishlamaydi, shuning uchun u yerda `.gitlab-ci.yml` ni o'zgartirib production sirini o'qib bo'lmaydi. Masked faqat log'da yashiradi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-gl-3",
+    "category": "gitlab",
+    "categoryLabel": "GitLab",
+    "skillSlug": "gitlab-ci-cd",
+    "subskillId": "44.4",
+    "question": "Job faqat merge request pipeline'ida ishlashi uchun qaysi `rules` sharti to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`if: $CI_COMMIT_BRANCH == \"main\"`"
+      },
+      {
+        "key": "B",
+        "text": "`if: $CI_PIPELINE_SOURCE == \"merge_request_event\"`"
+      },
+      {
+        "key": "C",
+        "text": "`when: manual`"
+      },
+      {
+        "key": "D",
+        "text": "`only: [tags]`"
+      }
+    ],
+    "correct": "B",
+    "explanation": "`CI_PIPELINE_SOURCE` pipeline qanday hodisadan boshlanganini bildiradi. MR pipeline'lari uchun qiymat `merge_request_event`.",
+    "level": "middle"
+  },
+  {
+    "id": "t-gha-1",
+    "category": "github-actions",
+    "categoryLabel": "GitHub",
+    "skillSlug": "github-actions",
+    "subskillId": "45.3",
+    "question": "GitHub Actions workflow'idagi job'lar default'da qanday bajariladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faylda yozilgan tartibda ketma-ket"
+      },
+      {
+        "key": "B",
+        "text": "Bitta runner'da birga"
+      },
+      {
+        "key": "C",
+        "text": "Faqat qo'lda ishga tushirilganda"
+      },
+      {
+        "key": "D",
+        "text": "Parallel, `needs:` bilan bog'liqlik berilmasa"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Job'lar default'da parallel ishlaydi va har biri alohida runner'da. Ketma-ketlik `needs: [build]` kabi bog'liqlik bilan beriladi.",
+    "level": "junior"
+  },
+  {
+    "id": "t-gha-2",
+    "category": "github-actions",
+    "categoryLabel": "GitHub",
+    "skillSlug": "github-actions",
+    "subskillId": "45.15",
+    "question": "Uchinchi tomon action'ini supply chain hujumidan himoyalangan holda ishlatishning eng ishonchli usuli qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "To'liq commit SHA bo'yicha pinlash: `uses: org/action@<40 belgili sha>`"
+      },
+      {
+        "key": "B",
+        "text": "`@main` branch bo'yicha"
+      },
+      {
+        "key": "C",
+        "text": "`@v1` major tag bo'yicha"
+      },
+      {
+        "key": "D",
+        "text": "`@latest`"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Tag va branch'lar o'zgaruvchan: ular zararli commit'ga ko'chirilishi mumkin. Commit SHA o'zgarmas. Dependabot pinlangan SHA'larni xavfsiz yangilab turadi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-gha-3",
+    "category": "github-actions",
+    "categoryLabel": "GitHub",
+    "skillSlug": "github-actions",
+    "subskillId": "45.14",
+    "question": "GitHub Actions'dan AWS'ga OIDC orqali kirish uchun workflow'da qaysi ruxsat kerak?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`permissions: contents: write`"
+      },
+      {
+        "key": "B",
+        "text": "`permissions: actions: write`"
+      },
+      {
+        "key": "C",
+        "text": "`permissions: id-token: write`"
+      },
+      {
+        "key": "D",
+        "text": "`permissions: packages: read`"
+      }
+    ],
+    "correct": "C",
+    "explanation": "`id-token: write` job'ga GitHub OIDC token so'rash imkonini beradi. AWS STS uni tekshirib, IAM rol trust policy'siga mos bo'lsa, vaqtinchalik credentials beradi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-gha-4",
+    "category": "github-actions",
+    "categoryLabel": "GitHub",
+    "skillSlug": "github-actions",
+    "subskillId": "45.6",
+    "question": "Matrix build'da `fail-fast: false` nima qiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Birinchi xatoda butun workflow'ni to'xtatadi"
+      },
+      {
+        "key": "B",
+        "text": "Bitta kombinatsiya yiqilsa ham, qolgan kombinatsiyalar ishlashda davom etadi"
+      },
+      {
+        "key": "C",
+        "text": "Yiqilgan job'larni avtomatik qayta ishga tushiradi"
+      },
+      {
+        "key": "D",
+        "text": "Matrix'ni ketma-ket bajaradi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Default `fail-fast: true` bitta yiqilishda qolgan matrix job'larini bekor qiladi. `false` bilan barcha kombinatsiyalar natijasini ko'rish mumkin.",
+    "level": "middle"
+  },
+  {
+    "id": "t-dock-1",
+    "category": "docker",
+    "categoryLabel": "Docker",
+    "skillSlug": "docker-compose",
+    "subskillId": "37.8",
+    "question": "Compose'da Laravel konteyneri MySQL haqiqatan tayyor bo'lgandan keyin ishga tushishi uchun nima kerak?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Faqat `depends_on: [mysql]`"
+      },
+      {
+        "key": "B",
+        "text": "`restart: always`"
+      },
+      {
+        "key": "C",
+        "text": "`links: [mysql]`"
+      },
+      {
+        "key": "D",
+        "text": "MySQL'ga `healthcheck` va `depends_on: mysql: condition: service_healthy`"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Oddiy `depends_on` faqat konteyner ishga tushishini kutadi, servis tayyorligini emas. Healthcheck bilan `service_healthy` sharti MySQL ulanish qabul qilguncha kutadi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-dock-2",
+    "category": "docker",
+    "categoryLabel": "Docker",
+    "skillSlug": "docker",
+    "subskillId": "36.4",
+    "question": "Laravel Dockerfile'ida `composer install` ni har kod o'zgarishida qayta bajarmaslik uchun to'g'ri tartib qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Avval `COPY composer.json composer.lock ./` va `composer install`, keyin `COPY . .`"
+      },
+      {
+        "key": "B",
+        "text": "Avval `COPY . .`, keyin `composer install`"
+      },
+      {
+        "key": "C",
+        "text": "`composer install` ni `CMD` ichida"
+      },
+      {
+        "key": "D",
+        "text": "`RUN composer update` har build'da"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Docker layer keshi: bog'liqlik fayllari o'zgarmasa, `composer install` qatlami keshdan olinadi. Kod avval nusxalansa, har o'zgarish keshni buzadi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-dock-3",
+    "category": "docker",
+    "categoryLabel": "Docker",
+    "skillSlug": "docker",
+    "subskillId": "36.15",
+    "question": "Production PHP konteynerini root foydalanuvchi ostida ishga tushirish nega xavfli?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Root'da PHP sekinroq ishlaydi"
+      },
+      {
+        "key": "B",
+        "text": "Root'da OPcache ishlamaydi"
+      },
+      {
+        "key": "C",
+        "text": "Ilovadagi zaiflik orqali egallangan jarayon konteyner ichida to'liq huquqqa ega bo'ladi va konteynerdan chiqish xavfi oshadi"
+      },
+      {
+        "key": "D",
+        "text": "Docker root konteynerlarni ishga tushirmaydi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Eng kam huquq tamoyili: `USER www-data` (yoki maxsus UID) bilan, RCE bo'lsa ham hujumchi huquqlari cheklangan. Kernel zaifliklari bilan konteynerdan chiqish root'da osonroq.",
+    "level": "senior"
+  },
+  {
+    "id": "t-ngx-1",
+    "category": "nginx",
+    "categoryLabel": "Nginx",
+    "skillSlug": "nginx",
+    "subskillId": "41.21",
+    "question": "Nginx error.log'da `upstream timed out (110: Connection timed out) while reading response header from upstream` ko'rindi. Foydalanuvchi qaysi xatoni ko'radi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "502 Bad Gateway"
+      },
+      {
+        "key": "B",
+        "text": "504 Gateway Timeout"
+      },
+      {
+        "key": "C",
+        "text": "500 Internal Server Error"
+      },
+      {
+        "key": "D",
+        "text": "503 Service Unavailable"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Upstream (PHP-FPM) javob bermoqda edi, lekin `fastcgi_read_timeout` ichida tugatmadi — bu 504. 502 esa upstream'ga ulanib bo'lmaganda yoki u yaroqsiz javob berganda.",
+    "level": "senior"
+  },
+  {
+    "id": "t-ngx-2",
+    "category": "nginx",
+    "categoryLabel": "Nginx",
+    "skillSlug": "nginx",
+    "subskillId": "41.20",
+    "question": "Nginx konfiguratsiyasini o'zgartirgandan keyin ulanishlarni uzmasdan qo'llashning to'g'ri tartibi qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`systemctl restart nginx`"
+      },
+      {
+        "key": "B",
+        "text": "`kill -9` barcha worker'larga"
+      },
+      {
+        "key": "C",
+        "text": "`nginx -t`, keyin `systemctl reload nginx`"
+      },
+      {
+        "key": "D",
+        "text": "Serverni qayta yuklash"
+      }
+    ],
+    "correct": "C",
+    "explanation": "`nginx -t` sintaksisni tekshiradi (xato bo'lsa, reload qilinmaydi). `reload` (SIGHUP) yangi worker'larni ishga tushiradi, eskilari joriy so'rovlarni tugatib chiqadi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-fpm-1",
+    "category": "php-fpm",
+    "categoryLabel": "PHP-FPM",
+    "skillSlug": "php-fpm",
+    "subskillId": "42.4",
+    "question": "Server'da FPM uchun 4 GB RAM ajratilgan, bitta worker o'rtacha 80 MB ishlatadi. `pm.max_children` uchun eng mantiqiy qiymat qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "~45–50"
+      },
+      {
+        "key": "B",
+        "text": "~500"
+      },
+      {
+        "key": "C",
+        "text": "~4"
+      },
+      {
+        "key": "D",
+        "text": "Cheklov qo'ymaslik kerak"
+      }
+    ],
+    "correct": "A",
+    "explanation": "4096 / 80 ≈ 51. Zaxira bilan 45–50. Juda katta qiymat OOM va swap'ga, juda kichik qiymat esa navbat va 502 xatolariga olib keladi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-fpm-2",
+    "category": "php-fpm",
+    "categoryLabel": "PHP-FPM",
+    "skillSlug": "php-fpm",
+    "subskillId": "42.15",
+    "question": "`opcache.validate_timestamps=0` bo'lgan production'da deploy'dan keyin eski kod ishlayapti. Eng ishonchli yechim qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "CLI'da `php -r 'opcache_reset();'`"
+      },
+      {
+        "key": "B",
+        "text": "`php artisan cache:clear`"
+      },
+      {
+        "key": "C",
+        "text": "`composer dump-autoload`"
+      },
+      {
+        "key": "D",
+        "text": "`systemctl reload php8.3-fpm`"
+      }
+    ],
+    "correct": "D",
+    "explanation": "OPcache har SAPI uchun alohida: CLI'dagi `opcache_reset()` FPM keshiga ta'sir qilmaydi. FPM'ni graceful reload qilish yangi bytecode'ni yuklaydi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-fpm-3",
+    "category": "php-fpm",
+    "categoryLabel": "PHP-FPM",
+    "skillSlug": "php-fpm",
+    "subskillId": "42.11",
+    "question": "Nginx va PHP-FPM turli Docker konteynerlarida bo'lsa, ular odatda qanday ulanadi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Unix socket orqali, alohida volume'siz"
+      },
+      {
+        "key": "B",
+        "text": "TCP orqali (`fastcgi_pass php-fpm:9000`)"
+      },
+      {
+        "key": "C",
+        "text": "HTTP orqali (`proxy_pass`)"
+      },
+      {
+        "key": "D",
+        "text": "Ulanib bo'lmaydi"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Turli konteynerlar alohida fayl tizimiga ega, shuning uchun Unix socket umumiy volume'siz ishlamaydi. Odatiy yo'l — ichki tarmoqda TCP, port tashqariga ochilmaydi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-lnx-1",
+    "category": "linux",
+    "categoryLabel": "Linux",
+    "skillSlug": "linux",
+    "subskillId": "38.6",
+    "question": "Supervisor queue worker'ni to'xtatganda `stopwaitsecs` eng uzun job'dan qisqa bo'lsa nima bo'ladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Job avtomatik keyingi worker'ga o'tadi"
+      },
+      {
+        "key": "B",
+        "text": "Worker SIGTERM'ni e'tiborsiz qoldiradi"
+      },
+      {
+        "key": "C",
+        "text": "Supervisor kutishni cheksiz uzaytiradi"
+      },
+      {
+        "key": "D",
+        "text": "Supervisor kutib, keyin SIGKILL yuboradi va joriy job yarmida uziladi"
+      }
+    ],
+    "correct": "D",
+    "explanation": "SIGTERM'dan keyin worker joriy job'ni tugatishga urinadi. `stopwaitsecs` tugasa, Supervisor SIGKILL yuboradi va jarayon tozalashsiz o'ldiriladi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-lnx-2",
+    "category": "linux",
+    "categoryLabel": "Linux",
+    "skillSlug": "linux",
+    "subskillId": "38.12",
+    "question": "`df -h` diskda joy borligini ko'rsatadi, lekin fayl yaratib bo'lmayapti (`No space left on device`). Ehtimoliy sabab nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Inode'lar tugagan (`df -i` bilan tekshiriladi)"
+      },
+      {
+        "key": "B",
+        "text": "RAM to'lgan"
+      },
+      {
+        "key": "C",
+        "text": "CPU yuklangan"
+      },
+      {
+        "key": "D",
+        "text": "Swap o'chirilgan"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Har fayl bitta inode egallaydi. Millionlab mayda fayllar (session, kesh) inode'larni tugatadi, disk hajmi esa bo'sh ko'rinadi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-lnx-3",
+    "category": "linux",
+    "categoryLabel": "Linux",
+    "skillSlug": "bash",
+    "subskillId": "40.16",
+    "question": "Bash skriptida `set -o pipefail` nima qiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Pipeline'ni parallel ishga tushiradi"
+      },
+      {
+        "key": "B",
+        "text": "Barcha xatolarni e'tiborsiz qoldiradi"
+      },
+      {
+        "key": "C",
+        "text": "Pipeline'dagi istalgan buyruq yiqilsa, butun pipeline yiqilgan hisoblanadi"
+      },
+      {
+        "key": "D",
+        "text": "Faqat birinchi buyruq kodini qaytaradi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Usiz pipeline exit kodi faqat oxirgi buyruqniki: `curl ... | jq ...` da `curl` yiqilsa ham, skript muvaffaqiyat deb davom etadi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-pest-1",
+    "category": "pest",
+    "categoryLabel": "Pest",
+    "skillSlug": "pest",
+    "subskillId": "26.4",
+    "question": "Pest'da bitta testni bir nechta ma'lumot to'plami bilan ishga tushirish uchun nima ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`->repeat()`"
+      },
+      {
+        "key": "B",
+        "text": "`->with([...])` yoki `dataset()`"
+      },
+      {
+        "key": "C",
+        "text": "`->group()`"
+      },
+      {
+        "key": "D",
+        "text": "`->skip()`"
+      }
+    ],
+    "correct": "B",
+    "explanation": "`with()` va nomlangan `dataset()` PHPUnit data provider'larining Pest'dagi qisqa ekvivalenti. Har to'plam alohida test sifatida ko'rsatiladi.",
+    "level": "junior"
+  },
+  {
+    "id": "t-pest-2",
+    "category": "pest",
+    "categoryLabel": "Pest",
+    "skillSlug": "pest",
+    "subskillId": "26.3",
+    "question": "Pest'da `expect($value)->toBe(10)` qaysi PHPUnit assertion'iga mos keladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`assertEquals`"
+      },
+      {
+        "key": "B",
+        "text": "`assertTrue`"
+      },
+      {
+        "key": "C",
+        "text": "`assertContains`"
+      },
+      {
+        "key": "D",
+        "text": "`assertSame` (qat'iy `===`)"
+      }
+    ],
+    "correct": "D",
+    "explanation": "`toBe` qat'iy tenglikni tekshiradi (tur va qiymat). Bo'shroq taqqoslash uchun `toEqual`.",
+    "level": "junior"
+  },
+  {
+    "id": "t-pest-3",
+    "category": "pest",
+    "categoryLabel": "Pest",
+    "skillSlug": "pest",
+    "subskillId": "26.13",
+    "question": "Laravel'da Pest testlarini parallel ishga tushirganda har jarayon qaysi muammoni oldini olish uchun alohida test bazasini oladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Testlar bir-birining DB ma'lumotlarini o'zgartirib yuborishi (izolyatsiya buzilishi)"
+      },
+      {
+        "key": "B",
+        "text": "Pest parallel rejimda DB'ni qo'llamaydi"
+      },
+      {
+        "key": "C",
+        "text": "Migratsiyalar tezroq ishlashi uchun"
+      },
+      {
+        "key": "D",
+        "text": "Coverage hisobotini birlashtirish uchun"
+      }
+    ],
+    "correct": "A",
+    "explanation": "`--parallel` bilan Laravel `app_test_1`, `app_test_2` kabi bazalar yaratadi. Aks holda parallel testlar bir xil jadvallarda to'qnashadi va tasodifiy yiqiladi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-stan-1",
+    "category": "phpstan",
+    "categoryLabel": "PHPStan",
+    "skillSlug": "phpstan",
+    "subskillId": "31.9",
+    "question": "Legacy loyihada PHPStan baseline'i nima uchun ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Barcha xatolarni abadiy o'chirish uchun"
+      },
+      {
+        "key": "B",
+        "text": "PHPStan darajasini avtomatik oshirish uchun"
+      },
+      {
+        "key": "C",
+        "text": "Mavjud xatolarni vaqtincha qayd etib, faqat yangi koddagi xatolar CI'ni yiqitishi uchun"
+      },
+      {
+        "key": "D",
+        "text": "Faqat vendor papkasini tahlil qilish uchun"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Baseline \"texnik qarzni muzlatadi\": eski xatolar e'tiborsiz, yangilari esa bloklanadi. Keyin baseline bosqichma-bosqich kamaytiriladi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-stan-2",
+    "category": "phpstan",
+    "categoryLabel": "PHPStan",
+    "skillSlug": "larastan",
+    "subskillId": "32.4",
+    "question": "Larastan'da `$user->posts` turini aniq ko'rsatish uchun munosabat metodiga qanday PHPDoc yoziladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`/** @var Post[] */`"
+      },
+      {
+        "key": "B",
+        "text": "`/** @return HasMany<Post, $this> */`"
+      },
+      {
+        "key": "C",
+        "text": "`/** @property Post $posts */`"
+      },
+      {
+        "key": "D",
+        "text": "`/** @mixin Post */`"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Generics bilan Larastan `posts()` builder'ini va `$user->posts` ni `Collection<int, Post>` sifatida tushunadi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-stan-3",
+    "category": "phpstan",
+    "categoryLabel": "PHPStan",
+    "skillSlug": "phpstan",
+    "subskillId": "31.2",
+    "question": "PHPStan darajalari (level) haqida qaysi fikr to'g'ri?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Daraja qancha yuqori bo'lsa, tekshiruvlar shuncha qat'iy"
+      },
+      {
+        "key": "B",
+        "text": "0-daraja eng qat'iy"
+      },
+      {
+        "key": "C",
+        "text": "Daraja faqat tezlikka ta'sir qiladi"
+      },
+      {
+        "key": "D",
+        "text": "Barcha darajalar bir xil qoidalarni tekshiradi"
+      }
+    ],
+    "correct": "A",
+    "explanation": "0 — eng yumshoq (asosiy xatolar), yuqori darajalar tur aniqligi, nullability, mixed va boshqalarni qo'shadi. Odatda pastdan boshlab, bosqichma-bosqich oshiriladi.",
+    "level": "junior"
+  },
+  {
+    "id": "t-stan-4",
+    "category": "phpstan",
+    "categoryLabel": "PHPStan",
+    "skillSlug": "refactoring",
+    "subskillId": "73.17",
+    "question": "Legacy tizimni to'liq qayta yozish (big bang rewrite) o'rniga ko'pincha nima tavsiya etiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Kodni o'zgartirmaslik"
+      },
+      {
+        "key": "B",
+        "text": "Barcha testlarni o'chirish"
+      },
+      {
+        "key": "C",
+        "text": "Yangi framework'ga bir kunda o'tish"
+      },
+      {
+        "key": "D",
+        "text": "Strangler fig: funksionallikni bosqichma-bosqich yangi modulga ko'chirish"
+      }
+    ],
+    "correct": "D",
+    "explanation": "Katta rewrite uzoq davom etadi, biznes funksiyalarini muzlatadi va eski tizimdagi yashirin qoidalarni yo'qotadi. Bosqichma-bosqich ko'chirish xavfni kamaytiradi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-sen-1",
+    "category": "sentry",
+    "categoryLabel": "Sentry",
+    "skillSlug": "sentry",
+    "subskillId": "59.11",
+    "question": "Sentry'da bir xil xato 5000 marta yuz bersa, u qanday ko'rsatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "5000 ta alohida issue"
+      },
+      {
+        "key": "B",
+        "text": "Faqat birinchisi saqlanadi"
+      },
+      {
+        "key": "C",
+        "text": "Bitta issue va hodisalar soni bilan"
+      },
+      {
+        "key": "D",
+        "text": "Xato e'tiborsiz qoldiriladi"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Sentry hodisalarni fingerprint (stack trace va xabar) bo'yicha guruhlaydi. Bu shovqinni kamaytiradi va qaysi xato eng ko'p ta'sir qilayotganini ko'rsatadi.",
+    "level": "junior"
+  },
+  {
+    "id": "t-sen-2",
+    "category": "sentry",
+    "categoryLabel": "Sentry",
+    "skillSlug": "sentry",
+    "subskillId": "59.14",
+    "question": "Sentry'ga yuboriladigan hodisadan parol va token'larni olib tashlash uchun Laravel SDK'da qaysi sozlama ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`before_send` callback"
+      },
+      {
+        "key": "B",
+        "text": "`traces_sample_rate`"
+      },
+      {
+        "key": "C",
+        "text": "`release`"
+      },
+      {
+        "key": "D",
+        "text": "`environment`"
+      }
+    ],
+    "correct": "A",
+    "explanation": "`before_send` hodisa yuborilishidan oldin uni o'zgartirish yoki bekor qilish imkonini beradi. Qo'shimcha himoya — Sentry tomonidagi Data Scrubbing.",
+    "level": "middle"
+  },
+  {
+    "id": "t-sen-3",
+    "category": "sentry",
+    "categoryLabel": "Sentry",
+    "skillSlug": "sentry",
+    "subskillId": "59.4",
+    "question": "`SENTRY_RELEASE` (masalan, git SHA) sozlash nima beradi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Xatolarni avtomatik tuzatadi"
+      },
+      {
+        "key": "B",
+        "text": "Xato qaysi deploy'dan boshlanganini va qaysi release'da qayta paydo bo'lganini (regression) ko'rsatadi"
+      },
+      {
+        "key": "C",
+        "text": "Sentry kvotasini kamaytiradi"
+      },
+      {
+        "key": "D",
+        "text": "Faqat frontend uchun kerak"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Release tracking xatolarni aniq deploy'ga bog'laydi: \"bu xato v2.14 dan boshlangan\". Resolved issue keyingi release'da qaytsa, regression deb belgilanadi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-sen-4",
+    "category": "sentry",
+    "categoryLabel": "Sentry",
+    "skillSlug": "sentry",
+    "subskillId": "59.13",
+    "question": "Performance monitoring'da checkout endpoint'ini 100%, health check'ni 0% kuzatish uchun nima ishlatiladi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`sample_rate = 1.0`"
+      },
+      {
+        "key": "B",
+        "text": "`send_default_pii = true`"
+      },
+      {
+        "key": "C",
+        "text": "`max_breadcrumbs`"
+      },
+      {
+        "key": "D",
+        "text": "`traces_sampler` callback"
+      }
+    ],
+    "correct": "D",
+    "explanation": "`traces_sampler` har tranzaksiya uchun dinamik ehtimollik qaytaradi. Doimiy `traces_sample_rate` esa barcha yo'llarga bir xil qo'llanadi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-aws-1",
+    "category": "aws",
+    "categoryLabel": "AWS",
+    "skillSlug": "amazon-s3",
+    "subskillId": "71.7",
+    "question": "Foydalanuvchiga yopiq S3 faylini vaqtincha ko'rsatishning to'g'ri usuli qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Bucket'ni ommaviy qilish"
+      },
+      {
+        "key": "B",
+        "text": "AWS access key'ni frontend'ga berish"
+      },
+      {
+        "key": "C",
+        "text": "Qisqa muddatli presigned URL (`Storage::temporaryUrl`)"
+      },
+      {
+        "key": "D",
+        "text": "Faylni har safar serverga yuklab, keyin uzatish"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Presigned URL faqat ma'lum obyekt uchun, ma'lum muddatga va imzo bilan. Bucket esa Block Public Access bilan yopiq qoladi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-aws-2",
+    "category": "aws",
+    "categoryLabel": "AWS",
+    "skillSlug": "aws",
+    "subskillId": "70.22",
+    "question": "Laravel ilovasi faqat bitta bucket'ning `uploads/` prefiksi bilan ishlaydi. IAM policy qanday bo'lishi kerak?",
+    "options": [
+      {
+        "key": "A",
+        "text": "`s3:*` hamma resurslarga"
+      },
+      {
+        "key": "B",
+        "text": "`s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` faqat `arn:aws:s3:::bucket/uploads/*` ga"
+      },
+      {
+        "key": "C",
+        "text": "`AdministratorAccess`"
+      },
+      {
+        "key": "D",
+        "text": "`s3:ListAllMyBuckets` yetarli"
+      }
+    ],
+    "correct": "B",
+    "explanation": "Eng kam huquq: faqat kerakli amallar va faqat kerakli resurs yo'li. Kalit sizib chiqsa, zarar shu prefiks bilan cheklanadi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-arch-9",
+    "category": "architecture",
+    "categoryLabel": "Arxitektura",
+    "skillSlug": "clean-architecture",
+    "subskillId": "64.1",
+    "question": "Clean Architecture'dagi asosiy bog'liqlik qoidasi qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Bog'liqliklar faqat ichkariga, domen tomonga yo'naladi: domen framework va DB'ga bog'liq emas"
+      },
+      {
+        "key": "B",
+        "text": "Domen qatlami Eloquent modellariga bog'liq bo'lishi shart"
+      },
+      {
+        "key": "C",
+        "text": "Controller'lar domenning ichida bo'ladi"
+      },
+      {
+        "key": "D",
+        "text": "Barcha qatlamlar bir-biriga erkin bog'liq"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Dependency Rule: ichki qatlamlar tashqi (UI, DB, framework) haqida bilmaydi. Tashqi qatlamlar interfeyslar orqali ichki qatlamga moslashadi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-team-1",
+    "category": "team",
+    "categoryLabel": "Jamoa va jarayon",
+    "skillSlug": "scrum",
+    "subskillId": "79.13",
+    "question": "Scrum'da Definition of Done (DoD) nima?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Product Owner'ning shaxsiy fikri"
+      },
+      {
+        "key": "B",
+        "text": "Sprint davomiyligi"
+      },
+      {
+        "key": "C",
+        "text": "Faqat kod yozilgani"
+      },
+      {
+        "key": "D",
+        "text": "Vazifa \"tugallangan\" deb hisoblanishi uchun jamoa kelishgan umumiy mezonlar: kod review, testlar, hujjat, deploy"
+      }
+    ],
+    "correct": "D",
+    "explanation": "DoD barcha vazifalar uchun bir xil sifat chegarasini belgilaydi va \"deyarli tayyor\" holatlarni yo'qotadi.",
+    "level": "middle"
+  },
+  {
+    "id": "t-team-2",
+    "category": "team",
+    "categoryLabel": "Jamoa va jarayon",
+    "skillSlug": "technical-leadership",
+    "subskillId": "84.12",
+    "question": "Texnik qarzni biznesga tushuntirish va boshqarishning eng samarali yo'li qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Barcha yangi funksiyalarni to'xtatib, faqat refactoring qilish"
+      },
+      {
+        "key": "B",
+        "text": "Texnik qarzni e'tiborsiz qoldirish"
+      },
+      {
+        "key": "C",
+        "text": "Qarzni biznes ta'siri (sekin yetkazish, xatolar, xavf) bilan ifodalab, har sprintda reja asosida ulush ajratish"
+      },
+      {
+        "key": "D",
+        "text": "Faqat dasturchilar o'rtasida muhokama qilish"
+      }
+    ],
+    "correct": "C",
+    "explanation": "Biznes \"refactoring\" ni emas, oqibatni tushunadi: \"to'lov modulidagi har o'zgarish 3 baravar ko'p vaqt oladi va oyiga 2 ta incident\". Muntazam ulush (masalan, 15–20%) uni boshqariladigan qiladi.",
+    "level": "senior"
+  },
+  {
+    "id": "t-team-3",
+    "category": "team",
+    "categoryLabel": "Jamoa va jarayon",
+    "skillSlug": "mentoring",
+    "subskillId": "83.10",
+    "question": "Junior dasturchi muammoga duch kelib yordam so'radi. Uzoq muddatli rivojlanish uchun eng yaxshi yondashuv qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "Yo'naltiruvchi savollar bilan o'zi yechimga kelishiga yordam berish"
+      },
+      {
+        "key": "B",
+        "text": "Darhol tayyor kodni yozib berish"
+      },
+      {
+        "key": "C",
+        "text": "O'zi hal qilsin deb javob bermaslik"
+      },
+      {
+        "key": "D",
+        "text": "Vazifani boshqa dasturchiga berish"
+      }
+    ],
+    "correct": "A",
+    "explanation": "Savollar orqali coaching mustaqil muammo yechish ko'nikmasini rivojlantiradi. Shoshilinch production holatlarida esa to'g'ridan-to'g'ri yordam ham o'rinli.",
+    "level": "middle"
+  },
+  {
+    "id": "t-team-4",
+    "category": "team",
+    "categoryLabel": "Jamoa va jarayon",
+    "skillSlug": "agile",
+    "subskillId": "78.5",
+    "question": "Yaxshi user story'ning odatiy formati qaysi?",
+    "options": [
+      {
+        "key": "A",
+        "text": "\"Ma'lumotlar bazasiga jadval qo'shish\""
+      },
+      {
+        "key": "B",
+        "text": "\"Mijoz sifatida men buyurtma holatini ko'rmoqchiman, toki yetkazib berish vaqtini bilay\" + qabul mezonlari"
+      },
+      {
+        "key": "C",
+        "text": "\"Backend'ni tezlashtirish\""
+      },
+      {
+        "key": "D",
+        "text": "\"Laravel'ni yangilash\""
+      }
+    ],
+    "correct": "B",
+    "explanation": "\"Kim sifatida — nima — nima uchun\" formati foydalanuvchi qiymatiga e'tibor qaratadi. Qabul mezonlari esa story qachon tayyor ekanini tekshiriladigan qiladi.",
+    "level": "junior"
   }
 ];

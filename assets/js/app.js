@@ -145,9 +145,11 @@
     // Ko'rsatiladigan raqamlash sidebar (bo'limlar) tartibiga mos: 1..N ketma-ket.
     // Ma'lumotdagi id'lar (progress kalitlari, prerequisites) o'zgarmaydi.
     SKILLS = GROUPS.flatMap((g) => g.items);
+    // Stack'ga tegishli skill raqami — stack ichidagi o'rni (1..n); stacksiz skill global tartibni saqlaydi.
     SKILLS.forEach((s, i) => {
       s.index = i;
-      s.num = i + 1;
+      const stk = TECH_LOGOS.find((x) => x.sk.includes(s.slug));
+      s.num = stk ? stk.sk.indexOf(s.slug) + 1 : i + 1;
       s.subskills.forEach((x, j) => { x.num = `${s.num}.${j + 1}`; });
     });
 
@@ -215,16 +217,13 @@
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   function inline(src) {
-    const parts = String(src).split(/(`[^`]+`)/g);
-    return parts.map((p) => {
-      if (/^`[^`]+`$/.test(p)) return `<code>${esc(p.slice(1, -1))}</code>`;
-      let h = esc(p);
-      h = h.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-      h = h.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
-      h = h.replace(/\[([^\]]+)\]\(((?:https?:\/\/|#)[^)\s]+)\)/g, (m, t, u) =>
-        `<a href="${u}"${u.startsWith("#") ? "" : ' target="_blank" rel="noopener noreferrer"'}>${t}</a>`);
-      return h;
-    }).join("");
+    const codes = [];
+    let h = esc(String(src).replace(/`([^`]+)`/g, (m, c) => "\u0000" + (codes.push(c) - 1) + "\u0000"));
+    h = h.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    h = h.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>");
+    h = h.replace(/\[([^\]]+)\]\(((?:https?:\/\/|#)[^)\s]+)\)/g, (m, t, u) =>
+      `<a href="${u}"${u.startsWith("#") ? "" : ' target="_blank" rel="noopener noreferrer"'}>${t}</a>`);
+    return h.replace(/\u0000(\d+)\u0000/g, (m, i) => `<code>${esc(codes[i])}</code>`);
   }
 
   const KW = new Set(("abstract and array as break callable case catch class clone const continue declare default do echo else elseif " +
@@ -283,13 +282,14 @@
       }
       if (/^\s*([-*]|\d+[.)])\s+/.test(line)) {
         const ordered = /^\s*\d+[.)]\s+/.test(line);
+        const start = ordered ? parseInt(line.trim(), 10) : 1;
         const items = [];
         while (i < lines.length && /^\s*([-*]|\d+[.)])\s+/.test(lines[i])) {
           let item = lines[i++].replace(/^\s*([-*]|\d+[.)])\s+/, "");
           while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*([-*]|\d+[.)])\s+/.test(lines[i])) item += " " + lines[i++].trim();
           items.push(`<li>${inline(item)}</li>`);
         }
-        out.push(ordered ? `<ol>${items.join("")}</ol>` : `<ul>${items.join("")}</ul>`);
+        out.push(ordered ? `<ol${start > 1 ? ` start="${start}"` : ""}>${items.join("")}</ol>` : `<ul>${items.join("")}</ul>`);
         continue;
       }
       if (/^\|/.test(line) && i + 1 < lines.length && /^\|?\s*:?-{3,}/.test(lines[i + 1])) {
@@ -470,6 +470,14 @@
   }
   function renderStack(x) {
     const skills = stackSkills(x), st = stackStats(x);
+    const iqN = (window.INTERVIEW_QUESTIONS || []).filter((q) => q.category === x.id).length;
+    const qzN = (window.INTERVIEW_TESTS || []).filter((t) => t.category === x.id).length;
+    const prep = iqN || qzN ? `
+        <h2 class="st-sub">Intervyuga tayyorgarlik</h2>
+        <ul class="st-skills">
+          ${iqN ? `<li><a class="st-skill" href="#/interview?stack=${x.id}">${icon("help", "ic")}<div class="st-skill-main"><h3>Intervyu savollari</h3><span>${iqN} ta savol-javob</span></div>${icon("arrow-right", "ic ic-sm")}</a></li>` : ""}
+          ${qzN ? `<li><a class="st-skill" href="#/quiz?stack=${x.id}">${icon("flask", "ic")}<div class="st-skill-main"><h3>Texnik testlar</h3><span>${qzN} ta test</span></div>${icon("arrow-right", "ic ic-sm")}</a></li>` : ""}
+        </ul>` : "";
     view().innerHTML = `
       <section class="reveal">
         <a class="st-back" href="#/stacks">${icon("arrow-left", "ic ic-sm")} Barcha stacklar</a>
@@ -487,6 +495,7 @@
             <b>${p}%</b>${icon("arrow-right", "ic ic-sm")}
           </a></li>`;
         }).join("")}</ul>
+        ${prep}
       </section>`;
   }
 
@@ -1204,10 +1213,11 @@
     const iqReveal = t.closest("[data-iq-reveal]");
     if (iqReveal) {
       const qId = iqReveal.dataset.iqReveal;
-      const promptEl = $(`#prompt-${CSS.escape(qId)}`);
-      const ansEl = $(`#ans-${CSS.escape(qId)}`);
-      if (promptEl) promptEl.style.display = "none";
-      if (ansEl) ansEl.style.display = "block";
+      iqRevealed.add(qId);
+      iqRerenderCard(qId);
+      const card = $(`#${CSS.escape(qId)}`);
+      const ans = card && $(".iq-ans-wrapper", card);
+      if (ans) { ans.setAttribute("tabindex", "-1"); ans.focus({ preventScroll: true }); }
       return;
     }
     const lvlBtn = t.closest("[data-iq-lvl]");
@@ -1285,20 +1295,15 @@
   let iqSearchQuery = "";
   let iqSubFilter = "";
 
-  const IQ_CATEGORIES = [
-    { id: "all", label: "Barchasi" },
-    { id: "php", label: "PHP tili" },
-    { id: "laravel", label: "Laravel" },
-    { id: "database", label: "Ma'lumotlar bazasi" },
-    { id: "architecture", label: "Arxitektura" },
-    { id: "async", label: "Navbatlar & Async" },
-    { id: "security", label: "Xavfsizlik" },
-    { id: "testing", label: "Testlash" },
-    { id: "devops", label: "DevOps & Server" }
-  ];
+  // Yo'nalishlar stacklardan hosil qilinadi (buildInterviewTaxonomy).
+  let IQ_CATEGORIES = [{ id: "all", label: "Barchasi" }];
 
   const IQ_TYPES = { bug: "Kod xatosi", scenario: "Production holati", behavioral: "Behavioral" };
   function iqById(id) { return (window.INTERVIEW_QUESTIONS || []).find((q) => q.id === id); }
+  function iqRerenderCard(id) {
+    const card = $(`#${CSS.escape(id)}`), q = iqById(id);
+    if (card && q) card.outerHTML = iqCardHtml(q, card.classList.contains("open"));
+  }
 
   function iqPickToday(n) {
     const qs = window.INTERVIEW_QUESTIONS || [];
@@ -1413,18 +1418,13 @@
   function toggleBookmarkIq(id) {
     if (bookmarkedIq.has(id)) {
       bookmarkedIq.delete(id);
-      toast("Sevimlilardan olib tashlandi");
+      toast("Saqlanganlardan olib tashlandi");
     } else {
       bookmarkedIq.add(id);
       toast("Saqlanganlarga qo'shildi");
     }
     store.set(KEYS.bookmarks, Array.from(bookmarkedIq));
-    const btn = $(`[data-iq-bookmark="${id}"]`);
-    if (btn) {
-      const isSaved = bookmarkedIq.has(id);
-      btn.classList.toggle("active", isSaved);
-      btn.title = isSaved ? "Sevimlilardan o'chirish" : "Sevimlilarga saqlash";
-    }
+    iqRerenderCard(id);
     updateIqStats();
     if (iqFilterStatus === "bookmarked") {
       filterInterviewList();
@@ -1497,281 +1497,301 @@
     if (uBtn) uBtn.textContent = String(remainingCount);
   }
 
-  function renderInterviewItems() {
-    const filtered = getIqFilteredList();
+  // Ko'rinish: "hub" (bosh), "stack" (bitta stack), "today" (bugungi mashq), "all" (barcha savollar / qidiruv)
+  let iqView = "hub";
+  const iqRevealed = new Set();
+  const IQ_LEVELS = [["junior", "Junior"], ["middle", "Middle"], ["senior", "Senior"], ["lead", "Lead"]];
+  const IQ_STATUS = [["all", "Barchasi"], ["unmastered", "O'rganish kerak"], ["mastered", "O'zlashtirilgan"], ["bookmarked", "Saqlangan"]];
 
-    if (!filtered.length && iqMode === "today" && !iqSubFilter) {
-      return `<div class="empty iq-empty"><h3>Bugungi to'plam bo'sh</h3><p>Takrorlash kerak yoki yangi savol qolmadi. Barcha savollarni ko'rib chiqishingiz mumkin.</p>
-        <button class="btn btn-sm" data-iq-mode="all">Barcha savollar</button></div>`;
-    }
-    if (!filtered.length) {
-      return `
-        <div class="empty" style="padding:var(--sp-8) var(--sp-4);background:var(--surface);border:1px dashed var(--border);border-radius:var(--r-lg);margin-top:var(--sp-4)">
-          <div style="font-size:32px;color:var(--text-3);margin-bottom:8px">${icon("search")}</div>
-          <h3 style="margin-bottom:6px;font-size:16px;color:var(--text)">Ushbu filtr bo'yicha savollar topilmadi</h3>
-          <p style="font-size:13px;color:var(--text-3);margin-bottom:14px">Qidiruv so'zini o'zgartiring yoki filtrlarni dastlabki holatiga qaytaring.</p>
-          <button class="btn btn-sm" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button>
-        </div>
-      `;
-    }
+  function iqDueToday(q) { return !!iqSrs[q.id] && iqSrs[q.id].due <= dayStr(); }
 
-    return filtered.map((q) => {
-      const isMastered = masteredIq.has(q.id);
-      const isBookmarked = bookmarkedIq.has(q.id);
-      const isOpen = false;
-      const cleanNum = q.id.replace("iq-", "");
-
-      return `
-        <article class="iq-card ${isOpen ? "open" : ""}" id="${q.id}" data-id="${q.id}" data-level="${q.level}" data-sub="${esc(q.subskillId || "")}">
-          <button class="iq-card-header" data-iq-toggle="${q.id}" aria-expanded="${isOpen}">
-            <span class="iq-badge ${q.level}">${q.level}</span>
-            <div class="iq-title-wrap">
-              <div class="iq-title">${esc(q.title)}</div>
-              <div class="iq-meta">
-                <span class="tag-cat">${esc(q.categoryLabel)}</span>
-                ${q.type && IQ_TYPES[q.type] ? `<span class="tag-type" data-type="${q.type}">${IQ_TYPES[q.type]}</span>` : ""}
-                ${SUB_BY_ID[q.subskillId] ? `<span>·</span>
-                <span class="iq-sub">${esc(q.subskillId)} ${inline(SUB_BY_ID[q.subskillId].title)}</span>
-                <span class="mini-st" data-st="${statusOf(q.subskillId)}"><i class="st-dot"></i>${STATUSES[statusOf(q.subskillId)].label}</span>` : ""}
-                ${isBookmarked ? `<span style="color:var(--st-2);font-weight:600">Saqlangan</span>` : ""}
-                ${isMastered ? `<span class="tag-done" style="color:var(--accent-text);font-weight:600;display:inline-flex;align-items:center;gap:3px">${icon("check", "ic ic-sm")} O'zlashtirildi</span>` : ""}
-              </div>
-            </div>
-            <span class="iq-chev">${icon("chev-down", "ic")}</span>
-          </button>
-          <div class="iq-card-body">
-            ${q.code ? `<pre class="iq-code" data-lang="php"><code>${highlight(q.code)}</code></pre>` : ""}
-            ${iqPracticeMode ? `
-              <div class="iq-practice-prompt" id="prompt-${q.id}">
-                <p><strong>${icon("target", "ic ic-sm")} Sinov rejimi:</strong> Savolga avval o'zingiz mustaqil javob berishga urinib ko'ring, so'ngra model javob bilan tekshiring.</p>
-                <button class="iq-reveal-btn" data-iq-reveal="${q.id}">Javobni ko'rish →</button>
-              </div>
-              <div class="iq-ans-wrapper" id="ans-${q.id}" style="display:none">
-                <div class="iq-answer-label">${icon("target", "ic ic-sm")} Model javob (Kutiladigan chuqur tushuntirish):</div>
-                <div class="iq-answer-prose">${markdown(q.answer)}</div>
-                ${q.tip ? `
-                  <div class="iq-tip-box">
-                    <h4>${icon("sparkles", "ic ic-sm")} Senior maslahati & Intervyu sirlari</h4>
-                    <p>${esc(q.tip)}</p>
-                  </div>
-                ` : ""}
-              </div>
-            ` : `
-              <div class="iq-ans-wrapper" id="ans-${q.id}">
-                <div class="iq-answer-label">${icon("target", "ic ic-sm")} Model javob (Kutiladigan chuqur tushuntirish):</div>
-                <div class="iq-answer-prose">${markdown(q.answer)}</div>
-                ${q.tip ? `
-                  <div class="iq-tip-box">
-                    <h4>${icon("sparkles", "ic ic-sm")} Senior maslahati & Intervyu sirlari</h4>
-                    <p>${esc(q.tip)}</p>
-                  </div>
-                ` : ""}
-              </div>
-            `}
-            <div class="iq-card-foot">
-              <div class="iq-card-actions-left">
-                <div class="iq-rate-wrap">${iqRateHtml(q)}</div>
-                <button class="iq-bookmark-btn ${isBookmarked ? "active" : ""}" data-iq-bookmark="${q.id}" title="${isBookmarked ? "Sevimlilardan o'chirish" : "Sevimlilarga saqlash"}">
-                  ${icon("sparkles", "ic ic-sm")}
-                </button>
-                <button class="iq-copy-btn" data-iq-copy="${q.id}" title="Savol va javobni nusxalash">
-                  ${icon("copy", "ic ic-sm")} Nusxalash
-                </button>
-              </div>
-              ${q.skillSlug ? `
-                <a href="#/s/${q.skillSlug}/${q.subskillId || ""}">
-                  ${icon("arrow-right", "ic ic-sm")} Ushbu mavzuni xaritada o'rganish
-                </a>
-              ` : ""}
+  function iqCardHtml(q, open = false) {
+    const isMastered = masteredIq.has(q.id);
+    const isBookmarked = bookmarkedIq.has(q.id);
+    const revealed = iqRevealed.has(q.id);
+    const sub = SUB_BY_ID[q.subskillId];
+    return `
+      <article class="iq-card ${open ? "open" : ""}" id="${q.id}" data-id="${q.id}" data-level="${q.level}" data-sub="${esc(q.subskillId || "")}">
+        <button class="iq-card-header" data-iq-toggle="${q.id}" aria-expanded="${open}">
+          <span class="iq-badge ${q.level}">${q.level}</span>
+          <div class="iq-title-wrap">
+            <div class="iq-title">${esc(q.title)}</div>
+            <div class="iq-meta">
+              ${iqView === "stack" ? "" : `<span class="tag-cat">${esc(q.categoryLabel)}</span>`}
+              ${q.type && IQ_TYPES[q.type] ? `<span class="tag-type" data-type="${q.type}">${IQ_TYPES[q.type]}</span>` : ""}
+              ${sub ? `<span class="iq-sub">${esc(sub.num)} ${inline(sub.title)}</span>` : ""}
+              ${iqDueToday(q) ? `<span class="iq-flag due">Takrorlash vaqti</span>` : ""}
+              ${isBookmarked ? `<span class="iq-flag saved">${icon("bookmark", "ic ic-sm")} Saqlangan</span>` : ""}
+              ${isMastered ? `<span class="tag-done">${icon("check", "ic ic-sm")} O'zlashtirildi</span>` : ""}
             </div>
           </div>
-        </article>
-      `;
-    }).join("");
+          <span class="iq-chev">${icon("chev-down", "ic")}</span>
+        </button>
+        <div class="iq-card-body">
+          ${q.code ? `<pre class="iq-code" data-lang="php"><code>${highlight(q.code)}</code></pre>` : ""}
+          ${revealed ? `
+            <div class="iq-ans-wrapper" id="ans-${q.id}">
+              <div class="iq-answer-prose">${markdown(q.answer)}</div>
+              ${q.tip ? `<aside class="iq-tip-box"><h4>${icon("sparkles", "ic ic-sm")} Intervyuda nimaga e'tibor berishadi</h4><p>${inline(q.tip)}</p></aside>` : ""}
+            </div>
+            <div class="iq-rate-wrap">${iqRateHtml(q)}</div>
+          ` : `
+            <div class="iq-recall" id="prompt-${q.id}">
+              <p>Avval o'zingiz javob bering: ovoz chiqarib yoki qisqa yozib. Keyin model javob bilan solishtiring.</p>
+              <button type="button" class="btn btn-primary" data-iq-reveal="${q.id}">${icon("eye", "ic ic-sm")} Javobni ko'rsatish</button>
+            </div>
+          `}
+          <div class="iq-card-foot">
+            <div class="iq-card-actions-left">
+              <button type="button" class="iq-icon-btn ${isBookmarked ? "active" : ""}" data-iq-bookmark="${q.id}" aria-pressed="${isBookmarked}" title="${isBookmarked ? "Saqlanganlardan olib tashlash" : "Saqlash"}">${icon("bookmark", "ic ic-sm")}<span>${isBookmarked ? "Saqlangan" : "Saqlash"}</span></button>
+              ${revealed ? `<button type="button" class="iq-icon-btn" data-iq-copy="${q.id}" title="Savol va javobni nusxalash">${icon("copy", "ic ic-sm")}<span>Nusxalash</span></button>` : ""}
+            </div>
+            ${sub ? `<a class="iq-lesson-link" href="#/s/${sub.skill.slug}/${sub.id}">Darsni o'qish ${icon("arrow-right", "ic ic-sm")}</a>` : ""}
+          </div>
+        </div>
+      </article>`;
   }
+
+  function iqGroupsHtml(list) {
+    if (iqView === "today") return list.map((q) => iqCardHtml(q)).join("");
+    if (iqView === "stack") {
+      const stk = TECH_LOGOS.find((x) => x.id === iqFilterCat);
+      const order = stk ? stk.sk : [];
+      const groups = order.map((slug) => ({ slug, items: list.filter((q) => q.skillSlug === slug) })).filter((g) => g.items.length);
+      return groups.map((g) => `
+        <section class="iq-group" aria-labelledby="g-${g.slug}">
+          <h2 class="iq-group-h" id="g-${g.slug}"><a href="#/s/${g.slug}">${esc(BY_SLUG[g.slug] ? BY_SLUG[g.slug].title : g.slug)}</a><span>${g.items.length}</span></h2>
+          ${g.items.map((q) => iqCardHtml(q)).join("")}
+        </section>`).join("");
+    }
+    const groups = TECH_LOGOS.map((x) => ({ x, items: list.filter((q) => q.category === x.id) })).filter((g) => g.items.length);
+    return groups.map((g) => `
+      <section class="iq-group" aria-labelledby="g-${g.x.id}">
+        <h2 class="iq-group-h" id="g-${g.x.id}"><a href="#/interview?stack=${g.x.id}">${stackLogo(g.x)}${esc(g.x.n)}</a><span>${g.items.length}</span></h2>
+        ${g.items.map((q) => iqCardHtml(q)).join("")}
+      </section>`).join("");
+  }
+
+  function renderInterviewItems() {
+    const filtered = getIqFilteredList();
+    if (!filtered.length && iqView === "today") {
+      return `<div class="iq-empty"><h3>Bugungi navbat bo'sh</h3><p>Takrorlanadigan va yangi savollar qolmadi. Biror stackni tanlab, chuqurroq ishlang.</p>
+        <a class="btn btn-sm" href="#/interview">Stacklarga qaytish</a></div>`;
+    }
+    if (!filtered.length) {
+      return `<div class="iq-empty"><h3>Bu filtr bo'yicha savol yo'q</h3><p>Qidiruv so'zini o'zgartiring yoki filtrlarni tozalang.</p>
+        <button type="button" class="btn btn-sm" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button></div>`;
+    }
+    return iqGroupsHtml(filtered);
+  }
+
+  function iqCountsFor(list) {
+    const c = { all: list.length, unmastered: 0, mastered: 0, bookmarked: 0 };
+    list.forEach((q) => { if (masteredIq.has(q.id)) c.mastered++; else c.unmastered++; if (bookmarkedIq.has(q.id)) c.bookmarked++; });
+    IQ_LEVELS.forEach(([id]) => { c[id] = list.filter((q) => q.level === id).length; });
+    return c;
+  }
+
+  function iqToolbarHtml(scope) {
+    const c = iqCountsFor(scope);
+    const segBtn = (attr, cur, id, label, n) => `<button type="button" ${attr}="${id}" aria-pressed="${cur === id}">${label}${n !== undefined ? ` <span class="count-chip">${n}</span>` : ""}</button>`;
+    return `
+      <div class="iq-toolbar" id="iq-controls">
+        <label class="iq-search-box">
+          ${icon("search", "ic")}
+          <span class="sr-only">Savollarni qidirish</span>
+          <input type="search" id="iq-search-input" placeholder="Qidirish: N+1, idempotency, lock, Horizon..." value="${esc(iqSearchQuery)}" autocomplete="off" />
+          ${iqSearchQuery ? `<button type="button" class="iq-search-clear" data-iq-clear-search aria-label="Qidiruvni tozalash">${icon("close", "ic ic-sm")}</button>` : ""}
+        </label>
+        <div class="iq-toolbar-row">
+          <div class="seg" role="group" aria-label="Daraja">
+            ${segBtn("data-iq-lvl", iqFilterLevel, "all", "Barcha darajalar")}
+            ${IQ_LEVELS.filter(([id]) => c[id]).map(([id, l]) => segBtn("data-iq-lvl", iqFilterLevel, id, l, c[id])).join("")}
+          </div>
+          <div class="seg" role="group" aria-label="Holat">
+            ${IQ_STATUS.map(([id, l]) => segBtn("data-iq-status", iqFilterStatus, id, l, id === "all" ? undefined : c[id])).join("")}
+          </div>
+        </div>
+        <p class="iq-results" aria-live="polite"><span id="iq-result-count">${getIqFilteredList().length} ta savol</span><span id="iq-reset-wrap">${iqIsFiltered() ? `<button type="button" class="iq-reset-link" data-iq-reset-filters>Filtrlarni tozalash</button>` : ""}</span></p>
+      </div>`;
+  }
+
+  function iqIsFiltered() { return iqFilterLevel !== "all" || iqFilterStatus !== "all" || !!iqSearchQuery || !!iqSubFilter; }
 
   function filterInterviewList() {
     const listEl = $("#iq-items");
-    if (listEl) {
-      listEl.innerHTML = renderInterviewItems();
-    }
+    if (listEl) listEl.innerHTML = renderInterviewItems();
     const countEl = $("#iq-result-count");
-    if (countEl) {
-      const filtered = getIqFilteredList();
-      countEl.textContent = `${filtered.length} ta savol`;
-    }
+    if (countEl) countEl.textContent = `${getIqFilteredList().length} ta savol`;
     const resetWrap = $("#iq-reset-wrap");
-    if (resetWrap) {
-      const isFiltered = iqFilterLevel !== "all" || iqFilterCat !== "all" || iqFilterStatus !== "all" || !!iqSearchQuery || !!iqSubFilter;
-      resetWrap.innerHTML = isFiltered
-        ? `<button class="iq-reset-link" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button>`
-        : "";
-    }
+    if (resetWrap) resetWrap.innerHTML = iqIsFiltered() ? `<button type="button" class="iq-reset-link" data-iq-reset-filters>Filtrlarni tozalash</button>` : "";
   }
 
-  function renderInterview() {
+  function iqStackStats(x) {
+    const qs = (window.INTERVIEW_QUESTIONS || []).filter((q) => q.category === x.id);
+    return { qs, total: qs.length, mastered: qs.filter((q) => masteredIq.has(q.id)).length, due: qs.filter(iqDueToday).length };
+  }
+
+  function renderIqHub() {
     const questions = window.INTERVIEW_QUESTIONS || [];
-    if (iqSubFilter) iqMode = "all";
-    if (iqMode === "today" && !iqTodayIds.length) iqPickToday(5);
-    const total = questions.length || 1;
-    const doneCount = Array.from(masteredIq).filter((id) => questions.some((q) => q.id === id)).length;
-    const remainingCount = Math.max(0, questions.length - doneCount);
-    const progressPct = pct(doneCount / total);
-    const seniorLeadCount = questions.filter((q) => q.level === "senior" || q.level === "lead").length;
-
-    // Har bir darajadagi savollar sonini oldindan hisoblash
-    const lvlCounts = {
-      all: questions.length,
-      junior: questions.filter((q) => q.level === "junior").length,
-      middle: questions.filter((q) => q.level === "middle").length,
-      senior: questions.filter((q) => q.level === "senior").length,
-      lead: questions.filter((q) => q.level === "lead").length
-    };
-
-    // Har bir sohadagi savollar sonini hisoblash
-    const catCounts = {};
-    IQ_CATEGORIES.forEach((c) => {
-      catCounts[c.id] = c.id === "all" ? questions.length : questions.filter((q) => q.category === c.id).length;
-    });
-
-    const circumference = 251.3;
-    const ringOffset = circumference - (circumference * (doneCount / total));
+    iqFilterCat = "all"; iqFilterLevel = "all"; iqFilterStatus = "all"; iqSearchQuery = ""; iqSubFilter = "";
+    if (!iqTodayIds.length) iqPickToday(5);
+    const today = iqTodayIds.map(iqById).filter(Boolean);
+    const dueN = today.filter(iqDueToday).length;
+    const doneToday = today.filter((q) => iqSrs[q.id] && iqSrs[q.id].last === dayStr()).length;
+    const mastered = questions.filter((q) => masteredIq.has(q.id)).length;
+    const dueAll = questions.filter(iqDueToday).length;
+    const stacks = TECH_LOGOS.map((x) => ({ x, ...iqStackStats(x) })).filter((s) => s.total);
 
     view().innerHTML = `
       ${loadErrorBlock()}
-      <nav class="crumbs" aria-label="Breadcrumb"><a href="#/">Bosh sahifa</a><span class="sep">/</span><span aria-current="page">Intervyu savol-javoblari</span></nav>
-      
-      <header class="page-head reveal">
+      <header class="page-head iq-hub-head">
         <div>
-          <h1>Intervyu savol-javoblari</h1>
-          <p class="page-sub">${questions.length} ta savol · model javoblar va Senior maslahatlar</p>
-        </div>
-        <div class="page-progress" aria-label="O'zlashtirilgan savollar">
-          <div class="page-progress-num"><b id="iq-stat-done">${doneCount} <small>/ ${questions.length}</small></b><span>o'zlashtirildi</span></div>
-          <div class="bar"><i id="iq-stat-bar" style="width:${progressPct}%"></i></div>
+          <h1>Intervyu savollari</h1>
+          <p class="page-sub">${questions.length} ta savol, ${stacks.length} ta stack. Har savol xaritadagi darsga bog'langan.</p>
         </div>
       </header>
 
-      <div class="iq-modebar">
-        <div class="seg" role="group" aria-label="Ko'rinish">
-          <button data-iq-mode="today" aria-pressed="${iqMode === "today"}">Bugun</button>
-          <button data-iq-mode="all" aria-pressed="${iqMode === "all"}">Barcha savollar <span class="count-chip">${questions.length}</span></button>
-        </div>
-        <div class="iq-tools">
-            <button class="iq-tool-btn primary" data-iq-start-mock title="Jonli intervyu simulyatori (Mock test)">
-              ${icon("rocket", "ic ic-sm")}
-              <span>Mock Imtihon</span>
-            </button>
-            <button class="iq-tool-btn ${iqPracticeMode ? "active" : ""}" data-iq-practice aria-pressed="${iqPracticeMode}" title="Model javoblarni yashirib, o'zingizni sinash">
-              ${icon("help", "ic ic-sm")}
-              <span>Sinov rejimi</span>
-            </button>
-        </div>
+      <div class="iq-hub">
+        <section class="iq-today" aria-labelledby="iq-today-h">
+          <div class="iq-today-top">
+            <div>
+              <h2 id="iq-today-h">Bugungi mashq</h2>
+              <p>${today.length ? `${dueN} ta takrorlash va ${today.length - dueN} ta yangi savol${doneToday ? `, ${doneToday} tasi baholandi` : ""}.` : "Bugun uchun savol qolmadi."}</p>
+            </div>
+            ${today.length ? `<a class="btn btn-primary" href="#/interview?view=today">${icon("play", "ic ic-sm")} Boshlash</a>` : ""}
+          </div>
+          ${today.length ? `<ol class="iq-today-list">
+            ${today.map((q) => {
+              const stk = TECH_LOGOS.find((x) => x.id === q.category);
+              const done = iqSrs[q.id] && iqSrs[q.id].last === dayStr();
+              return `<li class="${done ? "done" : ""}"><a href="#/interview?view=today&open=${q.id}">${stk ? stackLogo(stk) : ""}<span class="iq-today-q">${esc(q.title)}</span><span class="iq-badge ${q.level}">${q.level}</span></a></li>`;
+            }).join("")}
+          </ol>` : ""}
+        </section>
+
+        <aside class="iq-side" aria-label="Umumiy holat">
+          <dl class="iq-side-stats">
+            <div><dt>O'zlashtirildi</dt><dd>${mastered} <small>/ ${questions.length}</small></dd></div>
+            <div><dt>Takrorlash kutmoqda</dt><dd>${dueAll}</dd></div>
+            <div><dt>Saqlangan</dt><dd>${bookmarkedIq.size}</dd></div>
+          </dl>
+          <div class="bar" aria-hidden="true"><i style="width:${pct(mastered / (questions.length || 1))}%"></i></div>
+          <div class="iq-side-actions">
+            <button type="button" class="btn" data-iq-start-mock>${icon("rocket", "ic ic-sm")} Mock imtihon</button>
+            ${bookmarkedIq.size ? `<a class="btn" href="#/interview?view=all&status=bookmarked">${icon("bookmark", "ic ic-sm")} Saqlanganlar</a>` : ""}
+          </div>
+        </aside>
       </div>
-      <div class="iq-today-bar" id="iq-today-bar" ${iqMode === "today" ? "" : "hidden"}>${iqMode === "today" ? iqTodayBarHtml() : ""}</div>
 
-      <section class="iq-controls reveal" id="iq-controls" aria-label="Boshqaruv va qidiruv" ${iqMode === "all" ? "" : "hidden"}>
-        <div class="iq-search-row">
-          <div class="iq-search-box">
-            ${icon("search", "ic")}
-            <input type="search" id="iq-search-input" placeholder="Savol, texnologiya yoki kalit so'zni qidiring (masalan: N+1, idempotency, redis, lock)..." value="${esc(iqSearchQuery)}" />
-            ${iqSearchQuery ? `<button class="iq-search-clear" data-iq-clear-search aria-label="Qidiruvni tozalash">${icon("close", "ic ic-sm")}</button>` : ""}
-          </div>
-        </div>
+      <form class="iq-hub-search" id="iq-hub-search" role="search">
+        <label class="iq-search-box">
+          ${icon("search", "ic")}
+          <span class="sr-only">Barcha savollarni qidirish</span>
+          <input type="search" name="q" placeholder="Barcha savollardan qidirish: N+1, idempotency, lock, Horizon..." autocomplete="off" />
+        </label>
+        <a class="iq-all-link" href="#/interview?view=all">Barcha savollar ro'yxati ${icon("arrow-right", "ic ic-sm")}</a>
+      </form>
 
-        <div class="iq-pills-wrap">
-          <div class="iq-pills-row">
-            <span class="iq-pills-label">Holat:</span>
-            <div class="iq-pills" id="iq-status-pills">
-              <button type="button" class="iq-pill" data-iq-status="all" aria-pressed="${iqFilterStatus === "all"}">
-                Barchasi <span class="count-chip">${questions.length}</span>
-              </button>
-              <button type="button" class="iq-pill" data-iq-status="bookmarked" aria-pressed="${iqFilterStatus === "bookmarked"}">
-                Saqlanganlar <span class="count-chip">${bookmarkedIq.size}</span>
-              </button>
-              <button type="button" class="iq-pill" data-iq-status="mastered" aria-pressed="${iqFilterStatus === "mastered"}">
-                O'zlashtirilgan <span class="count-chip">${doneCount}</span>
-              </button>
-              <button type="button" class="iq-pill" data-iq-status="unmastered" aria-pressed="${iqFilterStatus === "unmastered"}">
-                O'rganish kerak <span class="count-chip">${remainingCount}</span>
-              </button>
-            </div>
-          </div>
+      <h2 class="st-sub">Stack bo'yicha</h2>
+      <ul class="st-grid iq-stack-grid">${stacks.map(({ x, total, mastered: m, due }) => `
+        <li><a class="st-card" href="#/interview?stack=${x.id}">
+          <div class="st-top">${stackLogo(x)}<div><h3>${esc(x.n)}</h3>${x.v ? `<em>${esc(x.v)}</em>` : ""}</div></div>
+          <p>${total} ta savol${due ? ` · <span class="iq-due">${due} ta takrorlash</span>` : ""}</p>
+          <div class="st-foot"><span>${m} o'zlashtirildi</span><b>${pct(m / total)}%</b></div>
+          <div class="bar"><i style="width:${pct(m / total)}%"></i></div>
+        </a></li>`).join("")}
+      </ul>`;
 
-          <div class="iq-pills-row">
-            <span class="iq-pills-label">Daraja:</span>
-            <div class="iq-pills" id="iq-level-pills">
-              <button type="button" class="iq-pill" data-iq-lvl="all" aria-pressed="${iqFilterLevel === "all"}">Barchasi <span class="count-chip">${lvlCounts.all}</span></button>
-              <button type="button" class="iq-pill" data-iq-lvl="junior" aria-pressed="${iqFilterLevel === "junior"}">Junior <span class="count-chip">${lvlCounts.junior}</span></button>
-              <button type="button" class="iq-pill" data-iq-lvl="middle" aria-pressed="${iqFilterLevel === "middle"}">Middle <span class="count-chip">${lvlCounts.middle}</span></button>
-              <button type="button" class="iq-pill" data-iq-lvl="senior" aria-pressed="${iqFilterLevel === "senior"}">Senior <span class="count-chip">${lvlCounts.senior}</span></button>
-              <button type="button" class="iq-pill" data-iq-lvl="lead" aria-pressed="${iqFilterLevel === "lead"}">Lead <span class="count-chip">${lvlCounts.lead}</span></button>
-            </div>
-          </div>
+    const form = $("#iq-hub-search");
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const q = new FormData(form).get("q").toString().trim();
+      location.hash = `#/interview?view=all${q ? `&q=${encodeURIComponent(q)}` : ""}`;
+    });
+  }
 
-          <div class="iq-pills-row">
-            <span class="iq-pills-label">Yo'nalish:</span>
-            <div class="iq-pills" id="iq-cat-pills">
-              ${IQ_CATEGORIES.map((c) => `
-                <button type="button" class="iq-pill" data-iq-cat="${c.id}" aria-pressed="${iqFilterCat === c.id}">
-                  ${esc(c.label)} <span class="count-chip">${catCounts[c.id]}</span>
-                </button>
-              `).join("")}
-            </div>
-          </div>
-        </div>
+  function renderIqList() {
+    const questions = window.INTERVIEW_QUESTIONS || [];
+    const stk = iqView === "stack" ? TECH_LOGOS.find((x) => x.id === iqFilterCat) : null;
+    let head;
+    if (stk) {
+      const s = iqStackStats(stk);
+      head = `
+        <header class="st-hero iq-stack-hero">
+          ${stackLogo(stk)}
+          <div><h1>${esc(stk.n)}${stk.v ? ` <em>${esc(stk.v)}</em>` : ""}</h1><p class="page-sub">${s.total} ta intervyu savoli${s.due ? `, ${s.due} tasi bugun takrorlanadi` : ""}.</p></div>
+          <div class="st-prog"><b>${pct(s.mastered / (s.total || 1))}<small>%</small></b><span>${s.mastered} / ${s.total} o'zlashtirildi</span><div class="bar"><i style="width:${pct(s.mastered / (s.total || 1))}%"></i></div></div>
+        </header>
+        <div class="iq-stack-actions">
+          <button type="button" class="btn" data-iq-start-mock>${icon("rocket", "ic ic-sm")} Shu stack bo'yicha mock imtihon</button>
+          <a class="btn" href="#/stacks/${stk.id}">Stack darslari ${icon("arrow-right", "ic ic-sm")}</a>
+        </div>`;
+    } else if (iqView === "today") {
+      head = `
+        <header class="page-head"><div><h1>Bugungi mashq</h1><p class="page-sub">Har savolga avval o'zingiz javob bering, keyin model javob bilan solishtirib, baholang. Baho keyingi takrorlash sanasini belgilaydi.</p></div></header>
+        <div class="iq-today-bar" id="iq-today-bar">${iqTodayBarHtml()}</div>`;
+    } else {
+      const sub = iqSubFilter && SUB_BY_ID[iqSubFilter];
+      head = `<header class="page-head"><div><h1>${sub ? esc(sub.title) : "Barcha savollar"}</h1><p class="page-sub">${sub ? `${esc(sub.num)} · ${esc(sub.skill.title)} mavzusiga oid intervyu savollari.` : `${questions.length} ta savol, stack bo'yicha guruhlangan.`}</p></div></header>`;
+    }
+    const scope = stk ? questions.filter((q) => q.category === stk.id) : questions;
 
-        <div class="iq-results-bar">
-          <div>Filtr bo'yicha: <strong id="iq-result-count" style="color:var(--text)">${getIqFilteredList().length} ta savol</strong> ko'rsatilmoqda${iqSubFilter && SUB_BY_ID[iqSubFilter] ? ` · mavzu: <strong style="color:var(--text)">${esc(iqSubFilter)} ${inline(SUB_BY_ID[iqSubFilter].title)}</strong>` : ""}</div>
-          <div id="iq-reset-wrap">
-            ${(iqFilterLevel !== "all" || iqFilterCat !== "all" || iqFilterStatus !== "all" || iqSearchQuery || iqSubFilter) ? `
-              <button class="iq-reset-link" data-iq-reset-filters>${icon("reset", "ic ic-sm")} Filtrlarni tozalash</button>
-            ` : ""}
-          </div>
-        </div>
-      </section>
+    view().innerHTML = `
+      ${loadErrorBlock()}
+      <a class="st-back" href="#/interview">${icon("arrow-left", "ic ic-sm")} Intervyu savollari</a>
+      ${head}
+      ${iqView === "today" ? "" : iqToolbarHtml(scope)}
+      <div class="iq-list" id="iq-items">${renderInterviewItems()}</div>`;
 
-      <h2 class="sr-only">Savollar ro'yxati</h2>
-      <div class="iq-list reveal" id="iq-items">
-        ${renderInterviewItems()}
-      </div>
-    `;
-const searchInp = $("#iq-search-input");
+    const searchInp = $("#iq-search-input");
     if (searchInp) {
       searchInp.addEventListener("input", (e) => {
         iqSearchQuery = e.target.value.toLowerCase().trim();
         filterInterviewList();
         const clearBtn = $("[data-iq-clear-search]");
         if (iqSearchQuery && !clearBtn) {
-          const btn = document.createElement("button");
-          btn.className = "iq-search-clear";
-          btn.setAttribute("data-iq-clear-search", "");
-          btn.setAttribute("aria-label", "Qidiruvni tozalash");
-          btn.innerHTML = icon("close", "ic ic-sm");
-          searchInp.parentElement.appendChild(btn);
-        } else if (!iqSearchQuery && clearBtn) {
-          clearBtn.remove();
-        }
+          searchInp.insertAdjacentHTML("afterend", `<button type="button" class="iq-search-clear" data-iq-clear-search aria-label="Qidiruvni tozalash">${icon("close", "ic ic-sm")}</button>`);
+        } else if (!iqSearchQuery && clearBtn) clearBtn.remove();
       });
     }
+    if (iqOpenId) {
+      const card = $(`#${CSS.escape(iqOpenId)}`);
+      if (card) { card.classList.add("open"); $(".iq-card-header", card).setAttribute("aria-expanded", "true"); requestAnimationFrame(() => card.scrollIntoView({ block: "start" })); }
+      iqOpenId = "";
+    }
+  }
+
+  let iqOpenId = "";
+
+  function renderInterview() {
+    if (iqSubFilter && iqView === "hub") iqView = "all";
+    iqMode = iqView === "today" ? "today" : "all";
+    if (iqView === "today" && !iqTodayIds.length) iqPickToday(5);
+    if (iqView === "hub") renderIqHub(); else renderIqList();
   }
 
   /* ------------------------------------------------------------------ *
    * Interactive Quiz & Assessment Engine (A, B, C, D Tests)
    * ------------------------------------------------------------------ */
-  const QUIZ_CATEGORIES = [
-    { id: "all", label: "Barchasi", icon: "layers" },
-    { id: "php", label: "PHP & OOP", icon: "code" },
-    { id: "laravel", label: "Laravel Core", icon: "boxes" },
-    { id: "eloquent", label: "Eloquent & DB", icon: "database" },
-    { id: "api", label: "REST API & Auth", icon: "plug" },
-    { id: "redis", label: "Redis & Kesh", icon: "gauge" },
-    { id: "queue", label: "Navbatlar (Queue)", icon: "queue" },
-    { id: "security", label: "Xavfsizlik", icon: "shield" },
-    { id: "testing", label: "Testlash (Pest/TDD)", icon: "flask" },
-    { id: "architecture", label: "Arxitektura", icon: "layers" },
-    { id: "devops", label: "DevOps & Linux", icon: "server" }
-  ];
+  let QUIZ_CATEGORIES = [{ id: "all", label: "Barchasi", icon: "layers" }];
+
+  // Savol va testlarning yo'nalishi skillSlug orqali stackdan olinadi: filtrlar stacklar bilan bir xil.
+  function buildInterviewTaxonomy() {
+    const stackOf = (slug) => TECH_LOGOS.find((x) => x.sk.includes(slug));
+    const tag = (item) => {
+      const stk = stackOf(item.skillSlug);
+      if (!stk) return;
+      item.category = stk.id;
+      item.categoryLabel = stk.n;
+    };
+    const iq = window.INTERVIEW_QUESTIONS || [], tests = window.INTERVIEW_TESTS || [];
+    iq.forEach(tag);
+    tests.forEach(tag);
+    const used = (list) => TECH_LOGOS.filter((x) => list.some((q) => q.category === x.id));
+    IQ_CATEGORIES = [{ id: "all", label: "Barchasi" }, ...used(iq).map((x) => ({ id: x.id, label: x.n, stack: x }))];
+    QUIZ_CATEGORIES = [{ id: "all", label: "Barchasi", icon: "layers" }, ...used(tests).map((x) => ({ id: x.id, label: x.n, stack: x }))];
+  }
 
   const QUIZ_LEVELS = [
     { id: "all", label: "Barcha darajalar" },
@@ -2022,7 +2042,7 @@ const searchInp = $("#iq-search-input");
             <button type="button" class="qz-topic-card ${quizActiveCat === c.id ? "active" : ""}" data-quiz-cat="${c.id}" aria-pressed="${quizActiveCat === c.id}">
               ${quizScores[c.id] ? `<span class="qz-topic-score-badge">★ ${quizScores[c.id]}%</span>` : ""}
               <div class="qz-topic-head">
-                <span class="qz-topic-icon">${icon(c.icon)}</span>
+                <span class="qz-topic-icon">${c.stack ? stackLogo(c.stack) : icon(c.icon)}</span>
                 <span class="qz-topic-count">${catCounts[c.id] || 0}</span>
               </div>
               <div class="qz-topic-name">${esc(c.label)}</div>
@@ -2228,6 +2248,10 @@ const searchInp = $("#iq-search-input");
             <div class="qz-exp-body">
               ${esc(currentQ.explanation)}
             </div>
+            ${(() => {
+              const sub = SUB_BY_ID[currentQ.subskillId];
+              return sub ? `<a class="qz-exp-link" href="#/s/${sub.skill.slug}/${sub.id}">${icon("arrow-right", "ic ic-sm")} Darsni o'qish: ${sub.num} ${inline(sub.title)}</a>` : "";
+            })()}
           </div>
         ` : ""}
 
@@ -2553,7 +2577,7 @@ const searchInp = $("#iq-search-input");
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;max-height:260px;overflow-y:auto">
         <div class="iq-answer-label">${icon("target", "ic ic-sm")} Kutiladigan model javob:</div>
         <div style="font-size:13.5px;line-height:1.6">${markdown(q.answer)}</div>
-        ${q.tip ? `<div class="iq-tip-box" style="margin-top:12px"><h4>${icon("sparkles", "ic ic-sm")} Senior siri</h4><p>${esc(q.tip)}</p></div>` : ""}
+        ${q.tip ? `<div class="iq-tip-box" style="margin-top:12px"><h4>${icon("sparkles", "ic ic-sm")} Senior siri</h4><p>${inline(q.tip)}</p></div>` : ""}
       </div>
 
       <div style="text-align:center;font:600 12px var(--mono);color:var(--text-3);text-transform:uppercase">O'z javobingizni xolisona baholang:</div>
@@ -2693,8 +2717,23 @@ const searchInp = $("#iq-search-input");
       markActive("stacks", s.slug);
     } else if (mInterview) {
       document.title = "Intervyu Savol-Javoblari · Stack Map";
-      iqSubFilter = ((mInterview[1] || "").match(/(?:^|&)sub=([\d.]+)/) || [])[1] || "";
-      iqTodayIds = [];
+      const qp = new URLSearchParams(mInterview[1] || "");
+      const iqStack = qp.get("stack");
+      iqSubFilter = /^[\d.]+$/.test(qp.get("sub") || "") ? qp.get("sub") : "";
+      iqOpenId = qp.get("open") || "";
+      if (iqStack && IQ_CATEGORIES.some((c) => c.id === iqStack)) {
+        iqView = "stack";
+        if (iqFilterCat !== iqStack) { iqFilterLevel = "all"; iqFilterStatus = "all"; iqSearchQuery = ""; }
+        iqFilterCat = iqStack;
+      } else if (qp.get("view") === "today") {
+        iqView = "today";
+      } else if (qp.get("view") === "all" || iqSubFilter) {
+        iqView = "all"; iqFilterCat = "all";
+        if (qp.has("q")) iqSearchQuery = qp.get("q").toLowerCase().trim();
+        if (qp.has("status")) iqFilterStatus = qp.get("status");
+      } else {
+        iqView = "hub";
+      }
       renderInterview();
       markActive("interview");
       window.scrollTo(0, 0);
@@ -2711,6 +2750,8 @@ const searchInp = $("#iq-search-input");
       window.scrollTo(0, 0);
     } else if (mQuiz) {
       document.title = "Texnik testlar · Stack Map";
+      const qzStack = ((mQuiz[1] || "").match(/(?:^|&)stack=([\w-]+)/) || [])[1];
+      if (qzStack && QUIZ_CATEGORIES.some((c) => c.id === qzStack)) { quizActiveCat = qzStack; quizActiveLevel = "all"; quizState = "lobby"; }
       renderQuizPage();
       markActive("quiz");
       window.scrollTo(0, 0);
@@ -3453,6 +3494,7 @@ const searchInp = $("#iq-search-input");
   bindPalette();
   Promise.all([loadData(), restoreSession()]).then(() => {
     buildModel();
+    buildInterviewTaxonomy();
     buildIndex();
     renderSidebar();
     route();
