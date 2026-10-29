@@ -176,7 +176,7 @@ registerSkill({
         "Yutib yuborilgan (swallowed) exception'larni qat'iy to'xtatadi",
         "Kontekstli va xavfsiz xatolik xabarlarini talab qiladi"
       ],
-      prerequisites: ["1.15", "51.24"]
+      prerequisites: ["1.15", "51.23"]
     },
     {
       id: "72.11",

@@ -244,7 +244,7 @@ registerSkill({
         "Lead Time va Cycle Time farqini tushunadi",
         "Metrikalarni maqsad emas, takomillashuv indikatori sifatida ko'radi"
       ],
-      prerequisites: ["79.19"]
+      prerequisites: ["79.18"]
     },
     {
       id: "78.15",
