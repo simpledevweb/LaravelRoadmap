@@ -629,11 +629,7 @@
         <span class="lp-glow" aria-hidden="true"></span>
         <h1><span>Stack Map</span></h1>
         <p>Har bir texnologiya bitta stack: darslar, amaliy topshiriqlar, intervyu savollari va testlar bir joyda. Stackni tanlang va mavzularni belgilab boring.</p>
-        <div class="lp-cta">
-          ${authed
-            ? `<a class="btn btn-primary btn-lg" href="#/stacks">Stacklarni ko'rish ${icon("arrow-right")}</a><a class="btn btn-lg" href="#/interview">Intervyuga tayyorlanish</a>`
-            : `<a class="btn btn-primary btn-lg" href="#/login?signup">Bepul boshlash ${icon("arrow-right")}</a><a class="btn btn-lg" href="#/login">Kirish</a>`}
-        </div>
+        ${authed ? `<div class="lp-cta"><a class="btn btn-primary btn-lg" href="#/stacks">Stacklarni ko'rish ${icon("arrow-right")}</a><a class="btn btn-lg" href="#/interview">Intervyuga tayyorlanish</a></div>` : ""}
       </section>
 
       <section class="lp-section lp-logos" aria-label="Texnologiyalar">
@@ -695,7 +691,7 @@
 
       <footer class="lp-footer">
         <div class="lp-foot-brand"><b>Stack Map</b><span>Senior PHP / Laravel dasturchi uchun texnologiyalar xaritasi</span></div>
-        <nav aria-label="Pastki havolalar"><a href="#/stacks">Stacklar</a><a href="#/" data-scroll="lp-faq">Savol-javob</a><a href="#/interview">Intervyu</a><a href="#/quiz">Testlar</a><a href="#/profile">Profil</a></nav>
+        <nav aria-label="Pastki havolalar">${authed ? `<a href="#/stacks">Stacklar</a><a href="#/" data-scroll="lp-faq">Savol-javob</a><a href="#/interview">Intervyu</a><a href="#/quiz">Testlar</a><a href="#/profile">Profil</a>` : `<a href="#/" data-scroll="lp-faq">Savol-javob</a>`}</nav>
         <small>© ${new Date().getFullYear()} Stack Map</small>
       </footer>`;
     buildRoadmapFlow();
