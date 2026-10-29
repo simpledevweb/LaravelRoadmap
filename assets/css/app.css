@@ -294,7 +294,7 @@ body:not([data-section="skills"]) .scrim { display: none; }
 .side-list { list-style: none; margin: 2px 0 0; padding: 0 0 0 6px; }
 .side-link {
   position: relative;
-  display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center; gap: 6px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px;
   min-height: 34px; padding: 5px 8px 5px 10px; border-radius: 8px;
   font-size: 14px; color: var(--text-2);
   transition: background var(--t-fast), color var(--t-fast);
@@ -305,7 +305,6 @@ body:not([data-section="skills"]) .scrim { display: none; }
 .side-link:hover { background: var(--surface-2); color: var(--text); }
 .side-link[aria-current="page"] { background: var(--surface-2); color: var(--text); font-weight: 500; }
 .side-link[aria-current="page"]::before { background: var(--accent); }
-.side-link .num { font: 500 12px var(--mono); color: var(--text-3); }
 .side-link .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .side-link .pct { font: 500 12px var(--mono); color: var(--text-3); }
 .side-link .pct.done { color: var(--accent-text); }
