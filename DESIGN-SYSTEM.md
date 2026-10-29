@@ -339,7 +339,7 @@ Hash-router (`route()`), `hashchange` hodisasida ishlaydi. Hisobga kirmagan foyd
 | `#/profile` | `renderProfile()` | Profil: Umumiy ko'rinish, Progress, Hisob, Profillar (faqat admin), Xavfli zona |
 | `#/skills` | — | `#/stacks` ga yo'naltiradi |
 
-`markActive(section)` `body[data-section]` ni o'rnatadi va topbar'dagi faol havolani belgilaydi. Sidebar faqat `data-section="skills"` bo'lganda ko'rinadi. Hozir skill sahifalari `stacks` bo'limida ochiladi, shuning uchun sidebar amalda yashirin.
+`markActive(section)` `body[data-section]` ni o'rnatadi va topbar'dagi faol havolani belgilaydi. Sidebar faqat `data-section="skills"` bo'lganda ko'rinadi. Hozir skill sahifalari `stacks` bo'limida ochiladi, shuning uchun sidebar amalda yashirin. Sidebar'dagi skill qatorlarida raqam ko'rsatilmaydi (raqamlar stack ichida hisoblangani uchun guruhlar bo'yicha takrorlanardi). Qidiruv paletida skill raqami stack nomi bilan birga chiqadi.
 
 ### 6.1. Dars sahifasi (`#/s/<slug>/<subId>`) tuzilishi
 
@@ -356,7 +356,7 @@ Ikki ustun (`.lesson-layout`: `1fr` + `300px`).
 8. **Qabul mezonlari** — `acceptanceCriteria` (belgili ro'yxat).
 9. **Oldindan bilish kerak** — `prerequisites` (havola chiplar).
 10. **Shu mavzudagi intervyu savollari**.
-11. Pastda: oldingi / keyingi mavzu (skill oxirida — keyingi skill).
+11. Pastda (`.pager`): oldingi / keyingi mavzu; skillning birinchi/oxirgi mavzusida — oldingi/keyingi skill.
 
 **O'ng (`aside.lesson-rail`):**
 - **Holat** tanlagich: Boshlanmagan / O'rganilmoqda / Ishonchli.
@@ -734,4 +734,4 @@ Skill fayli buzilsa, bosh sahifada qizil ogohlantirish chiqadi: fayl nomi va qat
 
 - Darslar kechiktirib yuklanadi (`loadLessons()`): boshlanishdan ~3.6 MB chiqarilgan (avval render ~3.1 s edi).
 - Yo'l xaritasidagi oqim (`buildRoadmapFlow`) bekat masofalarini yo'l chizilayotganda formula bilan hisoblaydi (avval `getPointAtLength` bilan ~4 s ketardi).
-- CSS'dan ishlatilmaydigan `qz-*`/`iq-*` stillari va `@keyframes`'lar olib tashlangan (3629 → 2079 qator).
+- CSS'dan ishlatilmaydigan `qz-*`/`iq-*` stillari va `@keyframes`'lar olib tashlangan (3629 → 2077 qator).
