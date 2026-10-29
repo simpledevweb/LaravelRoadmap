@@ -74,29 +74,36 @@
     }
   });
 
-  function loadData() {
-    const files = window.SKILL_FILES || [];
-    const lessons = window.LESSON_FILES || [];
+  function loadScripts(dir, files, onError) {
     return new Promise((resolve) => {
-      if (!files.length && !lessons.length) return resolve();
-      let left = files.length + lessons.length;
+      if (!files.length) return resolve();
+      let left = files.length;
       const done = () => { if (--left === 0) resolve(); };
-      lessons.forEach((f) => {
-        const s = document.createElement("script");
-        s.src = `data/lessons/${f}`;
-        s.async = false;
-        s.onload = done;
-        s.onerror = done;
-        document.body.appendChild(s);
-      });
       files.forEach((f) => {
         const s = document.createElement("script");
-        s.src = `data/skills/${f}`;
+        s.src = `${dir}/${f}`;
         s.async = false;
         s.onload = done;
-        s.onerror = () => { fileErrors[f] = fileErrors[f] || "Fayl topilmadi"; done(); };
+        s.onerror = () => { if (onError) onError(f); done(); };
         document.body.appendChild(s);
       });
+    });
+  }
+
+  function loadData() {
+    return loadScripts("data/skills", window.SKILL_FILES || [], (f) => { fileErrors[f] = fileErrors[f] || "Fayl topilmadi"; });
+  }
+
+  // Chuqur darslar faqat skill va dars sahifalarida kerak: birinchi render'dan keyin fonda yuklanadi.
+  let lessonsLoaded = false;
+  function loadLessons() {
+    return loadScripts("data/lessons", window.LESSON_FILES || []).then(() => {
+      lessonsLoaded = true;
+      if (/^#\/s\//.test(decodeURIComponent(location.hash))) {
+        const y = window.scrollY;
+        route();
+        window.scrollTo(0, y);
+      }
     });
   }
 
@@ -857,7 +864,8 @@
           <section class="lesson-sec"><h2>Qisqacha</h2><div class="md">${markdown(x.description)}</div></section>
 
           ${L && L.lesson ? `<section class="lesson-sec"><h2>Chuqur tushuntirish</h2><div class="md lesson-md">${markdown(L.lesson)}</div></section>`
-            : `<section class="lesson-sec">${placeholder("Chuqur dars hali yozilmagan", `data/lessons/${x.id}.js`)}</section>`}
+            : `<section class="lesson-sec">${lessonsLoaded ? placeholder("Chuqur dars hali yozilmagan", `data/lessons/${x.id}.js`)
+              : `<div class="loading"><div class="spinner"></div>Chuqur dars yuklanmoqda…</div>`}</section>`}
 
           ${L && L.examples && L.examples.length ? `<section class="lesson-sec"><h2>Kod misollari</h2>${L.examples.map(codeCardHtml).join("")}</section>` : ""}
 
@@ -3384,5 +3392,6 @@
     buildIndex();
     renderSidebar();
     route();
+    requestAnimationFrame(() => setTimeout(loadLessons, 0));
   });
 })();
