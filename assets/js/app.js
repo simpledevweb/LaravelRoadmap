@@ -502,7 +502,10 @@
   const skillStack = (s) => TECH_LOGOS.find((x) => x.sk.includes(s.slug));
   const stackCrumb = (s) => { const k = skillStack(s); return k ? `<a href="#/stacks/${k.id}">${esc(k.n)}</a>` : ""; };
   function stkChip(x, clone) {
-    return `<li${clone ? ' class="stk-clone" aria-hidden="true"' : ""}><a class="stk-chip" href="#/stacks/${x.id}"${clone ? ' tabindex="-1"' : ""} style="--bc:${x.c}">${stackLogo(x)}<b>${esc(x.n)}</b>${x.v ? `<em>${esc(x.v)}</em>` : ""}</a></li>`;
+    // Mehmon uchun bosilmaydi: havola baribir login sahifasiga olib boradi.
+    const tag = currentUser ? "a" : "span";
+    const href = currentUser ? ` href="#/stacks/${x.id}"${clone ? ' tabindex="-1"' : ""}` : "";
+    return `<li${clone ? ' class="stk-clone" aria-hidden="true"' : ""}><${tag} class="stk-chip"${href} style="--bc:${x.c}">${stackLogo(x)}<b>${esc(x.n)}</b>${x.v ? `<em>${esc(x.v)}</em>` : ""}</${tag}></li>`;
   }
   function stkRow(items) {
     return `<div class="stk-row"><ul class="stk-track">${items.filter((x) => !x.cat).map((x) => stkChip(x, false)).join("")}${items.filter((x) => !x.cat).map((x) => stkChip(x, true)).join("")}</ul></div>`;
@@ -522,11 +525,12 @@
               n++;
               const sk = stackSkills(x), names = sk.slice(0, 6).map((s) => s.title).join(", ");
               const tag = n === 1 ? `<i class="rm-tag">Boshlanish</i>` : (n === TECH_LOGOS.length ? `<i class="rm-tag">Maqsad</i>` : "");
-              return `<li class="rm-node" style="--i:${n}" role="listitem">
-                <a class="rm-link" href="#/stacks/${x.id}" title="${esc(x.n)}: ${esc(names)}">
+              const el = currentUser ? "a" : "span";
+              return `<li class="rm-node${currentUser ? "" : " rm-static"}" style="--i:${n}" role="listitem">
+                <${el} class="rm-link"${currentUser ? ` href="#/stacks/${x.id}"` : ""} title="${esc(x.n)}: ${esc(names)}">
                   ${tag}<span class="rm-ic" style="--bc:${x.c}">${stackGlyph(x)}<em>${n}</em></span>
                   <b>${esc(x.n)}</b><small>${sk.length} skill</small>
-                </a>
+                </${el}>
               </li>`;
             }).join("")}
           </ol>`).join("")}
@@ -553,9 +557,13 @@
         const row = rows[rows.length - 1];
         if (row && Math.abs(row[0].y - p.y) < 6) row.push(p); else rows.push([p]);
       });
-      let d = `M ${pts[0].x} ${pts[0].y}`;
+      // Bekatlar qator chiziqlarida yotadi: yo'l bo'ylab masofani yo'lni chizish bilan birga hisoblaymiz.
+      let d = `M ${pts[0].x} ${pts[0].y}`, acc = 0;
+      const at = new Map();
       rows.forEach((row, r) => {
         const last = row[row.length - 1];
+        row.forEach((p) => at.set(p, acc + Math.abs(p.x - row[0].x)));
+        acc += Math.abs(last.x - row[0].x);
         d += ` L ${last.x} ${last.y}`;
         const next = rows[r + 1];
         if (!next) return;
@@ -569,6 +577,7 @@
         d += ` L ${xt - sx * rad} ${last.y} A ${rad} ${rad} 0 0 ${sw} ${xt} ${last.y + rad}`
           + ` L ${xt} ${y2 - rad} A ${rad} ${rad} 0 0 ${sw} ${xt - sx * rad} ${y2}`
           + ` L ${next[0].x} ${y2}`;
+        acc += Math.abs(xt - sx * rad - last.x) + Math.PI * rad + Math.max(0, dy - 2 * rad) + Math.abs(next[0].x - (xt - sx * rad));
       });
       let svg = $(".rm-flow", root);
       if (!svg) {
@@ -584,16 +593,9 @@
       pulse.style.setProperty("--len", `${len}px`);
       pulse.style.setProperty("--L", `${L}px`);
       pulse.style.strokeDasharray = `${len} ${L + len}`;
-      // har bir bekat pulsga qachon yetishini topamiz (yo'l bo'ylab eng yaqin nuqta)
-      let from = 0;
+      // har bir bekat pulsga qachon yetishi: yo'l bo'ylab masofa / umumiy uzunlik
       pts.forEach((p, i) => {
-        let best = from, bd = Infinity;
-        for (let s = from; s <= L; s += 3) {
-          const q = pulse.getPointAtLength(s), dd = (q.x - p.x) ** 2 + (q.y - p.y) ** 2;
-          if (dd < bd) { bd = dd; best = s; }
-        }
-        from = best;
-        $(".rm-ic", nodes[i]).style.setProperty("--t", (best / (L + len)).toFixed(4));
+        $(".rm-ic", nodes[i]).style.setProperty("--t", (Math.min(at.get(p), L) / (L + len)).toFixed(4));
       });
     };
     draw();
